@@ -1,0 +1,301 @@
+/* Login Page Styles */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.login-form-wrapper {
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
+  text-align: left;
+}
+
+.login-form-wrapper h1 {
+  font-size: 32px;
+  margin-bottom: 15px;
+  color: #333;
+  text-align: center;
+}
+
+.login-form-wrapper h2 {
+  font-size: 24px;
+  margin-bottom: 30px;
+  font-weight: normal;
+  color: #444;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+  text-align: left;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: #fff;
+}
+
+/* Ensure consistent styling for select dropdowns */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px !important;
+}
+
+.login-button {
+  width: 100%;
+  padding: 15px;
+  background-color: #4361ee;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.login-button:hover {
+  background-color: #3a56d4;
+}
+
+.form-footer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.toggle-form {
+  background: none;
+  border: none;
+  color: #4361ee;
+  font-size: 16px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.join-button {
+  width: 100%;
+  padding: 15px;
+  background-color: white;
+  color: #4361ee;
+  border: 1px solid #4361ee;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.promo-message {
+  margin-bottom: 20px;
+  padding: 0 10px;
+  text-align: center;
+}
+
+.promo-message h2 {
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: 500;
+  color: #444;
+  text-align: center;
+}
+
+/* Multi-step form styles */
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.step {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  background-color: #e0e0e0;
+  color: #666;
+}
+
+.step.active {
+  background-color: #4361ee;
+  color: white;
+}
+
+.step.completed {
+  background-color: #4caf50;
+  color: white;
+}
+
+.step-separator {
+  height: 2px;
+  width: 50px;
+  background-color: #e0e0e0;
+  margin: 0 10px;
+}
+
+/* Error message styling */
+.error-message {
+  color: #d32f2f;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  margin-bottom: 0;
+  text-align: left;
+}
+
+/* Form buttons styling */
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.back-button {
+  padding: 15px;
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 45%;
+}
+
+.form-buttons .login-button {
+  width: 45%;
+  margin-top: 0;
+}
+
+/* Email info styling */
+.email-info {
+  background-color: #e3f2fd;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  color: #1565c0;
+  text-align: left;
+  width: 100%;
+}
+
+/* Disabled button styling */
+button:disabled {
+  background-color: #cccccc !important;
+  cursor: not-allowed;
+}
+
+/* Phone input styling */
+.phone-input-container {
+  width: 100% !important;
+}
+
+.phone-input {
+  width: 100% !important;
+  height: 49px !important;
+  padding: 15px !important;
+  padding-left: 52px !important; /* Added left padding for country code */
+  border: 1px solid #ddd !important;
+  border-radius: 5px !important;
+  font-size: 16px !important;
+  background-color: #fff !important;
+}
+
+.phone-dropdown-button {
+  background-color: #f5f5f5 !important;
+  border: 1px solid #ddd !important;
+  border-radius: 5px 0 0 5px !important;
+}
+
+/* Fix for react-phone-input-2 flag dropdown positioning */
+.react-tel-input {
+  width: 100% !important;
+  font-family: inherit !important;
+}
+
+.react-tel-input .selected-flag {
+  padding-left: 12px !important;
+}
+
+.react-tel-input .flag-dropdown {
+  border-radius: 5px 0 0 5px !important;
+  border: none !important;
+  background-color: transparent !important;
+}
+
+/* Phone input error state */
+.phone-input.is-invalid {
+  border-color: #d32f2f !important;
+  background-color: #fff6f6 !important;
+}
+
+/* Country dropdown styles */
+.react-tel-input .country-list {
+  max-height: 200px !important;
+  width: 300px !important;
+}
+
+.react-tel-input .country-list .search {
+  padding: 10px 10px 6px !important;
+}
+
+.react-tel-input .country-list .search-box {
+  padding: 8px !important;
+  margin-left: 0 !important;
+  width: 100% !important;
+}
+
+/* Forgot Password Link Styling */
+.forgot-password {
+  margin-top: 8px;
+  text-align: right;
+}
+
+.forgot-password-link {
+  background: none;
+  border: none;
+  color: #3498db;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  padding: 0;
+}
+
+.forgot-password-link:hover {
+  color: #2980b9;
+  text-decoration: underline;
+}

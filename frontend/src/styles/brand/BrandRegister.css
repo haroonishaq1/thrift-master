@@ -1,0 +1,593 @@
+/* Brand Registration Styles */
+.brand-register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  background-image: linear-gradient(135deg, #f5f7fa 0%, #e2e5ea 100%);
+  padding: 20px;
+}
+
+.brand-register-form-wrapper {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 550px;
+  text-align: left;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.brand-register-form-wrapper:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.brand-register-form-wrapper h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+  color: #222;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.brand-register-form-wrapper h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  color: #444;
+  text-align: center;
+}
+
+/* Step indicator styles for brand registration */
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.step {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  background-color: #e0e0e0;
+  color: #666;
+}
+
+.step.active {
+  background-color: #4361ee;
+  color: white;
+}
+
+.step.completed {
+  background-color: #4caf50;
+  color: white;
+}
+
+.step-separator {
+  height: 2px;
+  width: 50px;
+  background-color: #e0e0e0;
+  margin: 0 10px;
+}
+
+.registration-status {
+  padding: 15px;
+  margin: 0 0 25px 0;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 15px;
+  width: 100%;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.registration-status.success {
+  background-color: #e6f7ee;
+  color: #0c6b3d;
+  border-left: 4px solid #10b966;
+}
+
+.registration-status.error {
+  background-color: #fff2f2;
+  color: #b91c1c;
+  border-left: 4px solid #ef4444;
+}
+
+.brand-register-form {
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 24px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  width: 100%;
+}
+
+
+
+.form-group label {
+  margin-bottom: 10px;
+  color: #333;
+  font-weight: 600;
+  display: block;
+  font-size: 15px;
+  transition: color 0.2s;
+}
+
+.form-group input, 
+.form-group select {
+  padding: 14px 16px;
+  font-size: 16px;
+  width: 100%;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: #fff;
+  transition: all 0.3s ease;
+  color: #333;
+  font-family: inherit;
+}
+
+.form-group input::placeholder, 
+.form-group select::placeholder {
+  color: #a0aec0;
+}
+
+.form-group input:hover,
+.form-group select:hover {
+  border-color: #cbd5e0;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #4361ee;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+}
+
+.form-group:focus-within label {
+  color: #4361ee;
+}
+
+.form-hint {
+  font-size: 13px;
+  color: #718096;
+  margin-top: 8px;
+  display: block;
+  font-style: italic;
+}
+
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+.success-message {
+  color: #10b981;
+  font-size: 15px;
+  margin: 12px 0;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px 12px;
+  background-color: #ecfdf5;
+  border-radius: 6px;
+  border-left: 4px solid #10b981;
+}
+
+/* Error Message Styling - Clean Implementation */
+.form-group .error-message {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  color: #dc2626 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  margin: 6px 0 0 0 !important;
+  padding: 8px 12px !important;
+  border-radius: 4px !important;
+  background-color: #fef2f2 !important;
+  border-left: 3px solid #dc2626 !important;
+  text-align: left !important;
+  animation: fadeInError 0.3s ease-out !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  left: 0 !important;
+  right: auto !important;
+  float: none !important;
+  clear: both !important;
+}
+
+/* Checkbox group specific error styling */
+.form-group.checkbox-group .error-message {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  color: #dc2626 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  margin: 6px 0 0 0 !important;
+  padding: 8px 12px !important;
+  border-radius: 4px !important;
+  background-color: #fef2f2 !important;
+  border-left: 3px solid #dc2626 !important;
+  text-align: left !important;
+  animation: fadeInError 0.3s ease-out !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  left: 0 !important;
+  right: auto !important;
+  float: none !important;
+  clear: both !important;
+  order: 3 !important;
+  flex-basis: 100% !important;
+}
+
+/* File Input Styling */
+.file-input-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.file-input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.file-input-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  background-color: #fff;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  color: #4a5568;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: all 0.3s ease;
+  height: 120px;
+}
+
+.file-input-label:hover,
+.file-input-container:focus-within .file-input-label {
+  border-color: #4361ee;
+  background-color: #f0f4ff;
+  color: #4361ee;
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+}
+
+.file-input-label::before {
+  content: '� ';
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+.file-input-help {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #718096;
+  text-align: center;
+}
+
+.image-preview-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.logo-preview {
+  margin-top: 15px;
+  padding: 15px;
+  border: 2px dashed #e0e0e0;
+  border-radius: 8px;
+  background-color: #fafafa;
+  text-align: center;
+  position: relative;
+  display: inline-block;
+}
+
+.logo-preview img {
+  max-width: 200px;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 4px;
+  margin-bottom: 0;
+}
+
+.remove-logo-icon {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #000000;
+  color: white;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.remove-logo-icon:hover {
+  background-color: #333333;
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+.remove-logo-icon:active {
+  transform: scale(0.95);
+}
+
+/* Checkbox Styling */
+.form-group.checkbox-group {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  margin-bottom: 20px;
+  display: flex !important;
+}
+
+.form-group.checkbox-group .checkbox-label {
+  display: flex !important;
+  align-items: flex-start !important;
+  cursor: pointer;
+  width: 100%;
+  gap: 8px;
+  flex-direction: row !important;
+  margin-bottom: 8px !important;
+}
+
+.form-group.checkbox-group .checkbox-input {
+  margin: 0 !important;
+  width: 18px !important;
+  height: 18px !important;
+  flex-shrink: 0 !important;
+  margin-top: 2px !important;
+  order: 1 !important;
+}
+
+.form-group.checkbox-group .checkbox-text {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.4;
+  flex: 1;
+  order: 2 !important;
+  margin-left: 8px !important;
+}
+
+.checkbox-text a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.checkbox-text a:hover {
+  text-decoration: underline;
+}
+
+/* Submit Group Styling (for Step 2) */
+.form-group.submit-group {
+  display: flex;
+  justify-content: flex-start;
+  gap: 15px;
+  margin-top: 30px;
+  flex-direction: row !important;
+  align-items: center;
+}
+
+
+
+/* Button Styling */
+.form-actions {
+  display: flex !important;
+  justify-content: flex-start !important;
+  margin-top: 30px;
+  gap: 15px;
+  flex-direction: row !important;
+}
+
+.back-button,
+.continue-button,
+.register-button {
+  padding: 12px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s, transform 0.2s;
+  min-width: 120px;
+}
+
+.back-button {
+  background-color: #f8f9fa;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.back-button:hover {
+  background-color: #e9ecef;
+  color: #333;
+  transform: translateY(-2px);
+}
+
+.continue-button,
+.register-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.continue-button:hover,
+.register-button:hover {
+  background-color: #0069d9;
+  transform: translateY(-2px);
+}
+
+.form-actions button:disabled {
+  background-color: #b3d7ff;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.secondary-button {
+  background-color: #f8f9fa !important;
+  color: #333 !important;
+  border: 1px solid #ddd !important;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s;
+}
+.secondary-button:hover {
+  background-color: #e9ecef !important;
+  color: #333 !important;
+  transform: translateY(-2px);
+}
+
+.brand-register-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  min-width: 120px;
+  margin-right: 10px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+.brand-register-button:hover:not(:disabled) {
+  background-color: #0069d9;
+  transform: translateY(-2px);
+}
+
+/* Back button specific styling to override brand-register-button */
+.brand-register-button.back-button:hover:not(:disabled) {
+  background-color: #e9ecef !important;
+  color: #333 !important;
+  transform: translateY(-2px);
+}
+
+.brand-register-button:disabled {
+  background-color: #b3d7ff;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.brand-register-footer {
+  margin-top: 25px;
+  text-align: center;
+  font-size: 15px;
+  color: #666;
+}
+
+.brand-register-footer a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.brand-register-footer a:hover {
+  text-decoration: underline;
+}
+
+/* OTP Verification Specific Styles */
+.verify-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 12px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 500;
+  margin-bottom: 15px;
+  transition: background-color 0.3s;
+}
+
+.verify-button:hover {
+  background-color: #0069d9;
+}
+
+.verify-button:disabled {
+  background-color: #b3d7ff;
+  cursor: not-allowed;
+}
+
+.resend-button {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 5px;
+}
+
+.resend-button:hover {
+  text-decoration: underline;
+}
+
+.timer {
+  font-size: 15px;
+  color: #666;
+  margin: 10px 0;
+}
+
+.otp-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .brand-register-form-wrapper {
+    padding: 30px 20px;
+    max-width: 100%;
+    margin: 20px;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .back-button,
+  .continue-button,
+  .register-button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}

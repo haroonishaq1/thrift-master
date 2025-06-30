@@ -1,0 +1,25 @@
+.brand-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  box-sizing: border-box;
+}
+
+.brand-container-with-sidebar {
+  flex: 1;
+  background-color: #f8f9fa;
+  width: calc(100% - 250px);
+  margin-left: 250px;
+  overflow-x: hidden; /* Prevent horizontal scrolling in content area */
+  transition: width 0.3s, margin-left 0.3s;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 768px) {
+  .brand-container-with-sidebar {
+    width: 100%;
+    margin-left: 60px;
+    padding-right: 60px; /* Ensure content doesn't go under the sidebar */
+  }
+}

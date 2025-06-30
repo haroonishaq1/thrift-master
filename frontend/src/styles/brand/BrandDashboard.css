@@ -1,0 +1,164 @@
+/* Brand Dashboard Styles */
+.brand-dashboard {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f9fa;
+}
+
+.loading-redirect {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 18px;
+  color: #6c757d;
+}
+
+/* Header Styles */
+.dashboard-header {
+  background-color: #ffffff;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.dashboard-logo h1 {
+  font-size: 24px;
+  color: #333;
+  margin: 0;
+}
+
+.dashboard-actions {
+  display: flex;
+  align-items: center;
+}
+
+.logout-button {
+  background-color: transparent;
+  color: #555;
+  border: 1px solid #ddd;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logout-button:hover {
+  background-color: #f1f1f1;
+  border-color: #ccc;
+}
+
+/* Content Styles */
+.dashboard-content {
+  flex: 1;
+  padding: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.welcome-section {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.welcome-section h1 {
+  margin-top: 0;
+  color: #333;
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+.welcome-section p {
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 0;
+}
+
+/* Dashboard Cards */
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.dashboard-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-card h3 {
+  margin-top: 0;
+  color: #333;
+  font-size: 20px;
+}
+
+.dashboard-card p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.dashboard-card button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dashboard-card button:hover {
+  background-color: #0069d9;
+}
+
+/* Footer Styles */
+.dashboard-footer {
+  background-color: #fff;
+  padding: 15px 30px;
+  text-align: center;
+  border-top: 1px solid #eee;
+  color: #666;
+}
+
+.dashboard-footer p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 20px 15px;
+  }
+  
+  .welcome-section {
+    padding: 20px;
+  }
+  
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-header {
+    padding: 15px;
+  }
+}

@@ -1,0 +1,341 @@
+/* RedeemedCodePage - Clean, Simple Design matching reference */
+.redeemed-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Loading and Error States */
+.loading-container,
+.error-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  color: #666;
+  text-align: center;
+  padding: 40px;
+}
+
+.loading,
+.error {
+  padding: 20px;
+}
+
+/* Main container for the entire centered content */
+.redeemed-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Main white card */
+.redeemed-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  padding: 50px 40px;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+}
+
+/* Discount Title - Large and prominent */
+.discount-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.discount-subtitle {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Rating Section */
+.rating-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.rate-text {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+  font-weight: 500;
+}
+
+.rating-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.rating-btn {
+  background: transparent;
+  border: 1px solid #ddd;
+  padding: 10px 15px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.rating-btn:hover {
+  background: #f5f5f5;
+}
+
+.rating-btn.active {
+  background: #f5f5f5;
+  border-color: #bbb;
+}
+
+/* Instruction Text */
+.instruction-text {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* Additional Text */
+.additional-text {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* Show Code Button - Blue to match login/signup */
+.show-code-btn {
+  background: #4361ee;
+  color: white;
+  border: none;
+  padding: 14px 40px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 5px;
+}
+
+.show-code-btn:hover {
+  background: #3a56d4;
+}
+
+/* Code Container */
+.code-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+  width: 100%;
+  justify-content: center;
+}
+
+.code-field {
+  padding: 12px 20px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  font-family: monospace;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  min-width: 300px;
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Copy Button */
+.copy-btn {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+  padding: 12px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.copy-btn:hover {
+  background: #000000;
+  color: #ffffff;
+}
+
+.copy-btn.copied {
+  background: #000000;
+  color: #ffffff;
+}
+
+/* Open Website Button - Blue to match other buttons */
+.open-website-btn {
+  background: #4361ee;
+  color: white;
+  border: none;
+  padding: 14px 40px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.open-website-btn:hover {
+  background: #3a56d4;
+}
+
+/* Brand Logo Styles for RedeemedCodePage */
+.offer-brand-logo-center {
+  width: 120px;
+  height: 120px;
+  border-radius: 0;
+  background-color: #ffffff !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 30px auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 4px solid #ffffff;
+  padding: 20px !important;
+  position: relative;
+  overflow: hidden;
+  /* Position above the card */
+  z-index: 10;
+}
+
+.offer-brand-logo-center::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ffffff !important;
+  border-radius: 0;
+  z-index: 1;
+}
+
+.offer-brand-logo-center img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  position: relative;
+  z-index: 3;
+  border-radius: 0;
+  background-color: #ffffff !important;
+  padding: 10px !important;
+  /* Ensure white background behind logo */
+  box-shadow: 0 0 0 10px #ffffff !important;
+}
+
+/* Container for the main white card */
+.redeemed-container {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Main white card */
+.redeemed-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  padding: 50px 40px;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+  /* Add top margin to account for logo spacing */
+  margin-top: 0;
+}
+
+/* Responsive styles for brand logo */
+@media (max-width: 768px) {
+  .offer-brand-logo-center {
+    width: 100px;
+    height: 100px;
+    padding: 15px !important;
+    margin-bottom: 20px;
+    border-radius: 0;
+  }
+
+  .offer-brand-logo-center::before {
+    border-radius: 0;
+  }
+
+  .offer-brand-logo-center img {
+    width: 70px;
+    height: 70px;
+    padding: 8px !important;
+    box-shadow: 0 0 0 8px #ffffff !important;
+    border-radius: 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .redeemed-main {
+    padding: 20px 15px;
+  }
+  
+  .redeemed-container {
+    margin: 0;
+    max-width: none;
+  }
+  
+  .redeemed-card {
+    padding: 30px 20px;
+  }
+  
+  .discount-title {
+    font-size: 26px;
+  }
+  
+  .discount-subtitle {
+    font-size: 22px;
+  }
+  
+  .code-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .code-field {
+    font-size: 14px;
+    padding: 10px 15px;
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .rating-buttons {
+    gap: 12px;
+  }
+  
+  .rating-btn {
+    padding: 8px 12px;
+    font-size: 18px;
+  }
+}

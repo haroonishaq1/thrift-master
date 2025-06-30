@@ -1,0 +1,783 @@
+.offer-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f8f8f8;
+}
+
+.loading,
+.error-message {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  color: #666;
+  text-align: center;
+  padding: 40px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #007bff;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-message {
+  color: #ff4444;
+  background-color: #fff0f0;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 40px;
+  box-shadow: 0 2px 4px rgba(255, 68, 68, 0.1);
+}
+
+.offer-page-container {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+}
+
+.category-header {
+  text-align: center;
+  margin: 40px 0 30px 0;
+  width: 100%;
+}
+
+.category-header h1 {
+  font-size: 48px;
+  font-weight: 400;
+  color: #333;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.offer-counter {
+  font-size: 16px;
+  color: #666;
+  margin: 10px 0 0 0;
+  font-weight: 500;
+}
+
+/* Carousel Container */
+.offer-carousel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1000px;
+  margin: 10px auto;
+  padding: 0 20px;
+  position: relative;
+}
+
+/* Navigation Buttons */
+.carousel-nav-btn {
+  background-color: #fff;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin: 0 20px;
+  font-size: 18px;
+  color: #666;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.carousel-nav-btn:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.05);
+}
+
+.carousel-nav-btn:disabled {
+  background-color: #f5f5f5;
+  color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.carousel-nav-btn:disabled:hover {
+  background-color: #f5f5f5;
+  transform: none;
+}
+
+/* Main Carousel Card */
+.offer-carousel-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  width: 100%;
+  max-width: 650px;
+  height: 380px;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.offer-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.offer-header h1 {
+  font-size: 24px;
+  margin: 0;
+  font-weight: 600;
+  color: #333;
+}
+
+.offer-content {
+  width: 100%;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.offer-details {
+  padding: 30px;
+}
+
+.offer-details h2 {
+  font-size: 32px;
+  color: #333;
+  margin: 0 0 20px;
+  text-align: center;
+}
+
+.offer-description {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.offer-rating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.offer-rating p {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: #555;
+}
+
+.rating-buttons {
+  display: flex;
+  gap: 20px;
+}
+
+.rating-buttons button {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.rating-buttons button:hover {
+  transform: scale(1.2);
+}
+
+.rating-buttons button.active {
+  transform: scale(1.2);
+}
+
+.thumbs-up.active {
+  background-color: rgba(0, 200, 83, 0.1);
+}
+
+.thumbs-down.active {
+  background-color: rgba(255, 60, 60, 0.1);
+}
+
+.offer-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.offer-action p {
+  margin: 0 0 15px;
+  color: #555;
+  font-size: 16px;
+  text-align: center;
+}
+
+.show-code-btn {
+  background-color: #1a73e8;
+  color: white;
+  font-weight: 500;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 180px;
+  text-align: center;
+}
+
+.show-code-btn:hover {
+  background-color: #1557b0;
+}
+
+.offer-terms {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.offer-terms h3 {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 10px;
+}
+
+.offer-terms p {
+  font-size: 14px;
+  color: #888;
+  margin: 5px 0;
+  line-height: 1.4;
+}
+
+/* Offer image styling */
+.offer-image {
+  margin: 30px 0;
+  text-align: center;
+  width: 100%;
+}
+
+.offer-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Redeem now button styling */
+.redeem-now-btn {
+  background-color: transparent;
+  color: #4285f4;
+  border: 2px solid #4285f4;
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: auto;
+  min-width: 140px;
+}
+
+.redeem-now-btn:hover {
+  background-color: #4285f4;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(66, 133, 244, 0.3);
+}
+
+/* Offer discount styling */
+.offer-discount {
+  font-size: 20px;
+  color: #666;
+  margin-bottom: 25px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Page header styling */
+.page-header {
+  text-align: center;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.page-header h1 {
+  font-size: 48px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+/* Main offer card styling */
+.offer-card-main {
+  width: 100%;
+  max-width: 600px;
+  background-color: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.brand-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #4CAF50;
+  margin: 0 0 20px 0;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.offer-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 15px 0;
+  line-height: 1.2;
+}
+
+/* Left Content Section */
+.offer-content-wrapper {
+  flex: 0 0 35%;
+  padding: 30px 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.offer-brand-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  justify-content: flex-start;
+}
+
+.brand-logo-round {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.brand-name-large {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.brand-name-large {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.offer-text-content {
+  flex: 1;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.offer-main-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 10px 0;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.offer-description-text {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.offer-cta-section {
+  margin-top: 20px;
+  text-align: left;
+}
+
+/* Right Image Section */
+.offer-image-section {
+  flex: 0 0 65%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f8f8;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  height: 380px;
+}
+
+/* Right Image Section - Large (without brand name) */
+.offer-image-section-large {
+  flex: 0 0 65%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f8f8;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  height: 380px;
+}
+
+.offer-image-section img,
+.offer-image-section-large img {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  display: block;
+}
+
+.offer-main-image {
+  transition: transform 0.3s ease;
+}
+
+.offer-main-image:hover {
+  transform: scale(1.02);
+}
+
+/* Carousel Indicators */
+.carousel-indicators {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 20px auto 30px auto;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 20px;
+  padding-left: 150px;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #ddd;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.indicator:hover {
+  background-color: #999;
+  transform: scale(1.2);
+}
+
+.indicator.active {
+  background-color: #666;
+}
+
+/* Redeem Screen Styles */
+.redeem-screen {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  min-height: 60vh;
+}
+
+.redeem-content {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 60px 40px;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+}
+
+.discount-title {
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 40px 0;
+  text-align: center;
+}
+
+.redeem-content .offer-rating {
+  margin: 40px 0;
+}
+
+.redeem-content .offer-rating p {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.redeem-content .rating-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.redeem-content .rating-buttons button {
+  background: none;
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.redeem-content .rating-buttons button:hover {
+  transform: scale(1.1);
+}
+
+.redeem-content .rating-buttons button.active {
+  background-color: #f0f0f0;
+}
+
+.redeem-content .offer-action {
+  margin-top: 40px;
+}
+
+.redeem-content .offer-action p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.visit-website {
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 30px !important;
+}
+
+.redeem-content .show-code-btn {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  padding: 16px 40px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  min-width: 200px;
+}
+
+.redeem-content .show-code-btn:hover {
+  background-color: #3367d6;
+}
+
+.offer-brand-logo {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  background-color: #fff;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.offer-brand-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Brand logo styles for different sections */
+.offer-card-main .offer-brand-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 3px solid #ffffff;
+  margin-bottom: 15px;
+}
+
+.offer-brand-logo-small {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #ffffff;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 15px;
+  border: 2px solid #f0f0f0;
+}
+
+.offer-brand-logo-small img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.offer-brand-logo-center {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #ffffff !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 30px auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 4px solid #ffffff;
+  padding: 20px !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.offer-brand-logo-center::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ffffff !important;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.offer-brand-logo-center img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  position: relative;
+  z-index: 3;
+  border-radius: 50%;
+  background-color: #ffffff !important;
+  padding: 10px !important;
+  /* Ensure white background behind logo */
+  box-shadow: 0 0 0 10px #ffffff !important;
+}
+
+/* Responsive styles for brand logos */
+@media (max-width: 768px) {
+  .offer-brand-logo-center {
+    width: 100px;
+    height: 100px;
+    padding: 15px !important;
+  }
+
+  .offer-brand-logo-center img {
+    width: 70px;
+    height: 70px;
+    padding: 8px !important;
+    box-shadow: 0 0 0 8px #ffffff !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .offer-carousel-card {
+    flex-direction: column;
+    max-width: 450px;
+    height: 420px;
+  }
+  
+  .offer-content-wrapper {
+    flex: 0 0 auto;
+    padding: 25px;
+    text-align: left;
+  }
+  
+  .offer-image-section {
+    flex: 0 0 200px;
+    order: -1;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .offer-carousel-container {
+    max-width: 800px;
+  }
+}
+
+@media (max-width: 600px) {
+  .offer-container {
+    padding: 20px 15px;
+  }
+  
+  .offer-details {
+    padding: 20px;
+  }
+  
+  .offer-details h2 {
+    font-size: 26px;
+  }
+  
+  .redeem-content {
+    padding: 40px 20px;
+    margin: 20px;
+  }
+  
+  .discount-title {
+    font-size: 28px;
+  }
+  
+  .offer-carousel-card {
+    margin: 0 10px;
+    height: 380px;
+  }
+  
+  .offer-content-wrapper {
+    padding: 15px;
+    text-align: left;
+  }
+  
+  .offer-image-section {
+    flex: 0 0 160px;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .category-header h1 {
+    font-size: 36px;
+  }
+}

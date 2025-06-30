@@ -1,0 +1,111 @@
+/* Navigation Categories Styles */
+.nav-categories {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  padding: 0;
+  position: sticky;
+  top: 80px; /* Adjust based on header height */
+  z-index: 99;
+  width: 100%;
+}
+
+.nav-categories-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 15px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.nav-categories-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+.category-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: white;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.category-nav-item:hover {
+  border-color: #4361ee;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.15);
+  background: #f8f9ff;
+}
+
+.category-nav-item:active {
+  transform: translateY(0);
+}
+
+.category-icon {
+  font-size: 24px;
+  display: block;
+}
+
+.category-name {
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .nav-categories {
+    top: 70px; /* Adjust for smaller header on mobile */
+  }
+  
+  .nav-categories-container {
+    justify-content: flex-start;
+    padding: 10px 15px;
+    gap: 15px;
+  }
+  
+  .category-nav-item {
+    min-width: 100px;
+    padding: 10px 12px;
+    gap: 6px;
+  }
+  
+  .category-icon {
+    font-size: 20px;
+  }
+  
+  .category-name {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .category-nav-item {
+    min-width: 85px;
+    padding: 8px 10px;
+  }
+  
+  .category-icon {
+    font-size: 18px;
+  }
+  
+  .category-name {
+    font-size: 10px;
+  }
+}

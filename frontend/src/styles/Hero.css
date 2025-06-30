@@ -1,0 +1,35 @@
+/* Hero Component Styles */
+.hero-banner {
+  background: url('../assets/Images/home students banner.webp');
+  background-size: cover;
+  background-position: center;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  margin-bottom: 40px;
+  position: relative;
+  color: white;
+}
+
+.hero-content {
+  text-align: center;
+  z-index: 1;
+}
+
+.hero-content h2 {
+  font-size: 36px;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .hero-banner {
+    height: 200px;
+  }
+  
+  .hero-content h2 {
+    font-size: 28px;
+  }
+}

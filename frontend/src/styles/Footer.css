@@ -1,0 +1,183 @@
+/* Footer Component Styles */
+.footer {
+  background-color: #222222;
+  color: #fff;
+  width: 100%;
+  margin: 0;
+  margin-top: 50px;
+}
+
+.footer-main {
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.footer-navigation {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.footer-nav-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #333;
+}
+
+.footer-links-left {
+  display: flex;
+  gap: 20px;
+}
+
+.footer-links-left a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  transition: color 0.2s ease;
+}
+
+.footer-links-left a:hover {
+  color: #ccc;
+}
+
+.footer-social-links {
+  display: flex;
+  gap: 20px;
+}
+
+.footer-social-links a {
+  color: #fff;
+  font-size: 20px;
+  transition: color 0.2s ease;
+}
+
+.footer-social-links a:hover {
+  color: #ccc;
+}
+
+.footer-app-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 0;
+}
+
+.footer-app-logo {
+  margin-bottom: 15px;
+}
+
+.unidays-logo {
+  background-color: #4CAF50;
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.footer-app-stores {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.app-store-badge img,
+.play-store-badge img {
+  height: 40px;
+}
+
+.footer-app-rating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rating-number {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.rating-stars {
+  color: #ffd700;
+  letter-spacing: 2px;
+}
+
+.rating-count {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.footer-nav-bottom {
+  padding: 20px 0;
+  border-top: 1px solid #333;
+}
+
+.footer-links-bottom {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.footer-links-bottom a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+  transition: color 0.2s ease;
+}
+
+.footer-links-bottom a:hover {
+  color: #ccc;
+}
+
+.footer-copyright {
+  text-align: center;
+  padding: 20px;
+  color: #aaa;
+  font-size: 14px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .footer-nav-top {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .footer-links-left {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .footer-social-links {
+    justify-content: center;
+  }
+  
+  .footer-links-bottom {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .footer-bottom {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .footer-links {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-section {
+    width: 100%;
+  }
+}
