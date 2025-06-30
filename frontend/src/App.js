@@ -10,6 +10,7 @@ import OfferPage from './pages/OfferPage';
 import Offers from './pages/Offers';
 import RedeemedCodePage from './pages/RedeemedCodePage';
 import Profile from './pages/Profile';
+import EditProfile from './pages/EditProfile';
 import Bookmarks from './pages/Bookmarks';
 import Orders from './pages/Orders';
 import Settings from './pages/Settings';
@@ -84,6 +85,7 @@ function App() {
           
           {/* User Profile Routes */}
           <Route path="/my-profile" element={<Profile isLoggedIn={isLoggedIn} />} />
+          <Route path="/edit-profile" element={<EditProfile isLoggedIn={isLoggedIn} />} />
           <Route path="/my-bookmarks" element={<Bookmarks isLoggedIn={isLoggedIn} />} />
           <Route path="/my-orders" element={<Orders isLoggedIn={isLoggedIn} />} />
           <Route path="/settings" element={<Settings isLoggedIn={isLoggedIn} />} />

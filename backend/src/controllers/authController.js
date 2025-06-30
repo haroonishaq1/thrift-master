@@ -173,7 +173,8 @@ const verifyOTP = async (req, res) => {
     // Generate JWT token
     const token = generateToken({
       userId: verifiedUser.id,
-      email: verifiedUser.email
+      email: verifiedUser.email,
+      email_verified: verifiedUser.email_verified
     });
 
     // Send welcome email
@@ -309,7 +310,8 @@ const login = async (req, res) => {
     // Generate JWT token
     const token = generateToken({
       userId: user.id,
-      email: user.email
+      email: user.email,
+      email_verified: user.email_verified
     });
 
     console.log(`✅ User logged in successfully: ${email}`);    res.status(200).json(
@@ -377,6 +379,109 @@ const getProfile = async (req, res) => {
     console.error('❌ Get profile error:', error.message);
     res.status(500).json(
       formatResponse(false, 'Failed to retrieve profile')
+    );
+  }
+};
+
+// User Profile Update
+const updateProfile = async (req, res) => {
+  try {
+    console.log('🚀 Update profile request received');
+    console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
+    
+    const {
+      firstName,
+      lastName,
+      username,
+      age,
+      gender,
+      phone,
+      country,
+      city,
+      university,
+      course
+    } = req.body;
+
+    // Validation
+    if (!firstName || !lastName || !username || !university || !course || !phone) {
+      console.log('❌ Validation failed - missing required fields');
+      return res.status(400).json(
+        formatResponse(false, 'All required fields must be provided')
+      );
+    }
+
+    // Check if username is taken by another user
+    if (username) {
+      const existingUser = await User.findByUsername(username);
+      
+      if (existingUser && existingUser.id !== req.user.userId) {
+        return res.status(400).json(
+          formatResponse(false, 'Username is already taken')
+        );
+      }
+    }
+
+    // Update user profile
+    const updateData = {
+      first_name: firstName,
+      last_name: lastName,
+      username: username,
+      age: age ? parseInt(age) : undefined,
+      gender: gender,
+      phone: phone,
+      country: country,
+      city: city,
+      university: university,
+      course: course
+    };
+
+    // Remove undefined values
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === undefined) {
+        delete updateData[key];
+      }
+    });
+
+    const user = await User.update(req.user.userId, updateData);
+
+    if (!user) {
+      return res.status(404).json(
+        formatResponse(false, 'User not found')
+      );
+    }
+
+    console.log('✅ Profile updated successfully');
+    res.status(200).json(
+      formatResponse(true, 'Profile updated successfully', {
+        user: {
+          id: user.id,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          username: user.username,
+          email: user.email,
+          age: user.age,
+          gender: user.gender,
+          phone: user.phone,
+          country: user.country,
+          city: user.city,
+          university: user.university,
+          course: user.course,
+          email_verified: user.email_verified,
+          created_at: user.created_at,
+          updated_at: user.updated_at
+        }
+      })
+    );
+
+  } catch (error) {
+    console.error('❌ Update profile error:', error.message);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json(
+        formatResponse(false, 'Validation error: ' + error.message)
+      );
+    }
+    res.status(500).json(
+      formatResponse(false, 'Failed to update profile')
     );
   }
 };
@@ -910,6 +1015,7 @@ module.exports = {
   resendOTP,
   login,
   getProfile,
+  updateProfile,
   brandRegister,
   verifyBrandOTP,
   brandLogin,

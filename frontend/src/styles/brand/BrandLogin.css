@@ -15,6 +15,7 @@
   width: 100%;
   max-width: 450px;
   text-align: left;
+  position: relative;
 }
 
 .brand-login-form-wrapper h1 {
@@ -184,4 +185,33 @@
     max-width: 100%;
     margin: 20px;
   }
+}
+
+/* Back arrow button styles */
+.back-arrow-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  color: #666;
+  font-size: 20px;
+}
+
+.back-arrow-btn:hover {
+  color: #007bff;
+  transform: scale(1.1);
+}
+
+.back-arrow-btn:active {
+  transform: scale(0.95);
 }

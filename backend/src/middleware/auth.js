@@ -61,12 +61,32 @@ const optionalAuth = (req, res, next) => {
 /**
  * Middleware to check if user is verified
  */
-const requireVerified = (req, res, next) => {
+const requireVerified = async (req, res, next) => {
   if (!req.user) {
     return sendErrorResponse(res, 'Authentication required', 401);
   }
 
-  if (!req.user.email_verified) {
+  // If email_verified is not in the token (old tokens), fetch from database
+  if (req.user.email_verified === undefined) {
+    try {
+      const { User } = require('../models/User');
+      const user = await User.findById(req.user.userId);
+      
+      if (!user) {
+        return sendErrorResponse(res, 'User not found', 404);
+      }
+      
+      if (!user.email_verified) {
+        return sendErrorResponse(res, 'Email verification required', 403);
+      }
+      
+      // Add email_verified to req.user for this request
+      req.user.email_verified = user.email_verified;
+    } catch (error) {
+      console.error('Error checking email verification:', error);
+      return sendErrorResponse(res, 'Verification check failed', 500);
+    }
+  } else if (!req.user.email_verified) {
     return sendErrorResponse(res, 'Email verification required', 403);
   }
 

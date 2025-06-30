@@ -111,6 +111,17 @@ const User = {
     return result.rows[0];
   },
 
+  // Find user by username
+  findByUsername: async (username) => {
+    const query = `
+      SELECT id, first_name, last_name, username, email, age, gender, 
+             country, city, university, course, phone, email_verified, created_at
+      FROM users WHERE username = $1
+    `;
+    const result = await pool.query(query, [username]);
+    return result.rows[0];
+  },
+
   // Update email verification status
   updateEmailVerification: async (email, verified = true) => {
     const query = 'UPDATE users SET email_verified = $1, updated_at = CURRENT_TIMESTAMP WHERE email = $2 RETURNING *';

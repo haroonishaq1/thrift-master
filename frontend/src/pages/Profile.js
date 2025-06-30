@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { getUserData, isUserAuthenticated } from '../utils/auth';
@@ -8,6 +8,7 @@ import '../styles/Profile.css';
 function Profile({ isLoggedIn }) {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     // Check if user is authenticated
@@ -16,12 +17,18 @@ function Profile({ isLoggedIn }) {
       return;
     }
 
-    // Get user data from localStorage
-    const data = getUserData();
-    if (data) {
-      setUserData(data);
-    }
-  }, [navigate]);
+    // Function to load user data
+    const loadUserData = () => {
+      const data = getUserData();
+      if (data) {
+        setUserData(data);
+      }
+    };
+
+    // Load data whenever the component mounts or location changes
+    loadUserData();
+
+  }, [navigate, location]); // Add location as dependency to refresh when navigating back
 
   if (!userData) {
     return (
@@ -41,19 +48,24 @@ function Profile({ isLoggedIn }) {
         <div className="profile-header">
           <div className="profile-header-top">
             <h2 className="profile-title">Profile Information</h2>
-            <button className="edit-button">
-              ✏ Edit
+            <button 
+              className="edit-button"
+              onClick={() => navigate('/edit-profile')}
+              style={{
+                backgroundColor: '#4361ee',
+                background: '#4361ee',
+                borderColor: '#4361ee',
+                color: 'white'
+              }}
+            >
+              Edit
             </button>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <div className="profile-user-section">
             <div className="profile-avatar">
-              <img 
-                src="/images/avatar-placeholder.png" 
-                alt="Profile"
-                onError={(e) => {
-                  e.target.src = `https://ui-avatars.com/api/?name=${userData.first_name}+${userData.last_name}&background=4c6ef5&color=fff&size=80&rounded=true&bold=true`;
-                }}
-              />
+              <div className="profile-icon">
+                <div className="person-icon"></div>
+              </div>
             </div>
             <div className="profile-info">
               <h1>{userData.first_name} {userData.last_name}</h1>

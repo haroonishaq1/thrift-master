@@ -223,9 +223,9 @@ function Header({ isLoggedIn }) {
           justifyContent: 'center',
           alignItems: 'center',
           gap: '30px',
-          padding: '12px 20px 2px 20px',
-          maxWidth: '1200px',
-          margin: '0 auto',
+          padding: '12px 0 2px 0',
+          width: '100%',
+          margin: '0',
           overflowX: 'auto'
         }}>
           {categories.map((category, index) => (

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
 import { storeBrandAuth } from '../../utils/auth';
 import { authAPI } from '../../services/api';
 import '../../styles/brand/BrandLogin.css';
@@ -154,6 +155,13 @@ function BrandLogin() {
   return (
     <div className="brand-login-container">
       <div className="brand-login-form-wrapper">
+        <button 
+          className="back-arrow-btn"
+          onClick={() => navigate('/')}
+          aria-label="Go back to home"
+        >
+          <FaArrowLeft />
+        </button>
         <h1>THRIFT</h1>        <h2>Brand Partner Login</h2>
         
         {error && (

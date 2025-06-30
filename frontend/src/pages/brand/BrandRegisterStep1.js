@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
 import '../../styles/brand/BrandRegister.css';
 
 // Brand registration step indicator component
@@ -112,6 +113,13 @@ function BrandRegisterStep1() {
   return (
     <div className="brand-register-container">
       <div className="brand-register-form-wrapper">
+        <button 
+          className="back-arrow-btn"
+          onClick={() => navigate('/')}
+          aria-label="Go back to home"
+        >
+          <FaArrowLeft />
+        </button>
         <h1>THRIFT</h1>
         <h2>Register Your Brand</h2>
         

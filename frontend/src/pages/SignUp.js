@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { useNavigate } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
 import { authAPI } from '../services/api';
 import '../styles/Login.css';
 
@@ -353,6 +354,13 @@ function SignUp() {
     return (
     <div className="login-container">
       <div className="login-form-wrapper">
+        <button 
+          className="back-arrow-btn"
+          onClick={() => navigate('/')}
+          aria-label="Go back to home"
+        >
+          <FaArrowLeft />
+        </button>
         <h1>THRIFT</h1>
         <div className="promo-message">
           <h2>Studying at university? Get student discounts on all your favorite brands—for free!</h2>

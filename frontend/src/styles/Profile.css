@@ -2,12 +2,12 @@
 .profile-container {
   min-height: 100vh;
   background: #f5f7fa;
-  padding: 20px;
+  padding: 0;
 }
 
 .profile-content {
   max-width: 800px;
-  margin: 0 auto;
+  margin: 20px auto;
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
@@ -19,17 +19,15 @@
   background: white;
   padding: 30px;
   border-bottom: 1px solid #e9ecef;
-  display: flex;
-  align-items: center;
-  gap: 20px;
   position: relative;
 }
 
 .profile-header-top {
   display: flex;
-  justify-content: between;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  width: 100%;
 }
 
 .profile-title {
@@ -39,23 +37,39 @@
   margin: 0;
 }
 
-.edit-button {
-  background: #4c6ef5;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
+/* Edit Button Styles - High Specificity */
+.profile-header .profile-header-top .edit-button,
+.profile-content .profile-header .edit-button,
+button.edit-button {
+  background: #4361ee !important;
+  background-color: #4361ee !important;
+  color: white !important;
+  border: none !important;
+  border-color: #4361ee !important;
+  padding: 10px 20px;
+  border-radius: 5px;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: bold;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
-  transition: background-color 0.2s;
+  gap: 8px;
+  transition: all 0.3s ease;
 }
 
-.edit-button:hover {
-  background: #3b5bdb;
+.profile-header .profile-header-top .edit-button:hover,
+.profile-content .profile-header .edit-button:hover,
+button.edit-button:hover {
+  background: #3a56d4 !important;
+  background-color: #3a56d4 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
+}
+
+.profile-user-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
 .profile-avatar {
@@ -63,12 +77,53 @@
   flex-shrink: 0;
 }
 
-.profile-avatar img {
+.profile-avatar .profile-icon {
+  font-size: 24px;
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #e9ecef;
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 400;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 2px solid #e0e0e0;
+}
+
+/* Person Icon Styles for Profile Page */
+.profile-avatar .person-icon {
+  position: relative;
+  width: 28px;
+  height: 28px;
+}
+
+.profile-avatar .person-icon::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  border: 2px solid #666;
+  border-radius: 50%;
+  background: none;
+}
+
+.profile-avatar .person-icon::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 12px;
+  border: 2px solid #666;
+  border-top: none;
+  border-radius: 0 0 18px 18px;
+  background: none;
 }
 
 .profile-info h1 {
@@ -153,28 +208,278 @@
   margin: 20px;
 }
 
+/* Success Message */
+.success-message {
+  background: #d1e7dd;
+  color: #0f5132;
+  padding: 12px 16px;
+  border-radius: 6px;
+  border: 1px solid #badbcc;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.success-message::before {
+  content: '✓';
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+/* Form Styling for Edit Profile */
+.edit-profile-form {
+  padding: 0;
+}
+
+.edit-profile-form .form-group {
+  margin-bottom: 20px;
+}
+
+.edit-profile-form .form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.875rem;
+}
+
+.edit-profile-form .detail-value {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: white;
+}
+
+.edit-profile-form .detail-value:focus {
+  outline: none;
+  border-color: #4361ee;
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+.edit-profile-form .error-message {
+  color: #dc3545;
+  font-size: 0.75rem;
+  margin-top: 5px;
+  display: block;
+}
+
+.edit-profile-form .detail-section h3 {
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+/* Success Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.success-modal {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 15px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  animation: slideInUp 0.4s ease-out;
+}
+
+.success-modal h3 {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin: 20px 0 15px 0;
+  font-weight: 600;
+}
+
+.success-modal p {
+  color: #6c757d;
+  margin: 10px 0;
+  font-size: 1rem;
+}
+
+.redirect-text {
+  color: #4361ee !important;
+  font-weight: 500;
+  margin-top: 20px !important;
+}
+
+/* Checkmark Animation */
+.success-icon {
+  margin-bottom: 20px;
+}
+
+.checkmark {
+  display: inline-block;
+}
+
+.checkmark-circle {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: inline-block;
+  animation: scaleUp 0.3s ease-in-out 0.2s both;
+}
+
+.checkmark-circle .background {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #4CAF50;
+  position: absolute;
+}
+
+.checkmark-draw {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 25px;
+  height: 15px;
+  border: 3px solid white;
+  border-top: none;
+  border-right: none;
+  transform: translate(-50%, -70%) rotate(-45deg);
+  animation: drawCheck 0.5s ease-in-out 0.5s both;
+}
+
+/* Loading Dots Animation */
+.loading-dots {
+  display: inline-block;
+  margin-top: 15px;
+}
+
+.loading-dots span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4361ee;
+  margin: 0 3px;
+  animation: pulse 1.4s infinite ease-in-out both;
+}
+
+.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+/* Keyframe Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes drawCheck {
+  from {
+    stroke-dasharray: 0, 50;
+  }
+  to {
+    stroke-dasharray: 50, 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Update Button Loading State */
+.login-button:disabled {
+  background: #6c757d !important;
+  cursor: not-allowed !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-button:disabled::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid #ffffff;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .profile-container {
-    padding: 10px;
+    padding: 0;
   }
   
   .profile-content {
-    margin: 0;
+    margin: 10px;
     border-radius: 8px;
   }
   
   .profile-header {
     padding: 20px;
+  }
+  
+  .profile-header-top {
+    margin-bottom: 20px;
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
   }
   
-  .profile-header-top {
-    width: 100%;
+  .profile-user-section {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
     gap: 15px;
   }
   
@@ -193,9 +498,27 @@
 }
 
 @media (max-width: 480px) {
-  .profile-avatar img {
+  .profile-avatar .profile-icon {
     width: 60px;
     height: 60px;
+    font-size: 20px;
+  }
+  
+  .profile-avatar .person-icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .profile-avatar .person-icon::before {
+    width: 7px;
+    height: 7px;
+    border-width: 1.5px;
+  }
+  
+  .profile-avatar .person-icon::after {
+    width: 14px;
+    height: 9px;
+    border-width: 1.5px;
   }
   
   .profile-info h1 {
@@ -214,7 +537,7 @@
 /* Additional sections styling */
 .settings-content {
   max-width: 800px;
-  margin: 0 auto;
+  margin: 20px auto;
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
@@ -273,7 +596,7 @@
 /* Help styles */
 .help-content {
   max-width: 800px;
-  margin: 0 auto;
+  margin: 20px auto;
   background: white;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);

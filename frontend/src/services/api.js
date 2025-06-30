@@ -114,6 +114,15 @@ export const authAPI = {
       method: 'GET',
     });
   },
+
+  // Update user profile
+  updateProfile: async (userData) => {
+    return apiRequest('/auth/profile', {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+    });
+  },
+
   // Health check
   healthCheck: async () => {
     return apiRequest('/auth/health', {

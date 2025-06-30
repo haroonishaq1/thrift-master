@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { FaArrowLeft } from 'react-icons/fa';
 import PhoneInput from 'react-phone-input-2';
 import { storeBrandAuth } from '../../utils/auth';
 import { authAPI } from '../../services/api';
@@ -182,6 +183,13 @@ function BrandRegisterStep2() {
   return (
     <div className="brand-register-container">
       <div className="brand-register-form-wrapper">
+        <button 
+          className="back-arrow-btn"
+          onClick={() => navigate('/')}
+          aria-label="Go back to home"
+        >
+          <FaArrowLeft />
+        </button>
         <h1>ThriftHub</h1>
         
         <StepIndicator currentStep={2} />

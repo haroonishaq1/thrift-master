@@ -2,12 +2,13 @@
 .header {
   background-color: #ffffff;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 8px 0 0 0;
+  padding: 0;
+  margin: 0;
   position: sticky;
   top: 0;
   z-index: 100;
   width: 100%;
-  margin: 0;
+  box-sizing: border-box;
 }
 
 .header-container {
@@ -15,17 +16,18 @@
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 15px;
+  margin: 0;
+  padding: 8px 0;
   box-sizing: border-box;
   gap: 20px;
+  min-height: 60px;
 }
 
 /* Left - Hamburger Menu */
 .hamburger-menu-section {
   position: relative;
   justify-self: start;
+  padding-left: 20px;
 }
 
 .hamburger-button {
@@ -236,6 +238,7 @@
   display: flex;
   align-items: center;
   gap: 20px;
+  padding-right: 20px;
 }
 
 .search-container {
@@ -283,6 +286,7 @@
 .profile-section {
   position: relative;
   justify-self: start;
+  padding-right: 20px;
 }
 
 .profile-icon-button {
@@ -475,7 +479,15 @@
   .header-container {
     grid-template-columns: auto 1fr auto;
     gap: 15px;
-    padding: 0 12px;
+    padding: 8px 0;
+  }
+  
+  .hamburger-menu-section {
+    padding-left: 15px;
+  }
+  
+  .search-section {
+    padding-right: 15px;
   }
   
   .search-input {
@@ -498,8 +510,16 @@
 
 @media (max-width: 480px) {
   .header-container {
-    padding: 0 10px;
+    padding: 8px 0;
     gap: 10px;
+  }
+  
+  .hamburger-menu-section {
+    padding-left: 10px;
+  }
+  
+  .search-section {
+    padding-right: 10px;
   }
   
   .search-input {

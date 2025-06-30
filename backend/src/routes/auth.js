@@ -20,6 +20,7 @@ const {
   resendOTP,
   login,
   getProfile,
+  updateProfile,
   brandRegister,
   forgotPassword,
   verifyForgotPasswordOTP,
@@ -51,6 +52,7 @@ router.post('/brand/register', upload.single('logoImage'), asyncHandler(brandReg
 
 // Protected routes
 router.get('/profile', authenticateToken, requireVerified, asyncHandler(getProfile));
+router.put('/profile', authenticateToken, requireVerified, asyncHandler(updateProfile));
 
 // Health check route
 router.get('/health', (req, res) => {
