@@ -1,7 +1,7 @@
-/* RedeemedCodePage - Clean, Simple Design matching reference */
+/* RedeemedCodePage - Clean, Simple Design matching signup/login pages */
 .redeemed-page {
   min-height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #f5f5f5;
   display: flex;
   flex-direction: column;
 }

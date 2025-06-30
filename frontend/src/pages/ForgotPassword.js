@@ -17,9 +17,9 @@ function ForgotPassword() {
     setSuccess('');
     setIsLoading(true);
     
-    // Basic validation
+    // Check if email is empty
     if (!email) {
-      setError('Please enter your email address');
+      setError('Email is required');
       setIsLoading(false);
       return;
     }
@@ -50,7 +50,12 @@ function ForgotPassword() {
         }, 1500);
       }
     } catch (err) {
-      setError(err.message || 'Failed to send reset code. Please try again.');
+      // Show specific error for unregistered email
+      if (err.message && err.message.toLowerCase().includes('not found')) {
+        setError('This email is not registered with us');
+      } else {
+        setError('This email is not registered with us');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -66,7 +71,7 @@ function ForgotPassword() {
         </p>
         
         {success && <div className="success-message">{success}</div>}
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className="forgot-password-error-message">{error}</div>}
         
         <form onSubmit={handleSubmit} className="forgot-password-form">
           <div className="form-group">
@@ -78,7 +83,6 @@ function ForgotPassword() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your registered email"
               disabled={isLoading}
-              required
             />
           </div>
           

@@ -10,6 +10,8 @@ function Login({ updateAuthStatus }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -21,12 +23,64 @@ function Login({ updateAuthStatus }) {
     }
   }, [location]);
 
+  // Validation functions
+  const validateEmail = (email) => {
+    if (!email) {
+      return 'Email address is required';
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return 'Please provide a valid email address';
+    }
+    return '';
+  };
+
+  const validatePassword = (password) => {
+    if (!password) {
+      return 'Password is required';
+    }
+    if (password.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+    return '';
+  };
+
+  // Clear field errors when user starts typing
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    if (emailError) {
+      setEmailError('');
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+    if (passwordError) {
+      setPasswordError('');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!email || !password) {
-      setError('Please fill in all fields');
+    // Validate fields and show custom errors
+    const emailValidationError = validateEmail(email);
+    const passwordValidationError = validatePassword(password);
+    
+    if (emailValidationError) {
+      setEmailError(emailValidationError);
+      setError('');
       return;
+    } else {
+      setEmailError('');
+    }
+    
+    if (passwordValidationError) {
+      setPasswordError(passwordValidationError);
+      setError('');
+      return;
+    } else {
+      setPasswordError('');
     }
 
     setLoading(true);
@@ -51,7 +105,11 @@ function Login({ updateAuthStatus }) {
       }
     } catch (error) {
       console.error('Login error:', error);
-      setError(error.message || 'Login failed. Please try again.');
+      
+      // Show general error message for login failures
+      setError('Invalid credentials');
+      setEmailError('');
+      setPasswordError('');
     } finally {
       setLoading(false);
     }
@@ -63,27 +121,13 @@ function Login({ updateAuthStatus }) {
         <h2>Log in to Thrift with me</h2>
         
         {error && (
-          <div className="error-message" style={{ 
-            color: '#e74c3c', 
-            backgroundColor: '#ffebee', 
-            padding: '10px', 
-            borderRadius: '5px', 
-            marginBottom: '20px',
-            textAlign: 'center'
-          }}>
+          <div className="login-error-message">
             {error}
           </div>
         )}
         
         {success && (
-          <div className="success-message" style={{ 
-            color: '#2ecc71', 
-            backgroundColor: '#e8f5e9', 
-            padding: '10px', 
-            borderRadius: '5px', 
-            marginBottom: '20px',
-            textAlign: 'center'
-          }}>
+          <div className="success-message">
             {success}
           </div>
         )}
@@ -95,9 +139,8 @@ function Login({ updateAuthStatus }) {
               id="email"
               type="email" 
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               disabled={loading}
-              required
             />
           </div>
           <div className="form-group">
@@ -106,9 +149,8 @@ function Login({ updateAuthStatus }) {
               id="password"
               type="password" 
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               disabled={loading}
-              required
             />
             <div className="forgot-password">
               <button 

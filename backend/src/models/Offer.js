@@ -100,7 +100,7 @@ const Offer = {
   getAll: async (filters = {}) => {
     try {
       let query = `
-        SELECT o.*, b.name as brand_name, b.email as brand_email, b.logo as brand_logo
+        SELECT o.*, b.name as brand_name, b.email as brand_email, b.logo as brand_logo, b.website as brand_website
         FROM offers o
         LEFT JOIN brands b ON o.brand_id = b.id
         WHERE 1=1
@@ -155,7 +155,7 @@ const Offer = {
   getById: async (id) => {
     try {
       const query = `
-        SELECT o.*, b.name as brand_name, b.email as brand_email, b.logo as brand_logo
+        SELECT o.*, b.name as brand_name, b.email as brand_email, b.logo as brand_logo, b.website as brand_website
         FROM offers o
         LEFT JOIN brands b ON o.brand_id = b.id
         WHERE o.id = $1
@@ -172,7 +172,7 @@ const Offer = {
   getByBrandId: async (brandId) => {
     try {
       const query = `
-        SELECT o.*, b.name as brand_name, b.logo as brand_logo
+        SELECT o.*, b.name as brand_name, b.logo as brand_logo, b.website as brand_website
         FROM offers o
         LEFT JOIN brands b ON o.brand_id = b.id
         WHERE o.brand_id = $1
@@ -310,7 +310,7 @@ const Offer = {
   getByCategory: async (category) => {
     try {
       const query = `
-        SELECT o.*, b.name as brand_name, b.logo as brand_logo
+        SELECT o.*, b.name as brand_name, b.logo as brand_logo, b.website as brand_website
         FROM offers o
         LEFT JOIN brands b ON o.brand_id = b.id
         WHERE o.category = $1 

@@ -240,7 +240,7 @@ router.get('/search', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const offer = await Offer.findById(id);
+    const offer = await Offer.getById(id);
 
     if (!offer) {
       return res.status(404).json({

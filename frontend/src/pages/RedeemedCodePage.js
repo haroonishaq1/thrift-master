@@ -43,6 +43,8 @@ function RedeemedCodePage() {
         
         if (offerResponse.success && offerResponse.data) {
           const offerData = offerResponse.data;
+          console.log('🎯 Offer data received:', offerData);
+          console.log('🏢 Brand website in offer:', offerData.brand_website);
           setOffer(offerData);
           
           // Generate a code with format: THRIFT-BRANDID-OFFER-ID-random6digits
@@ -80,8 +82,26 @@ function RedeemedCodePage() {
   };
 
   const handleOpenWebsite = () => {
-    if (offer?.redemptionUrl) {
-      window.open(offer.redemptionUrl, '_blank');
+    console.log('🔍 Open Website clicked');
+    console.log('📦 Offer data:', offer);
+    console.log('🌐 Brand website:', offer?.brand_website);
+    console.log('🔗 Redemption URL:', offer?.redemptionUrl);
+    
+    // First try brand website, then fallback to redemption URL
+    const websiteUrl = offer?.brand_website || offer?.redemptionUrl;
+    console.log('🎯 Final website URL:', websiteUrl);
+    
+    if (websiteUrl) {
+      // Ensure the URL has a protocol
+      let finalUrl = websiteUrl;
+      if (!websiteUrl.startsWith('http://') && !websiteUrl.startsWith('https://')) {
+        finalUrl = 'https://' + websiteUrl;
+      }
+      console.log('🚀 Opening URL:', finalUrl);
+      window.open(finalUrl, '_blank');
+    } else {
+      console.warn('❌ No website URL available for this brand');
+      alert('No website URL available for this brand');
     }
   };
 

@@ -9,6 +9,8 @@ function BrandLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
   const navigate = useNavigate();
@@ -31,24 +33,63 @@ function BrandLogin() {
     }
   }, [location]);
   
+  // Validation functions
+  const validateEmail = (email) => {
+    if (!email) {
+      return 'Email is required';
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return 'Please provide a valid email address';
+    }
+    return '';
+  };
+
+  const validatePassword = (password) => {
+    if (!password) {
+      return 'Password is required';
+    }
+    return '';
+  };
+
+  // Clear field errors when user starts typing
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    if (emailError) {
+      setEmailError('');
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+    if (passwordError) {
+      setPasswordError('');
+    }
+  };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
     
-    // Basic validation
-    if (!email || !password) {
-      setError('Please enter both email and password');
+    // Validate fields and show custom errors
+    const emailValidationError = validateEmail(email);
+    const passwordValidationError = validatePassword(password);
+    
+    if (emailValidationError) {
+      setEmailError(emailValidationError);
       setIsLoading(false);
       return;
+    } else {
+      setEmailError('');
     }
     
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError('Please enter a valid email address');
+    if (passwordValidationError) {
+      setPasswordError(passwordValidationError);
       setIsLoading(false);
       return;
+    } else {
+      setPasswordError('');
     }
       try {
       // Call the backend API for brand login using API service
@@ -96,7 +137,10 @@ function BrandLogin() {
         navigate('/brand/analytics');
       }, 800);
     } catch (err) {
-      setError(err.message || 'Login failed. Please try again.');
+      // Show general error message for login failures
+      setError('Invalid credentials');
+      setEmailError('');
+      setPasswordError('');
     } finally {
       setIsLoading(false);
     }
@@ -112,8 +156,13 @@ function BrandLogin() {
       <div className="brand-login-form-wrapper">
         <h1>THRIFT</h1>        <h2>Brand Partner Login</h2>
         
+        {error && (
+          <div className="brand-login-error-message">
+            {error}
+          </div>
+        )}
+        
         {success && <div className="success-message">{success}</div>}
-        {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit} className="brand-login-form">
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
@@ -121,11 +170,11 @@ function BrandLogin() {
               id="email"
               type="email" 
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               placeholder="Enter your business email"
               disabled={isLoading}
-              required
             />
+            {emailError && <div className="field-error">{emailError}</div>}
           </div>
           
           <div className="form-group">
@@ -134,11 +183,11 @@ function BrandLogin() {
               id="password"
               type="password" 
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               placeholder="Enter your password"
               disabled={isLoading}
-              required
             />
+            {passwordError && <div className="field-error">{passwordError}</div>}
             <div className="forgot-password">
               <button 
                 type="button" 
