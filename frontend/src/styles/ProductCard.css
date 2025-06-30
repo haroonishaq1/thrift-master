@@ -64,13 +64,12 @@
 }
 
 .brand-logo-img {
-  max-width: 70%;
-  max-height: 70%;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   object-position: center;
-  border-radius: 0;
+  border-radius: 50%;
   background: transparent;
-  aspect-ratio: auto;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
   /* Prevent layout shifts and distortion during navigation */
@@ -79,15 +78,14 @@
   will-change: transform, opacity;
   /* Force consistent rendering */
   display: block;
-  margin: auto;
 }
 
 /* Prevent logo distortion on resize and navigation */
 .brand-logo-img:not([src=""]) {
-  width: auto;
-  height: auto;
-  /* Lock aspect ratio */
-  aspect-ratio: attr(width) / attr(height);
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
 }
 
 .brand-initial {

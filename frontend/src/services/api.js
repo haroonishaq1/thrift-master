@@ -272,6 +272,28 @@ export const adminAPI = {
       method: 'GET',
     });
   },
+
+  // Get pending offers
+  getPendingOffers: async () => {
+    return adminApiRequest('/admin/offers/pending', {
+      method: 'GET',
+    });
+  },
+
+  // Approve offer
+  approveOffer: async (offerId) => {
+    return adminApiRequest(`/admin/offers/${offerId}/approve`, {
+      method: 'POST',
+    });
+  },
+
+  // Reject offer
+  rejectOffer: async (offerId, reason = '') => {
+    return adminApiRequest(`/admin/offers/${offerId}/reject`, {
+      method: 'POST',
+      body: JSON.stringify({ reason }),
+    });
+  },
 };
 
 /**

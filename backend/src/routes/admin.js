@@ -6,7 +6,10 @@ const {
   getAllBrands,
   approveBrand,
   rejectBrand,
-  getDashboardStats
+  getDashboardStats,
+  getPendingOffers,
+  approveOffer,
+  rejectOffer
 } = require('../controllers/adminController');
 const { asyncHandler } = require('../middleware/errorHandler');
 
@@ -21,6 +24,11 @@ router.get('/brands/all', asyncHandler(getAllBrands));
 // Brand approval actions
 router.post('/brands/:brandId/approve', asyncHandler(approveBrand));
 router.post('/brands/:brandId/reject', asyncHandler(rejectBrand));
+
+// Offer management and approval
+router.get('/offers/pending', asyncHandler(getPendingOffers));
+router.post('/offers/:offerId/approve', asyncHandler(approveOffer));
+router.post('/offers/:offerId/reject', asyncHandler(rejectOffer));
 
 // Health check
 router.get('/health', (req, res) => {

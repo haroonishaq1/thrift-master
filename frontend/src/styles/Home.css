@@ -431,9 +431,10 @@
 }
 
 .brand-logo-circle img {
-  max-width: 70%;
-  max-height: 70%;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
 }
 
 .brand-info {

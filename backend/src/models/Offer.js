@@ -11,6 +11,9 @@ const CREATE_OFFERS_TABLE = `
     brand_id INTEGER NOT NULL REFERENCES brands(id) ON DELETE CASCADE,
     category VARCHAR(50) DEFAULT 'other',
     status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'expired')),
+    isApproved BOOLEAN DEFAULT FALSE,
+    approvedAt DATETIME NULL,
+    approvedBy INT NULL,
     valid_from TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     valid_until TIMESTAMP,
     terms_conditions TEXT,
@@ -26,6 +29,7 @@ const CREATE_OFFERS_INDEXES = `
   CREATE INDEX IF NOT EXISTS idx_offers_brand_id ON offers(brand_id);
   CREATE INDEX IF NOT EXISTS idx_offers_category ON offers(category);
   CREATE INDEX IF NOT EXISTS idx_offers_status ON offers(status);
+  CREATE INDEX IF NOT EXISTS idx_offers_approval ON offers(isApproved);
   CREATE INDEX IF NOT EXISTS idx_offers_valid_dates ON offers(valid_from, valid_until);
 `;
 
@@ -125,9 +129,9 @@ const Offer = {
         values.push(filters.status);
       }
 
-      // Only active and non-expired offers for public view
+      // Only active, approved and non-expired offers for public view
       if (filters.publicView) {
-        query += ` AND o.status = 'active' AND (o.valid_until IS NULL OR o.valid_until > CURRENT_TIMESTAMP)`;
+        query += ` AND o.status = 'active' AND o.isApproved = true AND (o.valid_until IS NULL OR o.valid_until > CURRENT_TIMESTAMP)`;
       }
 
       query += ` ORDER BY o.created_at DESC`;
@@ -143,6 +147,23 @@ const Offer = {
       return result.rows;
     } catch (error) {
       console.error('❌ Error getting offers:', error.message);
+      throw error;
+    }
+  },
+
+  // Get offer by ID
+  getById: async (id) => {
+    try {
+      const query = `
+        SELECT o.*, b.name as brand_name, b.email as brand_email, b.logo as brand_logo
+        FROM offers o
+        LEFT JOIN brands b ON o.brand_id = b.id
+        WHERE o.id = $1
+      `;
+      const result = await pool.query(query, [id]);
+      return result.rows[0] || null;
+    } catch (error) {
+      console.error('❌ Error getting offer by ID:', error.message);
       throw error;
     }
   },
@@ -294,6 +315,7 @@ const Offer = {
         LEFT JOIN brands b ON o.brand_id = b.id
         WHERE o.category = $1 
         AND o.status = 'active' 
+        AND o.isApproved = true
         AND (o.valid_until IS NULL OR o.valid_until > CURRENT_TIMESTAMP)
         ORDER BY o.created_at DESC
       `;
@@ -331,6 +353,8 @@ const Offer = {
           COUNT(CASE WHEN status = 'active' THEN 1 END) as active_offers,
           COUNT(CASE WHEN status = 'inactive' THEN 1 END) as inactive_offers,
           COUNT(CASE WHEN status = 'expired' THEN 1 END) as expired_offers,
+          COUNT(CASE WHEN isApproved = true THEN 1 END) as approved_offers,
+          COUNT(CASE WHEN isApproved = false THEN 1 END) as pending_offers,
           AVG(discount_percent) as avg_discount,
           SUM(used_count) as total_usage
         FROM offers
@@ -346,6 +370,61 @@ const Offer = {
       return result.rows[0];
     } catch (error) {
       console.error('❌ Error getting offer stats:', error.message);
+      throw error;
+    }
+  },
+
+  // Get pending offers for admin approval
+  getPendingOffers: async () => {
+    try {
+      const query = `
+        SELECT o.*, b.name as brand_name, b.email as brand_email, b.logo as brand_logo
+        FROM offers o
+        LEFT JOIN brands b ON o.brand_id = b.id
+        WHERE o.isApproved = false
+        ORDER BY o.created_at ASC
+      `;
+      
+      const result = await pool.query(query);
+      return result.rows;
+    } catch (error) {
+      console.error('❌ Error getting pending offers:', error.message);
+      throw error;
+    }
+  },
+
+  // Approve offer
+  approve: async (offerId, adminId) => {
+    try {
+      const query = `
+        UPDATE offers 
+        SET isApproved = true, approvedAt = CURRENT_TIMESTAMP, approvedBy = $2, updated_at = CURRENT_TIMESTAMP
+        WHERE id = $1
+        RETURNING *
+      `;
+      
+      const result = await pool.query(query, [offerId, adminId]);
+      return result.rows[0];
+    } catch (error) {
+      console.error('❌ Error approving offer:', error.message);
+      throw error;
+    }
+  },
+
+  // Reject offer
+  reject: async (offerId, adminId) => {
+    try {
+      const query = `
+        UPDATE offers 
+        SET status = 'inactive', isApproved = false, updated_at = CURRENT_TIMESTAMP
+        WHERE id = $1
+        RETURNING *
+      `;
+      
+      const result = await pool.query(query, [offerId]);
+      return result.rows[0];
+    } catch (error) {
+      console.error('❌ Error rejecting offer:', error.message);
       throw error;
     }
   }

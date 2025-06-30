@@ -247,6 +247,18 @@
   color: #dc3545;
 }
 
+.approval-status-cell {
+  font-weight: 600;
+}
+
+.approval-status-cell.approved {
+  color: #28a745;
+}
+
+.approval-status-cell.pending {
+  color: #ffc107;
+}
+
 .expired-offer {
   opacity: 0.7;
 }

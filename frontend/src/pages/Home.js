@@ -215,15 +215,25 @@ function Home({ isLoggedIn }) {
     }
   };
 
-  // Create dynamic carousel items from brands data (only approved brands)
+  // Create dynamic carousel items from brands data (only approved brands with offers)
   const brandCarouselItems = brands.length > 0 ? brands
-    .filter(brand => brand.is_approved === true) // Only show approved brands
+    .filter(brand => {
+      // Only show approved brands
+      if (brand.is_approved !== true) return false;
+      
+      // Check if this brand has any approved offers
+      const brandOffers = featuredOffers.concat(electronicsOffers, fashionOffers, foodOffers, beautyOffers, educationOffers, fitnessOffers)
+        .filter(offer => offer.brand_id === brand.id);
+      
+      // Only include brands that have at least one offer
+      return brandOffers.length > 0;
+    })
     .map((brand, index) => {
     const suffixes = ['Exclusive', 'Collection', 'Special', 'Premium'];
     const suffix = suffixes[index % suffixes.length];
     
     // Find the first offer for this brand to use its image
-    const brandOffers = featuredOffers.concat(electronicsOffers, fashionOffers, foodOffers, beautyOffers, educationOffers)
+    const brandOffers = featuredOffers.concat(electronicsOffers, fashionOffers, foodOffers, beautyOffers, educationOffers, fitnessOffers)
       .filter(offer => offer.brand_id === brand.id);
     const firstBrandOffer = brandOffers[0];
     

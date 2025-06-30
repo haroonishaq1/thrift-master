@@ -1,5 +1,6 @@
 const { generateToken, formatResponse } = require('../utils/helpers');
 const { Brand } = require('../models/Brand');
+const { Offer } = require('../models/Offer');
 
 // Admin Login with Secret Key
 const adminLogin = async (req, res) => {
@@ -192,11 +193,111 @@ const getDashboardStats = async (req, res) => {
   }
 };
 
+// Get Pending Offers for Approval
+const getPendingOffers = async (req, res) => {
+  try {
+    console.log('📋 Fetching pending offers for admin approval...');
+    
+    const pendingOffers = await Offer.getPendingOffers();
+    
+    console.log(`✅ Found ${pendingOffers.length} pending offers`);
+    
+    return res.json(
+      formatResponse(true, 'Pending offers retrieved successfully', {
+        pendingOffers,
+        count: pendingOffers.length
+      })
+    );
+  } catch (error) {
+    console.error('❌ Get pending offers error:', error);
+    return res.status(500).json(
+      formatResponse(false, 'Failed to retrieve pending offers')
+    );
+  }
+};
+
+// Approve Offer
+const approveOffer = async (req, res) => {
+  try {
+    const { offerId } = req.params;
+    const adminId = req.admin?.adminId || 'admin';
+
+    console.log(`🔄 Admin approving offer ID: ${offerId}`);
+    
+    // Check if offer exists and is pending
+    const offer = await Offer.getById(offerId);
+    if (!offer) {
+      return res.status(404).json(
+        formatResponse(false, 'Offer not found')
+      );
+    }
+    
+    if (offer.isapproved) {
+      return res.status(400).json(
+        formatResponse(false, 'Offer is already approved')
+      );
+    }
+    
+    // Approve the offer
+    const approvedOffer = await Offer.approve(offerId, adminId);
+    
+    console.log(`✅ Offer "${approvedOffer.title}" approved successfully`);
+    
+    return res.json(
+      formatResponse(true, 'Offer approved successfully', {
+        offer: approvedOffer
+      })
+    );
+  } catch (error) {
+    console.error('❌ Approve offer error:', error);
+    return res.status(500).json(
+      formatResponse(false, 'Failed to approve offer')
+    );
+  }
+};
+
+// Reject Offer
+const rejectOffer = async (req, res) => {
+  try {
+    const { offerId } = req.params;
+    const adminId = req.admin?.adminId || 'admin';
+
+    console.log(`🔄 Admin rejecting offer ID: ${offerId}`);
+    
+    // Check if offer exists
+    const offer = await Offer.getById(offerId);
+    if (!offer) {
+      return res.status(404).json(
+        formatResponse(false, 'Offer not found')
+      );
+    }
+    
+    // Reject the offer
+    const rejectedOffer = await Offer.reject(offerId, adminId);
+    
+    console.log(`✅ Offer "${rejectedOffer.title}" rejected successfully`);
+    
+    return res.json(
+      formatResponse(true, 'Offer rejected successfully', {
+        offer: rejectedOffer
+      })
+    );
+  } catch (error) {
+    console.error('❌ Reject offer error:', error);
+    return res.status(500).json(
+      formatResponse(false, 'Failed to reject offer')
+    );
+  }
+};
+
 module.exports = {
   adminLogin,
   getPendingBrands,
   getAllBrands,
   approveBrand,
   rejectBrand,
-  getDashboardStats
+  getDashboardStats,
+  getPendingOffers,
+  approveOffer,
+  rejectOffer
 };

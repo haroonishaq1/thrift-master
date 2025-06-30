@@ -220,12 +220,13 @@ function BrandOffers() {
                 <th>Created Date</th>
                 <th>Expiry Date</th>
                 <th>Status</th>
+                <th>Approval Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>{isLoading ? (
+            <tbody>              {isLoading ? (
                 <tr>
-                  <td colSpan="8" className="loading-cell">Loading offers...</td>
+                  <td colSpan="9" className="loading-cell">Loading offers...</td>
                 </tr>
               ) : offers.map(offer => {
                 const isExpired = offer.current_status === 'expired';
@@ -254,6 +255,9 @@ function BrandOffers() {
                     <td>{formatDate(offer.end_date)}</td>
                     <td className={`status-cell ${isExpired ? 'expired' : 'active'}`}>
                       {isExpired ? 'Expired' : 'Active'}
+                    </td>
+                    <td className={`approval-status-cell ${offer.isapproved ? 'approved' : 'pending'}`}>
+                      {offer.isapproved ? 'Approved' : 'Pending'}
                     </td>
                     <td className="actions-cell">
                       <button 

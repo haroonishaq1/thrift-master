@@ -6,14 +6,17 @@ import '../../styles/AdminDashboard.css';
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [pendingBrands, setPendingBrands] = useState([]);
+  const [pendingOffers, setPendingOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState(''); // 'approve' or 'reject'
   const [selectedBrand, setSelectedBrand] = useState(null);
+  const [selectedOffer, setSelectedOffer] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [activeTab, setActiveTab] = useState('brands'); // 'brands' or 'offers'
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,18 +34,23 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       
-      // Load dashboard stats and pending brands
-      const [statsResponse, pendingResponse] = await Promise.all([
+      // Load dashboard stats, pending brands, and pending offers
+      const [statsResponse, pendingBrandsResponse, pendingOffersResponse] = await Promise.all([
         adminAPI.getDashboardStats(),
-        adminAPI.getPendingBrands()
+        adminAPI.getPendingBrands(),
+        adminAPI.getPendingOffers()
       ]);
 
       if (statsResponse.success) {
         setStats(statsResponse.data);
       }
 
-      if (pendingResponse.success) {
-        setPendingBrands(pendingResponse.data.pendingBrands || []);
+      if (pendingBrandsResponse.success) {
+        setPendingBrands(pendingBrandsResponse.data.pendingBrands || []);
+      }
+
+      if (pendingOffersResponse.success) {
+        setPendingOffers(pendingOffersResponse.data.pendingOffers || []);
       }
 
     } catch (error) {
@@ -67,6 +75,14 @@ const AdminDashboard = () => {
   };
 
   const confirmAction = async () => {
+    if (selectedBrand) {
+      return confirmBrandAction();
+    } else if (selectedOffer) {
+      return confirmOfferAction();
+    }
+  };
+
+  const confirmBrandAction = async () => {
     if (!selectedBrand) return;
     
     setIsProcessing(true);
@@ -105,9 +121,75 @@ const AdminDashboard = () => {
     }
   };
 
+  const confirmOfferAction = async () => {
+    if (!selectedOffer) return;
+    
+    setIsProcessing(true);
+    try {
+      let response;
+      
+      if (modalType === 'approve') {
+        response = await adminAPI.approveOffer(selectedOffer.id);
+      } else {
+        response = await adminAPI.rejectOffer(selectedOffer.id, rejectReason || 'Rejected by admin');
+      }
+      
+      if (response.success) {
+        const action = modalType === 'approve' ? 'approved' : 'rejected';
+        const actionPast = modalType === 'approve' ? 'Approved' : 'Rejected';
+        
+        setSuccessMessage({
+          type: modalType,
+          message: `${actionPast} Successfully`,
+          details: `Offer "${selectedOffer.title}" has been ${action}.`
+        });
+        
+        setShowModal(false);
+        loadDashboardData(); // Reload data
+        
+        // Clear success message after 4 seconds
+        setTimeout(() => setSuccessMessage(''), 4000);
+      } else {
+        alert(`❌ Failed to ${modalType} offer: ${response.message}`);
+      }
+    } catch (error) {
+      console.error(`❌ Error ${modalType}ing offer:`, error);
+      alert(`❌ Failed to ${modalType} offer`);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Offer approval handlers
+  const handleOfferApprove = (offer) => {
+    setSelectedOffer(offer);
+    setModalType('approve');
+    setShowModal(true);
+  };
+
+  const handleOfferReject = (offer) => {
+    setSelectedOffer(offer);
+    setModalType('reject');
+    setShowModal(true);
+  };
+
+  // Brand approval handlers  
+  const handleBrandApprove = (brand) => {
+    setSelectedBrand(brand);
+    setModalType('approve');
+    setShowModal(true);
+  };
+
+  const handleBrandReject = (brand) => {
+    setSelectedBrand(brand);
+    setModalType('reject');
+    setShowModal(true);
+  };
+
   const closeModal = () => {
     setShowModal(false);
     setSelectedBrand(null);
+    setSelectedOffer(null);
     setRejectReason('');
     setModalType('');
   };
@@ -180,50 +262,123 @@ const AdminDashboard = () => {
           </div>
         )}
 
+        {/* Management Tabs */}
+        <div className="management-tabs">
+          <button 
+            className={`tab-button ${activeTab === 'brands' ? 'active' : ''}`}
+            onClick={() => setActiveTab('brands')}
+          >
+            Pending Brands ({pendingBrands.length})
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'offers' ? 'active' : ''}`}
+            onClick={() => setActiveTab('offers')}
+          >
+            Pending Offers ({pendingOffers.length})
+          </button>
+        </div>
+
         {/* Pending Brands Section */}
-        <div className="pending-brands-section">
-          <h2>Pending Brand Approvals ({pendingBrands.length})</h2>
-          
-          {pendingBrands.length === 0 ? (
-            <div className="dashboard-card">
-              <h3>All Caught Up!</h3>
-              <p>No pending brand approvals at this time.</p>
-            </div>
-          ) : (
-            <div className="dashboard-cards">
-              {pendingBrands.map((brand) => (
-                <div key={brand.id} className="dashboard-card">
-                  <h3>{brand.name}</h3>
-                  <div className="brand-details" style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
-                    {brand.logo && (
-                      <div className="brand-logo-preview" style={{ minWidth: 120, maxWidth: 120, minHeight: 70, maxHeight: 70, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <img src={`http://localhost:5000${brand.logo}`} alt={brand.name + ' logo'} className="brand-logo-img" style={{ width: 110, height: 60, objectFit: 'contain', borderRadius: 8, background: '#f8f8f8', border: '1px solid #eee' }} />
+        {activeTab === 'brands' && (
+          <div className="pending-section">
+            <h2>Pending Brand Approvals</h2>
+            {pendingBrands.length === 0 ? (
+              <div className="empty-state">
+                <p>✅ No pending brand approvals at the moment!</p>
+              </div>
+            ) : (
+              <div className="pending-items">
+                {pendingBrands.map((brand) => (
+                  <div key={brand.id} className="pending-item">
+                    <div className="item-info">
+                      <div className="item-header">
+                        <h3>{brand.name}</h3>
+                        <span className="item-type">Brand</span>
                       </div>
-                    )}
-                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
-                      <p style={{ margin: 0 }}><strong>Email:</strong> {brand.email}</p>
-                      <p style={{ margin: 0 }}><strong>Website:</strong> {brand.website}</p>
+                      <div className="item-details">
+                        <p><strong>Email:</strong> {brand.email}</p>
+                        <p><strong>Website:</strong> {brand.website || 'Not provided'}</p>
+                        <p><strong>Description:</strong> {brand.description}</p>
+                        <p><strong>Submitted:</strong> {new Date(brand.created_at).toLocaleDateString()}</p>
+                      </div>
+                      {brand.logo && (
+                        <div className="brand-logo">
+                          <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${brand.logo}`} alt={brand.name} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="item-actions">
+                      <button 
+                        className="approve-btn"
+                        onClick={() => handleBrandApprove(brand)}
+                      >
+                        Approve
+                      </button>
+                      <button 
+                        className="reject-btn"
+                        onClick={() => handleBrandReject(brand)}
+                      >
+                        Reject
+                      </button>
                     </div>
                   </div>
-                  <div className="brand-actions">
-                    <button 
-                      onClick={() => handleApproveBrand(brand.id, brand.name)}
-                      className="approve-btn"
-                    >
-                      Approve
-                    </button>
-                    <button 
-                      onClick={() => handleRejectBrand(brand.id, brand.name)}
-                      className="reject-btn"
-                    >
-                      Reject
-                    </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Pending Offers Section */}
+        {activeTab === 'offers' && (
+          <div className="pending-section">
+            <h2>Pending Offer Approvals</h2>
+            {pendingOffers.length === 0 ? (
+              <div className="empty-state">
+                <p>✅ No pending offer approvals at the moment!</p>
+              </div>
+            ) : (
+              <div className="pending-items">
+                {pendingOffers.map((offer) => (
+                  <div key={offer.id} className="pending-item">
+                    <div className="item-info">
+                      <div className="item-header">
+                        <h3>{offer.title}</h3>
+                        <span className="item-type">Offer</span>
+                      </div>
+                      <div className="item-details">
+                        <p><strong>Brand:</strong> {offer.brand_name}</p>
+                        <p><strong>Discount:</strong> {offer.discount_percent}% OFF</p>
+                        <p><strong>Category:</strong> {offer.category}</p>
+                        <p><strong>Description:</strong> {offer.description}</p>
+                        <p><strong>Valid Until:</strong> {offer.valid_until ? new Date(offer.valid_until).toLocaleDateString() : 'No expiry'}</p>
+                        <p><strong>Submitted:</strong> {new Date(offer.created_at).toLocaleDateString()}</p>
+                      </div>
+                      {offer.image_url && (
+                        <div className="offer-image">
+                          <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${offer.image_url}`} alt={offer.title} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="item-actions">
+                      <button 
+                        className="approve-btn"
+                        onClick={() => handleOfferApprove(offer)}
+                      >
+                        Approve
+                      </button>
+                      <button 
+                        className="reject-btn"
+                        onClick={() => handleOfferReject(offer)}
+                      >
+                        Reject
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Success Message */}
@@ -244,14 +399,17 @@ const AdminDashboard = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h3>
-                {modalType === 'approve' ? 'Approve Brand' : 'Reject Brand'}
+                {selectedBrand 
+                  ? (modalType === 'approve' ? 'Approve Brand' : 'Reject Brand')
+                  : (modalType === 'approve' ? 'Approve Offer' : 'Reject Offer')
+                }
               </h3>
               <button className="modal-close" onClick={closeModal}>✕</button>
             </div>
             
             <div className="modal-body">
               <p>
-                Are you sure you want to <strong>{modalType}</strong> the brand <strong>"{selectedBrand?.name}"</strong>?
+                Are you sure you want to <strong>{modalType}</strong> the {selectedBrand ? 'brand' : 'offer'} <strong>"{selectedBrand?.name || selectedOffer?.title}"</strong>?
               </p>
               
               {modalType === 'reject' && (
