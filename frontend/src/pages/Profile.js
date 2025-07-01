@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { getUserData, isUserAuthenticated } from '../utils/auth';
@@ -8,7 +8,6 @@ import '../styles/Profile.css';
 function Profile({ isLoggedIn }) {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     // Check if user is authenticated
@@ -17,18 +16,12 @@ function Profile({ isLoggedIn }) {
       return;
     }
 
-    // Function to load user data
-    const loadUserData = () => {
-      const data = getUserData();
-      if (data) {
-        setUserData(data);
-      }
-    };
-
-    // Load data whenever the component mounts or location changes
-    loadUserData();
-
-  }, [navigate, location]); // Add location as dependency to refresh when navigating back
+    // Get user data from localStorage
+    const data = getUserData();
+    if (data) {
+      setUserData(data);
+    }
+  }, [navigate]);
 
   if (!userData) {
     return (
@@ -51,12 +44,6 @@ function Profile({ isLoggedIn }) {
             <button 
               className="edit-button"
               onClick={() => navigate('/edit-profile')}
-              style={{
-                backgroundColor: '#4361ee',
-                background: '#4361ee',
-                borderColor: '#4361ee',
-                color: 'white'
-              }}
             >
               Edit
             </button>

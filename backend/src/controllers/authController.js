@@ -412,9 +412,12 @@ const updateProfile = async (req, res) => {
 
     // Check if username is taken by another user
     if (username) {
-      const existingUser = await User.findByUsername(username);
+      const existingUser = await User.findOne({ 
+        username: username,
+        _id: { $ne: req.user.userId } // Exclude current user
+      });
       
-      if (existingUser && existingUser.id !== req.user.userId) {
+      if (existingUser) {
         return res.status(400).json(
           formatResponse(false, 'Username is already taken')
         );
@@ -432,7 +435,8 @@ const updateProfile = async (req, res) => {
       country: country,
       city: city,
       university: university,
-      course: course
+      course: course,
+      updated_at: new Date()
     };
 
     // Remove undefined values
@@ -442,7 +446,11 @@ const updateProfile = async (req, res) => {
       }
     });
 
-    const user = await User.update(req.user.userId, updateData);
+    const user = await User.findByIdAndUpdate(
+      req.user.userId,
+      updateData,
+      { new: true, runValidators: true }
+    );
 
     if (!user) {
       return res.status(404).json(
@@ -455,8 +463,8 @@ const updateProfile = async (req, res) => {
       formatResponse(true, 'Profile updated successfully', {
         user: {
           id: user.id,
-          first_name: user.first_name,
-          last_name: user.last_name,
+          firstName: user.first_name,
+          lastName: user.last_name,
           username: user.username,
           email: user.email,
           age: user.age,
@@ -466,9 +474,9 @@ const updateProfile = async (req, res) => {
           city: user.city,
           university: user.university,
           course: user.course,
-          email_verified: user.email_verified,
-          created_at: user.created_at,
-          updated_at: user.updated_at
+          emailVerified: user.email_verified,
+          createdAt: user.created_at,
+          updatedAt: user.updated_at
         }
       })
     );

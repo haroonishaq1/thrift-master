@@ -6,7 +6,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { getUserData, isUserAuthenticated, storeUserAuth, getUserToken } from '../utils/auth';
+import { getUserData, isUserAuthenticated, storeUserAuth } from '../utils/auth';
 import { authAPI } from '../services/api';
 import '../styles/Profile.css';
 import '../styles/Login.css';
@@ -16,8 +16,6 @@ function EditProfile({ isLoggedIn }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const navigate = useNavigate();
 
   // Validation schema
@@ -83,66 +81,27 @@ function EditProfile({ isLoggedIn }) {
         course: values.course
       };
 
-      console.log('Sending update data:', updateData);
-      console.log('Current userToken:', localStorage.getItem('userToken'));
-      console.log('Current userData:', localStorage.getItem('userData'));
-
+      // Note: You'll need to implement this API endpoint in your backend
       const response = await authAPI.updateProfile(updateData);
       
       if (response.success) {
-        // Update localStorage with the response data from backend
-        const updatedUserData = response.data.user;
-        storeUserAuth(getUserToken(), updatedUserData);
+        // Update localStorage with new data
+        const updatedUserData = { ...userData, ...updateData };
+        storeUserAuth(localStorage.getItem('token'), updatedUserData);
         
         setSuccess('Profile updated successfully!');
-        setShowSuccessModal(true);
         
-        // Redirect back to profile page after showing success modal
+        // Redirect back to profile page after a short delay
         setTimeout(() => {
-          setShowSuccessModal(false);
           navigate('/my-profile');
-        }, 2500);
+        }, 2000);
       }
     } catch (error) {
       console.error('Profile update error:', error);
-      console.error('Error details:', error.message);
-      
-      // Show more specific error message
-      if (error.message.includes('Email verification required')) {
-        setError('Email verification required. Please verify your email first.');
-        setShowVerificationPrompt(true);
-      } else if (error.message.includes('Authentication')) {
-        setError('Authentication failed. Please log in again.');
-      } else {
-        setError(`Failed to update profile: ${error.message}`);
-      }
+      setError('Failed to update profile. Please try again.');
     } finally {
       setLoading(false);
       setSubmitting(false);
-    }
-  };
-
-  const handleResendVerification = async () => {
-    try {
-      setLoading(true);
-      setError('');
-      setSuccess('');
-      
-      await authAPI.resendOTP(userData.email);
-      setSuccess('Verification email sent! Please check your inbox and verify your email.');
-      setShowVerificationPrompt(false);
-      
-      // Redirect to verification page or show instructions
-      setTimeout(() => {
-        alert('Please check your email and verify your account. You will need to log in again after verification.');
-        navigate('/login');
-      }, 3000);
-      
-    } catch (error) {
-      console.error('Resend verification error:', error);
-      setError('Failed to send verification email. Please try again.');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -167,10 +126,6 @@ function EditProfile({ isLoggedIn }) {
             <button 
               className="edit-button"
               onClick={() => navigate('/my-profile')}
-              style={{
-                backgroundColor: '#4361ee',
-                borderColor: '#4361ee'
-              }}
             >
               Cancel
             </button>
@@ -181,37 +136,6 @@ function EditProfile({ isLoggedIn }) {
           {error && (
             <div className="login-error-message" style={{ marginBottom: '20px' }}>
               {error}
-            </div>
-          )}
-          
-          {showVerificationPrompt && (
-            <div className="verification-prompt" style={{ 
-              backgroundColor: '#fff3cd', 
-              border: '1px solid #ffeaa7', 
-              padding: '15px', 
-              borderRadius: '6px', 
-              marginBottom: '20px',
-              textAlign: 'center'
-            }}>
-              <p style={{ margin: '0 0 15px 0', color: '#856404' }}>
-                Your email address needs to be verified before you can update your profile.
-              </p>
-              <button 
-                onClick={handleResendVerification}
-                disabled={loading}
-                style={{
-                  backgroundColor: '#4361ee',
-                  color: 'white',
-                  border: 'none',
-                  padding: '10px 20px',
-                  borderRadius: '5px',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  fontSize: '0.875rem',
-                  fontWeight: 'bold'
-                }}
-              >
-                {loading ? 'Sending...' : 'Resend Verification Email'}
-              </button>
             </div>
           )}
           
@@ -411,21 +335,12 @@ function EditProfile({ isLoggedIn }) {
                     className="back-button"
                     style={{
                       padding: '12px 24px',
-                      border: '1px solid #4361ee',
+                      border: '1px solid #ddd',
                       backgroundColor: 'white',
-                      color: '#4361ee',
+                      color: '#333',
                       borderRadius: '5px',
                       cursor: 'pointer',
-                      fontWeight: 'bold',
-                      transition: 'all 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = '#4361ee';
-                      e.target.style.color = 'white';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = 'white';
-                      e.target.style.color = '#4361ee';
+                      fontWeight: 'bold'
                     }}
                   >
                     Cancel
@@ -437,13 +352,10 @@ function EditProfile({ isLoggedIn }) {
                     disabled={isSubmitting || loading}
                     style={{
                       padding: '12px 24px',
-                      minWidth: '120px',
-                      opacity: (isSubmitting || loading) ? 0.7 : 1,
-                      transform: (isSubmitting || loading) ? 'scale(0.98)' : 'scale(1)',
-                      transition: 'all 0.2s ease'
+                      minWidth: '120px'
                     }}
                   >
-                    {isSubmitting || loading ? '' : 'Update Profile'}
+                    {isSubmitting || loading ? 'Updating...' : 'Update Profile'}
                   </button>
                 </div>
               </Form>
@@ -451,30 +363,6 @@ function EditProfile({ isLoggedIn }) {
           </Formik>
         </div>
       </div>
-
-      {/* Success Modal */}
-      {showSuccessModal && (
-        <div className="modal-overlay">
-          <div className="success-modal">
-            <div className="success-icon">
-              <div className="checkmark">
-                <div className="checkmark-circle">
-                  <div className="background"></div>
-                  <div className="checkmark-draw"></div>
-                </div>
-              </div>
-            </div>
-            <h3>Profile Updated Successfully!</h3>
-            <p>Your profile information has been updated.</p>
-            <p className="redirect-text">Redirecting to profile page...</p>
-            <div className="loading-dots">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-        </div>
-      )}
 
       <Footer />
     </div>

@@ -17,8 +17,8 @@ function BrandPage() {
       setBrandData(data);
     } catch (err) {
       setError(err.message);
-      // Redirect to 404 page after a delay
-      setTimeout(() => navigate('/404'), 2000);
+      // Optionally redirect to home page after a delay
+      setTimeout(() => navigate('/'), 3000);
     }
   }, [brandName, navigate]);
   if (error) {
@@ -26,7 +26,7 @@ function BrandPage() {
       <div className="brand-page">
         <Header />
         <div className="error-message">
-          {error}. Redirecting to error page...
+          {error}. Redirecting to home page...
         </div>
         <Footer />
       </div>

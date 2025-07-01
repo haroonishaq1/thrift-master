@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import '../styles/RedeemedCodePage.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -7,7 +7,6 @@ import { offersAPI } from '../services/api';
 
 function RedeemedCodePage() {
   const { offerId } = useParams();
-  const navigate = useNavigate();
   const [offer, setOffer] = useState(null);
   const [showCode, setShowCode] = useState(false);
   const [generatedCode, setGeneratedCode] = useState('');
@@ -15,7 +14,6 @@ function RedeemedCodePage() {
   const [rating, setRating] = useState(null);
   const [copied, setCopied] = useState(false);
   const [userRating, setUserRating] = useState(null);
-  const [error, setError] = useState(null);
 
   // Backend URL for constructing full image paths
   const BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -60,7 +58,6 @@ function RedeemedCodePage() {
         setLoading(false);
       } catch (error) {
         console.error('Error fetching offer:', error);
-        setError(error.message);
         setLoading(false);
       }
     };
@@ -69,13 +66,6 @@ function RedeemedCodePage() {
       fetchOffer();
     }
   }, [offerId]);
-
-  // Redirect to 404 page if there is an error fetching the offer
-  useEffect(() => {
-    if (error) {
-      navigate('/404', { replace: true });
-    }
-  }, [error, navigate]);
 
   const handleShowCode = () => {
     setShowCode(true);
@@ -127,8 +117,16 @@ function RedeemedCodePage() {
     );
   }
 
-  if (!offer || error) {
-    return null; // Will redirect to 404 page via useEffect
+  if (!offer) {
+    return (
+      <div className="redeemed-page">
+        <Header />
+        <div className="error-container">
+          <div className="error">Offer not found</div>
+        </div>
+        <Footer />
+      </div>
+    );
   }
 
   return (

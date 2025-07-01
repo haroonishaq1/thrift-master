@@ -95,15 +95,19 @@ function BrandRegisterStep1() {
     navigate('/brand/register/step2', { state: { formData: values } });
   };
   
-  // Brand categories (matching navigation categories)
+  // Sample brand categories
   const categories = [
     { value: '', label: 'Select a category' },
-    { value: 'food', label: 'Food & Drink' },
-    { value: 'fitness', label: 'Fitness' },
-    { value: 'electronics', label: 'Technology' },
-    { value: 'beauty', label: 'Beauty' },
-    { value: 'fashion', label: 'Fashion' },
-    { value: 'education', label: 'Education' }
+    { value: 'fashion', label: 'Fashion & Apparel' },
+    { value: 'electronics', label: 'Electronics' },
+    { value: 'beauty', label: 'Beauty & Personal Care' },
+    { value: 'home', label: 'Home & Furniture' },
+    { value: 'food', label: 'Food & Beverages' },
+    { value: 'sports', label: 'Sports & Fitness' },
+    { value: 'entertainment', label: 'Entertainment' },
+    { value: 'travel', label: 'Travel & Hospitality' },
+    { value: 'education', label: 'Education' },
+    { value: 'other', label: 'Other' }
   ];
   
   return (
