@@ -29,6 +29,7 @@ import BrandLogin from './pages/brand/BrandLogin';
 import BrandForgotPassword from './pages/brand/BrandForgotPassword';
 import BrandForgotPasswordOtpVerification from './pages/brand/BrandForgotPasswordOtpVerification';
 import BrandResetPassword from './pages/brand/BrandResetPassword';
+import BrandProfile from './pages/brand/BrandProfile';
 import BrandDashboard from './pages/brand/BrandDashboard';
 import BrandOffers from './pages/brand/BrandOffers';
 import BrandAddOffer from './pages/brand/BrandAddOffer';
@@ -108,6 +109,7 @@ function App() {
           <Route path="/brand/forgot-password/reset" element={<BrandResetPassword />} />
           
           {/* Brand Admin Panel Routes - Protected with Sidebar */}
+          <Route path="/brand/profile" element={<BrandLayout><BrandProfile /></BrandLayout>} />
           <Route path="/brand/dashboard" element={<BrandLayout><BrandDashboard /></BrandLayout>} />
           <Route path="/brand/offers" element={<BrandLayout><BrandOffers /></BrandLayout>} />
           <Route path="/brand/add-offer" element={<BrandLayout><BrandAddOffer /></BrandLayout>} />

@@ -12,7 +12,9 @@ function BrandSidebar() {
   // Update active tab based on current location
   useEffect(() => {
     const path = location.pathname;
-    if (path.includes('/brand/dashboard') || path.includes('/brand/analytics')) {
+    if (path.includes('/brand/profile')) {
+      setActiveTab('profile');
+    } else if (path.includes('/brand/dashboard') || path.includes('/brand/analytics')) {
       setActiveTab('dashboard');
     } else if (path.includes('/brand/add-offer')) {
       setActiveTab('addOffer');
@@ -62,6 +64,14 @@ function BrandSidebar() {
       </div>
       
       <div className="brand-sidebar-menu">
+        <div 
+          className={`sidebar-menu-item ${activeTab === 'profile' ? 'active' : ''}`}
+          onClick={() => navigate('/brand/profile')}
+        >
+          <i className="fas fa-user"></i>
+          <span>Profile</span>
+        </div>
+        
         <div 
           className={`sidebar-menu-item ${activeTab === 'dashboard' ? 'active' : ''}`}
           onClick={() => navigate('/brand/analytics')}

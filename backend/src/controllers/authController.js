@@ -678,6 +678,10 @@ const verifyBrandOTP = async (req, res) => {
       );
     }
 
+    console.log('🔍 Parsed brand data:', brandData);
+    console.log('🔍 Phone number in brand data:', brandData.phoneNumber);
+    console.log('🔍 Phone number type:', typeof brandData.phoneNumber);
+
     // Create brand in database (now with verified email)
     const newBrand = await Brand.create(brandData);
 
@@ -824,6 +828,11 @@ const brandLogin = async (req, res) => {
           id: verificationResult.brand.id,
           name: verificationResult.brand.name,
           email: verificationResult.brand.email,
+          phone: verificationResult.brand.phone_number,
+          website: verificationResult.brand.website,
+          category: verificationResult.brand.category,
+          description: verificationResult.brand.description,
+          logo: verificationResult.brand.logo,
           adminUsername: verificationResult.brand.adminUsername,
           adminEmail: verificationResult.brand.adminEmail,
           status: 'approved'

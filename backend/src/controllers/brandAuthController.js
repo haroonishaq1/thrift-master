@@ -24,8 +24,10 @@ const register = async (req, res) => {
     } = req.body;
 
     console.log('🔍 Extracted fields:', {
-      name, email, adminUsername, category, country, website
+      name, email, adminUsername, category, country, website, phoneNumber
     });
+    console.log('🔍 Phone number value:', phoneNumber);
+    console.log('🔍 Phone number type:', typeof phoneNumber);
 
     // Validation
     if (!name || !email || !password || !adminUsername || !category || !country || !website) {
@@ -66,6 +68,7 @@ const register = async (req, res) => {
       password,
       description: description || '',
       website,
+      phone_number: phoneNumber, // Add phone number to brand data
       adminUsername,
       adminEmail: email.toLowerCase(),
       category
@@ -166,7 +169,10 @@ const login = async (req, res) => {
 const getProfile = async (req, res) => {
   try {
     const brandId = req.user.id;
+    console.log('🔍 Getting profile for brand ID:', brandId);
+    
     const brand = await Brand.findById(brandId);
+    console.log('🔍 Raw brand data from database:', brand);
 
     if (!brand) {
       return res.status(404).json(

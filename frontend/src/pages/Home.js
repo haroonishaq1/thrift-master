@@ -185,8 +185,13 @@ function Home({ isLoggedIn }) {
 
   // Handle hot deals card click
   const handleHotDealClick = (dealId) => {
-    // Navigate with replace: true so back button goes to home
-    navigate(`/offer/${dealId}`, { replace: true });
+    // Navigate with hot deals context
+    navigate(`/offer/${dealId}`, { 
+      state: { 
+        source: 'hotdeals', 
+        title: 'HOT DEALS' 
+      } 
+    });
   };
 
   // Handle brand card click - navigate to offer page with first offer from that brand
@@ -204,8 +209,13 @@ function Home({ isLoggedIn }) {
       const brandOffers = response.data || [];
       
       if (brandOffers.length > 0) {
-        // Navigate normally (not replace) so browser back works
-        navigate(`/offer/${brandOffers[0].id}`);
+        // Navigate with brand context
+        navigate(`/offer/${brandOffers[0].id}`, { 
+          state: { 
+            source: 'brand', 
+            title: brandName 
+          } 
+        });
       } else {
         // If no offers, navigate to any available offer
         const allOffers = featuredOffers.concat(electronicsOffers, fashionOffers, foodOffers, beautyOffers, educationOffers);
@@ -416,7 +426,12 @@ function Home({ isLoggedIn }) {
               <div className="category-offers-grid">
                 {electronicsOffers.length > 0 ? (
                   electronicsOffers.map((offer, index) => (
-                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { replace: true })} style={{ cursor: 'pointer' }}>
+                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { 
+                      state: { 
+                        source: 'category', 
+                        title: 'TECHNOLOGY' 
+                      } 
+                    })} style={{ cursor: 'pointer' }}>
                       <ProductCard
                         imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
                         logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}
@@ -459,7 +474,12 @@ function Home({ isLoggedIn }) {
               <div className="category-offers-grid">
                 {fashionOffers.length > 0 ? (
                   fashionOffers.map((offer, index) => (
-                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { replace: true })} style={{ cursor: 'pointer' }}>
+                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { 
+                      state: { 
+                        source: 'category', 
+                        title: 'FASHION' 
+                      } 
+                    })} style={{ cursor: 'pointer' }}>
                       <ProductCard
                         imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
                         logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}
@@ -502,7 +522,12 @@ function Home({ isLoggedIn }) {
               <div className="category-offers-grid">
                 {foodOffers.length > 0 ? (
                   foodOffers.map((offer, index) => (
-                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { replace: true })} style={{ cursor: 'pointer' }}>
+                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { 
+                      state: { 
+                        source: 'category', 
+                        title: 'FOOD & DRINK' 
+                      } 
+                    })} style={{ cursor: 'pointer' }}>
                       <ProductCard
                         imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
                         logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}
@@ -545,7 +570,12 @@ function Home({ isLoggedIn }) {
               <div className="category-offers-grid">
                 {beautyOffers.length > 0 ? (
                   beautyOffers.map((offer, index) => (
-                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { replace: true })} style={{ cursor: 'pointer' }}>
+                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { 
+                      state: { 
+                        source: 'category', 
+                        title: 'BEAUTY' 
+                      } 
+                    })} style={{ cursor: 'pointer' }}>
                       <ProductCard
                         imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
                         logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}
@@ -588,7 +618,12 @@ function Home({ isLoggedIn }) {
               <div className="category-offers-grid">
                 {educationOffers.length > 0 ? (
                   educationOffers.map((offer, index) => (
-                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { replace: true })} style={{ cursor: 'pointer' }}>
+                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { 
+                      state: { 
+                        source: 'category', 
+                        title: 'EDUCATION' 
+                      } 
+                    })} style={{ cursor: 'pointer' }}>
                       <ProductCard
                         imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
                         logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}

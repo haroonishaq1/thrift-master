@@ -48,22 +48,27 @@ const Brand = {
         password,
         website,
         logo,
+        phone_number,
+        phoneNumber, // Handle both field names
         adminUsername,
         adminEmail,
         description,
         category = 'other'
       } = brandData;
 
+      // Use phoneNumber if phone_number is not provided
+      const finalPhoneNumber = phone_number || phoneNumber;
+
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 12);
 
       const query = `
-        INSERT INTO brands (name, email, password, website, logo, admin_username, admin_email, description, category, is_approved)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-        RETURNING id, name, email, website, logo, admin_username, admin_email, description, category, is_approved, created_at
+        INSERT INTO brands (name, email, password, website, logo, phone_number, admin_username, admin_email, description, category, is_approved)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        RETURNING id, name, email, website, logo, phone_number, admin_username, admin_email, description, category, is_approved, created_at
       `;
 
-      const values = [name, email, hashedPassword, website, logo, adminUsername, adminEmail, description, category, false];
+      const values = [name, email, hashedPassword, website, logo, finalPhoneNumber, adminUsername, adminEmail, description, category, false];
       const result = await pool.query(query, values);
 
       console.log(`✅ Brand registered: ${name} (Category: ${category}, Pending approval)`);
@@ -89,7 +94,7 @@ const Brand = {
   // Find brand by ID
   findById: async (id) => {
     try {
-      const query = 'SELECT * FROM brands WHERE id = $1';
+      const query = 'SELECT id, name, email, website, logo, phone_number, admin_username, admin_email, description, category, is_approved, created_at, updated_at FROM brands WHERE id = $1';
       const result = await pool.query(query, [id]);
       return result.rows[0] || null;
     } catch (error) {

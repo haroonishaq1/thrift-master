@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import '../styles/OfferPage.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -8,15 +9,27 @@ import { offersAPI } from '../services/api';
 function OfferPage() {
   const { offerId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [offerData, setOfferData] = useState(null);
   const [categoryOffers, setCategoryOffers] = useState([]);
   const [currentOfferIndex, setCurrentOfferIndex] = useState(0);
   const [error, setError] = useState(null);
   const [rating, setRating] = useState(null);
   const [showCodeScreen, setShowCodeScreen] = useState(false);
+  const [sectionTitle, setSectionTitle] = useState('');
   
   // Backend URL for constructing full image paths
   const BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  
+  // Set section title based on navigation source
+  useEffect(() => {
+    if (location.state) {
+      const { source, title } = location.state;
+      setSectionTitle(title);
+    } else {
+      setSectionTitle(''); // Default no title
+    }
+  }, [location.state]);
   
   useEffect(() => {
     const fetchOfferData = async () => {
@@ -31,54 +44,72 @@ function OfferPage() {
           const offer = offerResponse.data;
           setOfferData(offer);
           
-          // Get all offers from the same brand (prioritize brand over category)
-          if (offer.brand_id) {
-            const brandResponse = await offersAPI.getOffersByBrandId(offer.brand_id);
-            
-            if (brandResponse.success && brandResponse.data && brandResponse.data.length > 0) {
-              const brandData = brandResponse.data;
-              setCategoryOffers(brandData);
+          // Check if user came from hot deals
+          if (location.state && location.state.source === 'hotdeals') {
+            // If from hot deals, show all featured/hot deals
+            const hotDealsResponse = await offersAPI.getFeaturedOffers();
+            if (hotDealsResponse.success && hotDealsResponse.data && hotDealsResponse.data.length > 0) {
+              const hotDealsData = hotDealsResponse.data;
+              setCategoryOffers(hotDealsData);
               
-              // Find the index of the current offer in the brand list
-              const currentIndex = brandData.findIndex(brandOffer => brandOffer.id.toString() === offerId.toString());
+              // Find current offer index in hot deals
+              const currentIndex = hotDealsData.findIndex(hotOffer => hotOffer.id.toString() === actualOfferId);
               setCurrentOfferIndex(currentIndex >= 0 ? currentIndex : 0);
             } else {
-              // Fallback to category offers if no brand offers found
-              if (offer.category) {
-                const categoryResponse = await offersAPI.getOffersByCategory(offer.category);
-                if (categoryResponse.success && categoryResponse.data) {
-                  setCategoryOffers(categoryResponse.data);
-                  const currentIndex = categoryResponse.data.findIndex(categoryOffer => categoryOffer.id.toString() === offerId.toString());
-                  setCurrentOfferIndex(currentIndex >= 0 ? currentIndex : 0);
-                } else {
-                  setCategoryOffers([offer]);
-                  setCurrentOfferIndex(0);
-                }
-              } else {
-                setCategoryOffers([offer]);
-                setCurrentOfferIndex(0);
-              }
-            }
-          } else if (offer.category) {
-            // Fallback to category-based offers if no brand_id
-            const categoryResponse = await offersAPI.getOffersByCategory(offer.category);
-            
-            if (categoryResponse.success && categoryResponse.data) {
-              const categoryData = categoryResponse.data;
-              setCategoryOffers(categoryData);
-              
-              // Find the index of the current offer in the category list
-              const currentIndex = categoryData.findIndex(categoryOffer => categoryOffer.id.toString() === offerId.toString());
-              setCurrentOfferIndex(currentIndex >= 0 ? currentIndex : 0);
-            } else {
-              // If no category offers found, just show this single offer
+              // Fallback to single offer
               setCategoryOffers([offer]);
               setCurrentOfferIndex(0);
             }
           } else {
-            // If no category, just show this single offer
-            setCategoryOffers([offer]);
-            setCurrentOfferIndex(0);
+            // Original logic: Get all offers from the same brand (prioritize brand over category)
+            if (offer.brand_id) {
+              const brandResponse = await offersAPI.getOffersByBrandId(offer.brand_id);
+              
+              if (brandResponse.success && brandResponse.data && brandResponse.data.length > 0) {
+                const brandData = brandResponse.data;
+                setCategoryOffers(brandData);
+                
+                // Find the index of the current offer in the brand list
+                const currentIndex = brandData.findIndex(brandOffer => brandOffer.id.toString() === offerId.toString());
+                setCurrentOfferIndex(currentIndex >= 0 ? currentIndex : 0);
+              } else {
+                // Fallback to category offers if no brand offers found
+                if (offer.category) {
+                  const categoryResponse = await offersAPI.getOffersByCategory(offer.category);
+                  if (categoryResponse.success && categoryResponse.data) {
+                    setCategoryOffers(categoryResponse.data);
+                    const currentIndex = categoryResponse.data.findIndex(categoryOffer => categoryOffer.id.toString() === offerId.toString());
+                    setCurrentOfferIndex(currentIndex >= 0 ? currentIndex : 0);
+                  } else {
+                    setCategoryOffers([offer]);
+                    setCurrentOfferIndex(0);
+                  }
+                } else {
+                  setCategoryOffers([offer]);
+                  setCurrentOfferIndex(0);
+                }
+              }
+            } else if (offer.category) {
+              // Fallback to category-based offers if no brand_id
+              const categoryResponse = await offersAPI.getOffersByCategory(offer.category);
+              
+              if (categoryResponse.success && categoryResponse.data) {
+                const categoryData = categoryResponse.data;
+                setCategoryOffers(categoryData);
+                
+                // Find the index of the current offer in the category list
+                const currentIndex = categoryData.findIndex(categoryOffer => categoryOffer.id.toString() === offerId.toString());
+                setCurrentOfferIndex(currentIndex >= 0 ? currentIndex : 0);
+              } else {
+                // If no category offers found, just show this single offer
+                setCategoryOffers([offer]);
+                setCurrentOfferIndex(0);
+              }
+            } else {
+              // If no category, just show this single offer
+              setCategoryOffers([offer]);
+              setCurrentOfferIndex(0);
+            }
           }
         } else {
           throw new Error(offerResponse.message || 'Failed to fetch offer');
@@ -129,7 +160,11 @@ function OfferPage() {
       const newIndex = currentOfferIndex > 0 ? currentOfferIndex - 1 : categoryOffers.length - 1;
       setCurrentOfferIndex(newIndex);
       const newOfferId = categoryOffers[newIndex].id;
-      navigate(`/offer/${newOfferId}`, { replace: true });
+      // Preserve the current navigation state
+      navigate(`/offer/${newOfferId}`, { 
+        replace: true,
+        state: location.state 
+      });
     }
   };
 
@@ -138,7 +173,11 @@ function OfferPage() {
       const newIndex = currentOfferIndex < categoryOffers.length - 1 ? currentOfferIndex + 1 : 0;
       setCurrentOfferIndex(newIndex);
       const newOfferId = categoryOffers[newIndex].id;
-      navigate(`/offer/${newOfferId}`, { replace: true });
+      // Preserve the current navigation state
+      navigate(`/offer/${newOfferId}`, { 
+        replace: true,
+        state: location.state 
+      });
     }
   };
 
@@ -146,7 +185,11 @@ function OfferPage() {
     if (categoryOffers.length > 1 && index >= 0 && index < categoryOffers.length) {
       setCurrentOfferIndex(index);
       const newOfferId = categoryOffers[index].id;
-      navigate(`/offer/${newOfferId}`, { replace: true });
+      // Preserve the current navigation state
+      navigate(`/offer/${newOfferId}`, { 
+        replace: true,
+        state: location.state 
+      });
     }
   };
 
@@ -182,6 +225,9 @@ function OfferPage() {
           // First Screen: Carousel-style offer display
           <>
             <div className="category-header">
+              {sectionTitle && (
+                <h1 className="section-title">{sectionTitle}</h1>
+              )}
               {categoryOffers.length > 1 && (
                 <p className="offer-counter">
                   {currentOfferIndex + 1} of {categoryOffers.length} offers
@@ -194,7 +240,7 @@ function OfferPage() {
                 onClick={handlePrevOffer}
                 disabled={categoryOffers.length <= 1}
               >
-                <span>&lt;</span>
+                <FaChevronLeft />
               </button>
               <div className="offer-carousel-card">
                 <div className="offer-content-wrapper">
@@ -236,7 +282,7 @@ function OfferPage() {
                 onClick={handleNextOffer}
                 disabled={categoryOffers.length <= 1}
               >
-                <span>&gt;</span>
+                <FaChevronRight />
               </button>
             </div>
           </>

@@ -4,7 +4,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { brandRegister, brandLogin, verifyBrandOTP, resendBrandOTP } = require('../controllers/authController');
-const { forgotPassword, verifyForgotPasswordOTP, resetPassword } = require('../controllers/brandAuthController');
+const { forgotPassword, verifyForgotPasswordOTP, resetPassword, logout, getProfile } = require('../controllers/brandAuthController');
+const { authenticateToken } = require('../middleware/auth');
 const { asyncHandler } = require('../middleware/errorHandler');
 
 // Create brands upload directory if it doesn't exist
@@ -45,6 +46,8 @@ router.post('/register', upload.single('logoImage'), asyncHandler(brandRegister)
 router.post('/verify-otp', asyncHandler(verifyBrandOTP));
 router.post('/resend-otp', asyncHandler(resendBrandOTP));
 router.post('/login', asyncHandler(brandLogin));
+router.post('/logout', asyncHandler(logout));
+router.get('/profile', authenticateToken, asyncHandler(getProfile));
 
 // Brand forgot password routes
 router.post('/forgot-password', asyncHandler(forgotPassword));

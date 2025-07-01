@@ -574,11 +574,13 @@
 }
 
 .category-title-section h3 {
-  font-size: 24px;
-  font-weight: 600;
-  color: #333;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
   margin: 0;
   text-align: left;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.01em;
 }
 
 .category-title-section .show-more {

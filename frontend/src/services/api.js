@@ -504,6 +504,39 @@ export const offersAPI = {
 };
 
 /**
+ * Brand API functions
+ */
+export const brandAPI = {
+  // Get brand profile data
+  getBrandProfile: async () => {
+    const brandToken = localStorage.getItem('brand-token');
+    
+    if (!brandToken) {
+      throw new Error('No authentication token found. Please log in again.');
+    }
+    
+    if (brandToken === 'null' || brandToken === 'undefined') {
+      throw new Error('Invalid authentication token. Please log in again.');
+    }
+    
+    return fetch(`${API_BASE_URL}/brand-auth/profile`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${brandToken}`,
+      },
+    }).then(async (response) => {
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+      }
+      return data;
+    });
+  },
+};
+
+/**
  * Utility functions for token management (Legacy - use auth.js utilities instead)
  */
 export const tokenUtils = {
