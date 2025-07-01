@@ -2,7 +2,7 @@ import React, { useState, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ProductCard.css';
 
-const ProductCard = memo(function ProductCard({ id, brand, discount, logo, imageSrc, title, description, logoAlt }) {
+const ProductCard = memo(function ProductCard({ id, brand, discount, logo, imageSrc, title, description, logoAlt, disableClick }) {
   const navigate = useNavigate();
   const [logoLoaded, setLogoLoaded] = React.useState(false);
   const [logoError, setLogoError] = React.useState(false);
@@ -19,12 +19,15 @@ const ProductCard = memo(function ProductCard({ id, brand, discount, logo, image
   }, [logo]);
 
   const handleClick = () => {
-    // Navigate to the offer page with the offer ID
+    // Don't navigate if disableClick is true (handled by parent wrapper)
+    if (disableClick) return;
+    
+    // Navigate to the offer page with normal navigation (not replace) for browser back to work
     navigate(`/offer/${id || brand?.toLowerCase().replace(/\s+/g, '-') || title?.toLowerCase().replace(/\s+/g, '-')}`);
   };
 
   return (
-    <div className="product-card" onClick={handleClick}>
+    <div className="product-card" onClick={handleClick} style={{ cursor: disableClick ? 'default' : 'pointer' }}>
       <div className="card-image-container">
         <img src={imageSrc} alt={title || brand} className="main-image" />
         <div className="brand-logo-overlay">

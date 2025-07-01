@@ -104,9 +104,7 @@ function Home({ isLoggedIn }) {
         
         // Fetch brands
         const brandsResponse = await offersAPI.getBrands();
-        console.log('Brands response:', brandsResponse);
         setBrands(brandsResponse.data || []);
-        console.log('Brands set:', brandsResponse.data || []);
         
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -187,18 +185,26 @@ function Home({ isLoggedIn }) {
 
   // Handle hot deals card click
   const handleHotDealClick = (dealId) => {
-    navigate(`/offer/${dealId}`);
+    // Navigate with replace: true so back button goes to home
+    navigate(`/offer/${dealId}`, { replace: true });
   };
 
   // Handle brand card click - navigate to offer page with first offer from that brand
   const handleBrandClick = async (brandId, brandName) => {
+    // Prevent multiple rapid clicks
+    if (handleBrandClick.isProcessing) {
+      return;
+    }
+    
     try {
+      handleBrandClick.isProcessing = true;
+      
       // Get offers for this brand
       const response = await offersAPI.getOffersByBrandId(brandId);
       const brandOffers = response.data || [];
       
       if (brandOffers.length > 0) {
-        // Navigate to the first offer of this brand
+        // Navigate normally (not replace) so browser back works
         navigate(`/offer/${brandOffers[0].id}`);
       } else {
         // If no offers, navigate to any available offer
@@ -212,6 +218,11 @@ function Home({ isLoggedIn }) {
     } catch (error) {
       console.error('Error fetching offers for brand:', error);
       navigate('/offers');
+    } finally {
+      // Reset processing flag after a short delay
+      setTimeout(() => {
+        handleBrandClick.isProcessing = false;
+      }, 1000);
     }
   };
 
@@ -250,11 +261,6 @@ function Home({ isLoggedIn }) {
       ? `http://localhost:5000${firstBrandOffer.image_url}`
       : fallbackImages[index % fallbackImages.length];
     
-    console.log('Brand carousel item:', brand.name, 'using image:', imageSrc);
-    console.log('Brand logo URL:', brand.logo ? `http://localhost:5000${brand.logo}` : 'No logo');
-    console.log('Brand approval status:', brand.is_approved);
-    console.log('Raw brand logo path:', brand.logo);
-    
     return {
       id: brand.id,
       imageSrc: imageSrc, // Use actual offer image or fallback
@@ -269,10 +275,8 @@ function Home({ isLoggedIn }) {
   // Only use the real brandCarouselItems, no duplication
   const extendedCarouselItems = brandCarouselItems;
 
-  console.log('Brand carousel items count:', brandCarouselItems.length);
-  console.log('Extended carousel items count:', extendedCarouselItems.length);
-
-  // Auto-advance carousel (only if we have multiple brands)
+  // Auto-advance carousel (only if we have multiple brands) - TEMPORARILY DISABLED FOR DEBUGGING
+  /*
   useEffect(() => {
     if (brandCarouselItems.length > 1) {
       const timer = setInterval(() => {
@@ -281,6 +285,7 @@ function Home({ isLoggedIn }) {
       return () => clearInterval(timer);
     }
   }, [brandCarouselItems.length]);
+  */
 
   return (
     <div className="home">
@@ -296,7 +301,11 @@ function Home({ isLoggedIn }) {
                 <div 
                   key={`${item.id}-${index}`} 
                   className="carousel-card-wrapper"
-                  onClick={() => handleBrandClick(item.brandId, item.brandName)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleBrandClick(item.brandId, item.brandName);
+                  }}
                 >
                   <ProductCard
                     id={item.id}
@@ -306,6 +315,7 @@ function Home({ isLoggedIn }) {
                     title={item.title}
                     description={item.description}
                     logoAlt={item.brandName}
+                    disableClick={true}
                   />
                 </div>
               ))}
@@ -406,7 +416,7 @@ function Home({ isLoggedIn }) {
               <div className="category-offers-grid">
                 {electronicsOffers.length > 0 ? (
                   electronicsOffers.map((offer, index) => (
-                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`)} style={{ cursor: 'pointer' }}>
+                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { replace: true })} style={{ cursor: 'pointer' }}>
                       <ProductCard
                         imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
                         logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}
@@ -449,7 +459,7 @@ function Home({ isLoggedIn }) {
               <div className="category-offers-grid">
                 {fashionOffers.length > 0 ? (
                   fashionOffers.map((offer, index) => (
-                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`)} style={{ cursor: 'pointer' }}>
+                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { replace: true })} style={{ cursor: 'pointer' }}>
                       <ProductCard
                         imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
                         logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}
@@ -492,7 +502,7 @@ function Home({ isLoggedIn }) {
               <div className="category-offers-grid">
                 {foodOffers.length > 0 ? (
                   foodOffers.map((offer, index) => (
-                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`)} style={{ cursor: 'pointer' }}>
+                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { replace: true })} style={{ cursor: 'pointer' }}>
                       <ProductCard
                         imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
                         logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}
@@ -535,7 +545,7 @@ function Home({ isLoggedIn }) {
               <div className="category-offers-grid">
                 {beautyOffers.length > 0 ? (
                   beautyOffers.map((offer, index) => (
-                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`)} style={{ cursor: 'pointer' }}>
+                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { replace: true })} style={{ cursor: 'pointer' }}>
                       <ProductCard
                         imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
                         logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}
@@ -578,7 +588,7 @@ function Home({ isLoggedIn }) {
               <div className="category-offers-grid">
                 {educationOffers.length > 0 ? (
                   educationOffers.map((offer, index) => (
-                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`)} style={{ cursor: 'pointer' }}>
+                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { replace: true })} style={{ cursor: 'pointer' }}>
                       <ProductCard
                         imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
                         logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}

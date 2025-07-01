@@ -21,11 +21,11 @@ function OfferPage() {
   useEffect(() => {
     const fetchOfferData = async () => {
       try {
-        console.log('Fetching offer with ID:', offerId);
+        // Get the actual offer ID from URL to avoid React strict mode issues
+        const actualOfferId = window.location.pathname.split('/offer/')[1];
         
-        // Get the specific offer from the API
-        const offerResponse = await offersAPI.getOfferById(offerId);
-        console.log('Current offer data:', offerResponse);
+        // Use actualOfferId instead of offerId
+        const offerResponse = await offersAPI.getOfferById(actualOfferId);
         
         if (offerResponse.success && offerResponse.data) {
           const offer = offerResponse.data;
@@ -33,9 +33,7 @@ function OfferPage() {
           
           // Get all offers from the same brand (prioritize brand over category)
           if (offer.brand_id) {
-            console.log('Fetching offers for brand_id:', offer.brand_id);
             const brandResponse = await offersAPI.getOffersByBrandId(offer.brand_id);
-            console.log(`Offers from brand ${offer.brand_name}:`, brandResponse);
             
             if (brandResponse.success && brandResponse.data && brandResponse.data.length > 0) {
               const brandData = brandResponse.data;
@@ -43,11 +41,9 @@ function OfferPage() {
               
               // Find the index of the current offer in the brand list
               const currentIndex = brandData.findIndex(brandOffer => brandOffer.id.toString() === offerId.toString());
-              console.log('Current offer index in brand:', currentIndex);
               setCurrentOfferIndex(currentIndex >= 0 ? currentIndex : 0);
             } else {
               // Fallback to category offers if no brand offers found
-              console.log('No brand offers found, falling back to category');
               if (offer.category) {
                 const categoryResponse = await offersAPI.getOffersByCategory(offer.category);
                 if (categoryResponse.success && categoryResponse.data) {
@@ -65,9 +61,7 @@ function OfferPage() {
             }
           } else if (offer.category) {
             // Fallback to category-based offers if no brand_id
-            console.log('Fetching offers for category:', offer.category);
             const categoryResponse = await offersAPI.getOffersByCategory(offer.category);
-            console.log(`Offers in ${offer.category} category:`, categoryResponse);
             
             if (categoryResponse.success && categoryResponse.data) {
               const categoryData = categoryResponse.data;
@@ -75,7 +69,6 @@ function OfferPage() {
               
               // Find the index of the current offer in the category list
               const currentIndex = categoryData.findIndex(categoryOffer => categoryOffer.id.toString() === offerId.toString());
-              console.log('Current offer index in category:', currentIndex);
               setCurrentOfferIndex(currentIndex >= 0 ? currentIndex : 0);
             } else {
               // If no category offers found, just show this single offer
@@ -119,16 +112,6 @@ function OfferPage() {
     };
   }, []);
 
-  // Handle browser back: always go to home if not navigated from inside app
-  useEffect(() => {
-    const handlePopState = (event) => {
-      // Always redirect to home on browser back from offer page
-      navigate('/', { replace: true });
-    };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [navigate]);
-
   const handleRating = (value) => {
     setRating(value);
   };
@@ -146,7 +129,7 @@ function OfferPage() {
       const newIndex = currentOfferIndex > 0 ? currentOfferIndex - 1 : categoryOffers.length - 1;
       setCurrentOfferIndex(newIndex);
       const newOfferId = categoryOffers[newIndex].id;
-      navigate(`/offer/${newOfferId}`);
+      navigate(`/offer/${newOfferId}`, { replace: true });
     }
   };
 
@@ -155,7 +138,7 @@ function OfferPage() {
       const newIndex = currentOfferIndex < categoryOffers.length - 1 ? currentOfferIndex + 1 : 0;
       setCurrentOfferIndex(newIndex);
       const newOfferId = categoryOffers[newIndex].id;
-      navigate(`/offer/${newOfferId}`);
+      navigate(`/offer/${newOfferId}`, { replace: true });
     }
   };
 
@@ -163,7 +146,7 @@ function OfferPage() {
     if (categoryOffers.length > 1 && index >= 0 && index < categoryOffers.length) {
       setCurrentOfferIndex(index);
       const newOfferId = categoryOffers[index].id;
-      navigate(`/offer/${newOfferId}`);
+      navigate(`/offer/${newOfferId}`, { replace: true });
     }
   };
 
