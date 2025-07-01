@@ -19,9 +19,9 @@ const sendOTPEmail = async (email, otpCode, firstName = '') => {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: `"Project Thrift" <${process.env.SMTP_USER}>`,
+      from: `"Thrift" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: 'Verify Your Email - Project Thrift',
+      subject: 'Verify Your Email - Thrift',
       html: `
         <!DOCTYPE html>
         <html>
@@ -32,23 +32,30 @@ const sendOTPEmail = async (email, otpCode, firstName = '') => {
           <style>
             body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .header { background: linear-gradient(135deg, #6c7ce7 0%, #5a6fd8 100%); color: white !important; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .header h1 { color: white !important; margin: 0; font-size: 28px; }
+            .header p { color: white !important; margin: 0; font-size: 16px; }
             .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
-            .otp-code { background: #fff; border: 2px dashed #667eea; padding: 20px; text-align: center; margin: 20px 0; border-radius: 10px; }
-            .otp-number { font-size: 32px; font-weight: bold; color: #667eea; letter-spacing: 5px; }
+            .otp-code { background: #fff; border: 2px dashed #6c7ce7; padding: 20px; text-align: center; margin: 20px 0; border-radius: 10px; }
+            .otp-number { font-size: 32px; font-weight: bold; color: #6c7ce7; letter-spacing: 5px; }
             .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
-            .btn { background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px 0; }
+            .btn { background: #6c7ce7; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px 0; }
+            /* Dark mode overrides */
+            @media (prefers-color-scheme: dark) {
+              .header h1 { color: white !important; }
+              .header p { color: white !important; }
+            }
           </style>
         </head>
         <body>
           <div class="container">
             <div class="header">
-              <h1>🎓 Project Thrift</h1>
+              <h1>🎓 Thrift</h1>
               <p>Student Discounts Made Easy</p>
             </div>
             <div class="content">
               <h2>Hi${firstName ? ' ' + firstName : ''}! 👋</h2>
-              <p>Welcome to Project Thrift! We're excited to have you join our community of smart students saving money.</p>
+              <p>Welcome to Thrift! We're excited to have you join our community of smart students saving money.</p>
               
               <p>To complete your registration, please verify your email address using the verification code below:</p>
               
@@ -72,12 +79,12 @@ const sendOTPEmail = async (email, otpCode, firstName = '') => {
               
               <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
                 <p style="margin: 0; color: #666; font-size: 14px;">
-                  Need help? Contact us at support@projectthrift.com
+                  Need help? Contact us at support@thrift.com
                 </p>
               </div>
             </div>
             <div class="footer">
-              <p>© 2025 Project Thrift. Making education more affordable, one discount at a time.</p>
+              <p>© 2025 Thrift. Making education more affordable, one discount at a time.</p>
             </div>
           </div>
         </body>
@@ -86,7 +93,7 @@ const sendOTPEmail = async (email, otpCode, firstName = '') => {
       text: `
         Hi${firstName ? ' ' + firstName : ''}!
         
-        Welcome to Project Thrift! 
+        Welcome to Thrift! 
         
         Your verification code is: ${otpCode}
         
@@ -95,7 +102,7 @@ const sendOTPEmail = async (email, otpCode, firstName = '') => {
         If you didn't create an account with us, please ignore this email.
         
         Best regards,
-        Project Thrift Team
+        Thrift Team
       `
     };
 
@@ -114,9 +121,9 @@ const sendWelcomeEmail = async (email, firstName) => {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: `"Project Thrift" <${process.env.SMTP_USER}>`,
+      from: `"Thrift" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: 'Welcome to Project Thrift! 🎉',
+      subject: 'Welcome to Thrift! 🎉',
       html: `
         <!DOCTYPE html>
         <html>
@@ -127,22 +134,29 @@ const sendWelcomeEmail = async (email, firstName) => {
           <style>
             body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .header { background: linear-gradient(135deg, #6c7ce7 0%, #5a6fd8 100%); color: white !important; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .header h1 { color: white !important; margin: 0; font-size: 28px; }
+            .header p { color: white !important; margin: 0; font-size: 16px; }
             .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
-            .cta-button { background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 20px 0; }
+            .cta-button { background: #6c7ce7; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 20px 0; }
             .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
+            /* Dark mode overrides */
+            @media (prefers-color-scheme: dark) {
+              .header h1 { color: white !important; }
+              .header p { color: white !important; }
+            }
           </style>
         </head>
         <body>
           <div class="container">
             <div class="header">
-              <h1>🎉 Welcome to Project Thrift!</h1>
+              <h1>🎉 Welcome to Thrift!</h1>
               <p>Your student discount journey starts here</p>
             </div>
             <div class="content">
               <h2>Hi ${firstName}! 🎓</h2>
               
-              <p>Congratulations! Your Project Thrift account is now active and ready to help you save money as a student.</p>
+              <p>Congratulations! Your Thrift account is now active and ready to help you save money as a student.</p>
               
               <p><strong>Here's what you can do now:</strong></p>
               <ul>
@@ -158,12 +172,12 @@ const sendWelcomeEmail = async (email, firstName) => {
               
               <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
                 <p style="margin: 0; color: #666; font-size: 14px;">
-                  Questions? We're here to help! Contact us at support@projectthrift.com
+                  Questions? We're here to help! Contact us at support@thrift.com
                 </p>
               </div>
             </div>
             <div class="footer">
-              <p>© 2025 Project Thrift. Happy saving! 💰</p>
+              <p>© 2025 Thrift. Happy saving! 💰</p>
             </div>
           </div>
         </body>
@@ -176,6 +190,97 @@ const sendWelcomeEmail = async (email, firstName) => {
     return result;
   } catch (error) {
     console.error('❌ Error sending welcome email:', error.message);
+    throw error;
+  }
+};
+
+// Send contact form email
+const sendContactEmail = async (name, email, message) => {
+  try {
+    const transporter = createTransporter();
+
+    const mailOptions = {
+      from: `"Thrift" <${process.env.SMTP_USER}>`,
+      to: 'haroonishaq544@gmail.com', // Your email address
+      subject: `New Contact Message from ${name}`,
+      html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>New Contact Message</title>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #6c7ce7 0%, #5a6fd8 100%); color: white !important; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .header h1 { color: white !important; margin: 0; font-size: 28px; }
+            .header p { color: white !important; margin: 0; font-size: 16px; }
+            .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
+            .message-box { background: #fff; border-left: 4px solid #6c7ce7; padding: 20px; margin: 20px 0; border-radius: 5px; }
+            .info-row { display: flex; margin-bottom: 10px; }
+            .info-label { font-weight: bold; color: #6c7ce7; min-width: 80px; }
+            .info-value { color: #333; }
+            .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
+            /* Dark mode overrides */
+            @media (prefers-color-scheme: dark) {
+              .header h1 { color: white !important; }
+              .header p { color: white !important; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1>📧 New Contact Message</h1>
+              <p>Thrift Contact Form</p>
+            </div>
+            <div class="content">
+              <h2>You have received a new message!</h2>
+              
+              <div class="message-box">
+                <div class="info-row">
+                  <span class="info-label">Name:</span>
+                  <span class="info-value">${name}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Email:</span>
+                  <span class="info-value">${email}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Date:</span>
+                  <span class="info-value">${new Date().toLocaleString()}</span>
+                </div>
+              </div>
+              
+              <h3>Message:</h3>
+              <div class="message-box">
+                <p style="margin: 0; white-space: pre-wrap;">${message}</p>
+              </div>
+              
+              <p><strong>Reply to:</strong> <a href="mailto:${email}" style="color: #6c7ce7;">${email}</a></p>
+              
+              <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd;">
+                <p style="margin: 0; color: #666; font-size: 14px;">
+                  This message was sent through the Thrift contact form.
+                </p>
+              </div>
+            </div>
+            <div class="footer">
+              <p>© 2025 Thrift. Contact Form Notification</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+      replyTo: email // This allows you to reply directly to the sender
+    };
+
+    const result = await transporter.sendMail(mailOptions);
+    console.log('✅ Contact email sent successfully from:', email);
+    return result;
+  } catch (error) {
+    console.error('❌ Error sending contact email:', error.message);
     throw error;
   }
 };
@@ -196,5 +301,6 @@ const testEmailConfig = async () => {
 module.exports = {
   sendOTPEmail,
   sendWelcomeEmail,
+  sendContactEmail,
   testEmailConfig
 };

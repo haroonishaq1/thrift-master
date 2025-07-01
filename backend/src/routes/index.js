@@ -6,12 +6,14 @@ const authRoutes = require('./auth');
 const brandAuthRoutes = require('./brandAuthSimple');
 const adminRoutes = require('./admin');
 const offersRoutes = require('./offers');
+const contactRoutes = require('./contact');
 
 // Use route modules
 router.use('/auth', authRoutes);
 router.use('/brand-auth', brandAuthRoutes);
 router.use('/admin', adminRoutes);
 router.use('/offers', offersRoutes);
+router.use('/contact', contactRoutes);
 
 // API info route
 router.get('/', (req, res) => {

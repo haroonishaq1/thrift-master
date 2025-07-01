@@ -42,12 +42,50 @@
 
 .loading-spinner {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 100px 20px;
   font-size: 18px;
-  color: #666;
-  animation: pulse 2s infinite ease-in-out;
+  color: #4361ee;
+  font-weight: 500;
+}
+
+.loading-spinner::before {
+  content: '';
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(45deg, #4361ee, #7209b7, #f72585, #4361ee);
+  background-size: 400% 400%;
+  border-radius: 12px;
+  animation: gradientRotate 1.5s ease-in-out infinite, pulse 2s ease-in-out infinite alternate;
+  margin-bottom: 20px;
+}
+
+@keyframes gradientRotate {
+  0% { 
+    background-position: 0% 50%;
+    transform: rotate(0deg);
+  }
+  50% { 
+    background-position: 100% 50%;
+    transform: rotate(180deg);
+  }
+  100% { 
+    background-position: 0% 50%;
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(67, 97, 238, 0.4);
+  }
+  100% { 
+    transform: scale(1.05);
+    box-shadow: 0 0 0 20px rgba(67, 97, 238, 0);
+  }
 }
 
 @keyframes pulse {

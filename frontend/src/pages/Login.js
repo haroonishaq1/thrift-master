@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaArrowLeft } from 'react-icons/fa';
 import { authAPI, tokenUtils } from '../services/api';
 import { storeUserAuth } from '../utils/auth';
 import '../styles/Login.css';
@@ -119,13 +118,6 @@ function Login({ updateAuthStatus }) {
   return (
     <div className="login-container">
       <div className="login-form-wrapper">
-        <button 
-          className="back-arrow-btn"
-          onClick={() => navigate('/')}
-          aria-label="Go back to home"
-        >
-          <FaArrowLeft />
-        </button>
         <h1>THRIFT</h1>
         <h2>Log in to Thrift with me</h2>
         

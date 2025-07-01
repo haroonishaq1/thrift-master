@@ -286,7 +286,7 @@ const Offer = {
     }
   },
 
-  // Get featured offers (highest discount or most recent)
+  // Get featured offers (highest discount or most recent) - Only 25% or more discount
   getFeatured: async (limit = 4) => {
     try {
       const query = `
@@ -294,6 +294,7 @@ const Offer = {
         FROM offers o
         LEFT JOIN brands b ON o.brand_id = b.id
         WHERE o.status = 'active' 
+        AND o.discount_percent >= 25
         AND (o.valid_until IS NULL OR o.valid_until > CURRENT_TIMESTAMP)
         ORDER BY o.discount_percent DESC, o.created_at DESC
         LIMIT $1
@@ -302,6 +303,28 @@ const Offer = {
       return result.rows;
     } catch (error) {
       console.error('❌ Error getting featured offers:', error.message);
+      throw error;
+    }
+  },
+
+  // Get new lineup offers (created within last 5 hours)
+  getNewLineup: async (limit = 10) => {
+    try {
+      const query = `
+        SELECT o.*, b.name as brand_name, b.logo as brand_logo
+        FROM offers o
+        LEFT JOIN brands b ON o.brand_id = b.id
+        WHERE o.status = 'active' 
+        AND o.isApproved = true
+        AND o.created_at > NOW() - INTERVAL '5 HOURS'
+        AND (o.valid_until IS NULL OR o.valid_until > CURRENT_TIMESTAMP)
+        ORDER BY o.created_at DESC
+        LIMIT $1
+      `;
+      const result = await pool.query(query, [limit]);
+      return result.rows;
+    } catch (error) {
+      console.error('❌ Error getting new lineup offers:', error.message);
       throw error;
     }
   },

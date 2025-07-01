@@ -307,6 +307,37 @@ const Brand = {
     }
   },
 
+  // Update brand profile (name, category, phone number only)
+  updateProfile: async (brandId, updateData) => {
+    try {
+      const { name, category, phoneNumber } = updateData;
+      
+      // Validate required fields
+      if (!name || !category) {
+        throw new Error('Name and category are required');
+      }
+
+      const query = `
+        UPDATE brands 
+        SET name = $1, category = $2, phone_number = $3, updated_at = CURRENT_TIMESTAMP 
+        WHERE id = $4
+        RETURNING id, name, email, website, logo, phone_number, admin_username, admin_email, description, category, is_approved, created_at, updated_at
+      `;
+      
+      const result = await pool.query(query, [name, category, phoneNumber || null, brandId]);
+      
+      if (result.rows.length === 0) {
+        throw new Error('Brand not found');
+      }
+      
+      console.log(`✅ Profile updated for brand ID: ${brandId}`);
+      return result.rows[0];
+    } catch (error) {
+      console.error('❌ Error updating brand profile:', error.message);
+      throw error;
+    }
+  },
+
   // Get brands by category
   getByCategory: async (category) => {
     try {
@@ -341,7 +372,25 @@ const Brand = {
       console.error('❌ Error getting brand stats:', error.message);
       throw error;
     }
-  }
+  },
+
+  // Search brands for suggestions
+  searchBrands: async (searchTerm, limit = 5) => {
+    try {
+      const query = `
+        SELECT id, name, logo
+        FROM brands 
+        WHERE is_approved = TRUE AND name ILIKE $1
+        ORDER BY name ASC
+        LIMIT $2
+      `;
+      const result = await pool.query(query, [`%${searchTerm}%`, limit]);
+      return result.rows;
+    } catch (error) {
+      console.error('❌ Error searching brands:', error.message);
+      throw error;
+    }
+  },
 };
 
 module.exports = { Brand, initializeBrandsTable };

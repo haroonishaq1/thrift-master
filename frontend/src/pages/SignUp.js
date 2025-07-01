@@ -4,7 +4,6 @@ import * as Yup from 'yup';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { useNavigate } from 'react-router-dom';
-import { FaArrowLeft } from 'react-icons/fa';
 import { authAPI } from '../services/api';
 import '../styles/Login.css';
 
@@ -37,10 +36,23 @@ function SignUp() {
       .required('Gender is required'),
     phone: Yup.string()
       .required('Phone number is required')
-      .min(10, 'Phone number is too short')
-      .test('is-valid-phone', 'Please enter a valid phone number', function(value) {
-        // Basic validation - can be enhanced based on your requirements
-        return value && /^\d{10,15}$/.test(value.replace(/[^\d]/g, ''));
+      .test('phone-validation', 'Phone number must be 11 digits (Pakistani format: +92xxxxxxxxxx)', function(value) {
+        if (!value) return false;
+        
+        // Remove all non-numeric characters except +
+        const cleanNumber = value.replace(/[^\d+]/g, '');
+        
+        // Check Pakistani phone number format
+        if (cleanNumber.startsWith('+92')) {
+          // +92 + 10 digits = 13 total characters
+          return cleanNumber.length === 13;
+        } else if (cleanNumber.startsWith('92')) {
+          // 92 + 10 digits = 12 total characters  
+          return cleanNumber.length === 12;
+        } else {
+          // For other formats, should be exactly 11 digits
+          return cleanNumber.length === 11;
+        }
       })
   });    // Step 2: University and account information validation schema
   const step2ValidationSchema = Yup.object({
@@ -354,13 +366,6 @@ function SignUp() {
     return (
     <div className="login-container">
       <div className="login-form-wrapper">
-        <button 
-          className="back-arrow-btn"
-          onClick={() => navigate('/')}
-          aria-label="Go back to home"
-        >
-          <FaArrowLeft />
-        </button>
         <h1>THRIFT</h1>
         <div className="promo-message">
           <h2>Studying at university? Get student discounts on all your favorite brands—for free!</h2>

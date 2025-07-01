@@ -16,12 +16,18 @@ const Offers = ({ isLoggedIn }) => {
   
   // Get category from URL params
   const category = searchParams.get('category');
+  const view = searchParams.get('view');
 
   useEffect(() => {
     const fetchOffers = async () => {
       try {
         setLoading(true);
         setError(null);
+        
+        // Start loading timeout - maximum 1 second
+        const loadingTimeout = setTimeout(() => {
+          setLoading(false);
+        }, 1000);
         
         if (category) {
           // Fetch offers for specific category
@@ -34,10 +40,35 @@ const Offers = ({ isLoggedIn }) => {
             'fashion': 'Fashion',
             'food': 'Food & Drink',
             'beauty': 'Beauty',
+            'fitness': 'Fitness',
             'education': 'Education',
-            'featured': 'Hot Deals'
+            'featured': 'Hot Deals',
+            'newlineup': 'New to Lineup'
           };
           setCategoryName(categoryNames[category] || category);
+          
+          // If view=carousel and we have offers, redirect to first offer with carousel context
+          if (view === 'carousel' && response.data && response.data.length > 0) {
+            const sourceMapping = {
+              'featured': 'hotdeals',
+              'newlineup': 'newlineup'
+            };
+            const source = sourceMapping[category] || 'category';
+            const titleMapping = {
+              'featured': 'HOT DEALS',
+              'newlineup': 'NEW TO LINEUP'
+            };
+            const title = titleMapping[category] || categoryNames[category];
+            
+            // Clear timeout before navigation
+            clearTimeout(loadingTimeout);
+            
+            navigate(`/offer/${response.data[0].id}`, {
+              state: { source, title },
+              replace: true
+            });
+            return;
+          }
         } else {
           // Fetch all offers from the API
           const response = await offersAPI.getAllOffers();
@@ -49,6 +80,10 @@ const Offers = ({ isLoggedIn }) => {
           }
           setCategoryName('All Offers');
         }
+        
+        // Clear timeout and stop loading
+        clearTimeout(loadingTimeout);
+        
       } catch (error) {
         console.error('Error fetching offers:', error);
         setError('Failed to load offers. Please try again later.');

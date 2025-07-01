@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { clearUserAuth } from '../utils/auth';
+import { offersAPI } from '../services/api';
 import '../styles/Header.css';
 
 function Header({ isLoggedIn }) {
   const [showMenu, setShowMenu] = useState(false);
   const [showHamburgerMenu, setShowHamburgerMenu] = useState(false);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [brandSuggestions, setBrandSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showMoreBrands, setShowMoreBrands] = useState(false);
+  const searchContainerRef = useRef(null);
   const navigate = useNavigate();
 
   const categories = [
@@ -20,25 +26,36 @@ function Header({ isLoggedIn }) {
   ];
 
   const handleCategoryClick = (categoryValue) => {
-    // If not on home page, navigate to home first
-    if (window.location.pathname !== '/') {
-      navigate('/', { state: { scrollToCategory: categoryValue } });
+    // Categories that are shown on Home page (should scroll to section)
+    const categoriesOnHomePage = ['electronics', 'fashion', 'food', 'all'];
+    
+    // Categories that are NOT on Home page (should navigate to offers page)
+    const categoriesNotOnHomePage = ['fitness', 'beauty', 'education'];
+    
+    if (categoriesNotOnHomePage.includes(categoryValue)) {
+      // Navigate directly to offers page for categories not shown on home
+      navigate(`/offers?category=${categoryValue}`);
       return;
     }
     
-    // If on home page, scroll to the category section
-    scrollToCategorySection(categoryValue);
+    if (categoriesOnHomePage.includes(categoryValue)) {
+      // If not on home page, navigate to home first
+      if (window.location.pathname !== '/') {
+        navigate('/', { state: { scrollToCategory: categoryValue } });
+        return;
+      }
+      
+      // If on home page, scroll to the category section
+      scrollToCategorySection(categoryValue);
+    }
   };
 
   const scrollToCategorySection = (categoryValue) => {
-    // Map category values to section IDs
+    // Map category values to section IDs (only for categories shown on Home page)
     const categoryToSectionId = {
       'food': 'food-drink-section',
-      'fitness': 'fitness-section', // We'll need to add this ID
       'electronics': 'electronics-section',
-      'beauty': 'beauty-section',
       'fashion': 'fashion-section',
-      'education': 'education-section',
       'all': 'shop-by-category-section'
     };
     
@@ -95,6 +112,128 @@ function Header({ isLoggedIn }) {
     // Force a page reload to update the authentication state
     window.location.href = '/';
   };
+
+  const handleSearchInput = async (value) => {
+    setSearchTerm(value);
+    
+    if (value.trim().length >= 2) {
+      try {
+        const response = await offersAPI.searchBrands(value.trim(), showMoreBrands ? 20 : 5);
+        setBrandSuggestions(response.data || []);
+        setShowSuggestions(true);
+      } catch (error) {
+        console.error('Error searching brands:', error);
+        setBrandSuggestions([]);
+      }
+    } else {
+      setBrandSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleBrandSuggestionClick = async (brandId, brandName) => {
+    try {
+      // Get offers for this brand
+      const response = await offersAPI.getOffersByBrandId(brandId);
+      const brandOffers = response.data || [];
+      
+      if (brandOffers.length > 0) {
+        // Navigate with brand context
+        navigate(`/offer/${brandOffers[0].id}`, { 
+          state: { 
+            source: 'brand', 
+            title: brandName 
+          } 
+        });
+      } else {
+        // If no offers, navigate to offers page
+        navigate('/offers');
+      }
+      
+      // Clear search
+      setSearchTerm('');
+      setShowSuggestions(false);
+      setShowMoreBrands(false);
+    } catch (error) {
+      console.error('Error fetching offers for brand:', error);
+      navigate('/offers');
+    }
+  };
+
+  const handleShowMoreBrands = async () => {
+    setShowMoreBrands(true);
+    if (searchTerm.trim().length >= 2) {
+      try {
+        const response = await offersAPI.searchBrands(searchTerm.trim(), 20);
+        setBrandSuggestions(response.data || []);
+      } catch (error) {
+        console.error('Error fetching more brands:', error);
+      }
+    }
+  };
+
+  const handleSearchSubmit = async (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      const searchQuery = searchTerm.trim();
+      
+      try {
+        // First check if there are any exact matches (case insensitive)
+        const response = await offersAPI.searchBrands(searchQuery, 20);
+        const matchingBrands = response.data || [];
+        
+        // Look for exact match (case insensitive)
+        const exactMatch = matchingBrands.find(brand => 
+          brand.name.toLowerCase() === searchQuery.toLowerCase()
+        );
+        
+        if (exactMatch) {
+          // Navigate to brand offers if exact match found
+          const offersResponse = await offersAPI.getOffersByBrandId(exactMatch.id);
+          const brandOffers = offersResponse.data || [];
+          
+          if (brandOffers.length > 0) {
+            navigate(`/offer/${brandOffers[0].id}`, { 
+              state: { 
+                source: 'brand', 
+                title: exactMatch.name 
+              } 
+            });
+          } else {
+            // If brand has no offers, go to offers page with search
+            navigate(`/offers?search=${encodeURIComponent(searchQuery)}`);
+          }
+        } else {
+          // No exact match, navigate to offers page with search
+          navigate(`/offers?search=${encodeURIComponent(searchQuery)}`);
+        }
+      } catch (error) {
+        console.error('Error during search:', error);
+        // Fallback to offers page with search
+        navigate(`/offers?search=${encodeURIComponent(searchQuery)}`);
+      }
+      
+      // Clear search
+      setSearchTerm('');
+      setShowSuggestions(false);
+      setShowMoreBrands(false);
+    }
+  };
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+        setShowMoreBrands(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const UserAvatar = () => (
     <div className="user-profile">
@@ -199,14 +338,56 @@ function Header({ isLoggedIn }) {
 
         {/* Right - Search Bar */}
         <div className="search-section">
-          <div className="search-container">
-            <input type="text" placeholder="e.g. Zalando..." className="search-input" />
-            <button className="search-button">
-              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="2"/>
-                <line x1="14.4142" y1="14" x2="19" y2="18.5858" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
-            </button>
+          <div className="search-container" ref={searchContainerRef}>
+            <form onSubmit={handleSearchSubmit} className="search-form">
+              <input 
+                type="text" 
+                placeholder="e.g. Apple, Samsung..." 
+                className="search-input"
+                value={searchTerm}
+                onChange={(e) => handleSearchInput(e.target.value)}
+              />
+              <button type="submit" className="search-button">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="2"/>
+                  <line x1="14.4142" y1="14" x2="19" y2="18.5858" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </form>
+            
+            {/* Brand Suggestions */}
+            {showSuggestions && (
+              <div className="brand-suggestions">
+                {brandSuggestions.length > 0 ? (
+                  <>
+                    <ul>
+                      {brandSuggestions.slice(0, showMoreBrands ? undefined : 5).map((brand) => (
+                        <li key={brand.id}>
+                          <button 
+                            onClick={() => handleBrandSuggestionClick(brand.id, brand.name)} 
+                            className="brand-suggestion-item"
+                          >
+                            {brand.name}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    
+                    {/* Show More button */}
+                    {!showMoreBrands && brandSuggestions.length > 5 && (
+                      <button onClick={handleShowMoreBrands} className="show-more-brands">
+                        Show More
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <div className="no-results">
+                    <p>No brands found matching "{searchTerm}"</p>
+                    <small>Try searching for something else or press Enter to search all offers</small>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

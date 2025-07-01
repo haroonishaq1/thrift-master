@@ -65,16 +65,13 @@ function BrandProfile() {
   }, [navigate]);
 
   const handleEditProfile = () => {
-    // TODO: Implement edit functionality
-    console.log('Edit profile clicked');
-    // You can navigate to edit page or show edit modal
-    // navigate('/brand/profile/edit');
+    navigate('/brand/edit-profile');
   };
 
   if (isLoading) {
     return (
       <div className="profile-container">
-        <div className="loading">Loading...</div>
+        <div className="loading">Loading profile...</div>
       </div>
     );
   }
@@ -172,10 +169,6 @@ function BrandProfile() {
               <div className="detail-item">
                 <label>Category</label>
                 <div className="detail-value">{brandData.category || ''}</div>
-              </div>
-              <div className="detail-item">
-                <label>Description</label>
-                <div className="detail-value">{brandData.description || ''}</div>
               </div>
             </div>
           </div>

@@ -385,11 +385,52 @@ const resetPassword = async (req, res) => {
   }
 };
 
+// Update brand profile
+const updateProfile = async (req, res) => {
+  try {
+    console.log('🚀 Brand profile update request received');
+    console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
+    console.log('👤 Brand ID from token:', req.user.id);
+
+    const { name, category, phoneNumber } = req.body;
+
+    // Validation
+    if (!name || !category) {
+      console.log('❌ Validation failed - missing required fields');
+      return res.status(400).json(
+        formatResponse(false, 'Name and category are required')
+      );
+    }
+
+    // Update brand profile
+    const updatedBrand = await Brand.updateProfile(req.user.id, {
+      name,
+      category,
+      phoneNumber
+    });
+
+    console.log('✅ Brand profile updated successfully');
+
+    return res.status(200).json(
+      formatResponse(true, 'Profile updated successfully', {
+        brand: updatedBrand
+      })
+    );
+
+  } catch (error) {
+    console.error('❌ Brand profile update error:', error);
+    return res.status(500).json(
+      formatResponse(false, 'Failed to update profile. Please try again later.')
+    );
+  }
+};
+
 module.exports = {
   register,
   login,
   getProfile,
   logout,
+  updateProfile,
   forgotPassword,
   verifyForgotPasswordOTP,
   resetPassword

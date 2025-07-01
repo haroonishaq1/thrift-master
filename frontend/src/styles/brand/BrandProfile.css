@@ -1,12 +1,12 @@
-/* Profile Container - exactly matching Profile.css */
-.profile-container {
+/* Brand Profile Container - matching Profile.css exactly */
+.brand-profile {
   min-height: 100vh;
   background: #f5f7fa;
   padding: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
-.profile-content {
+.brand-profile-content {
   max-width: 800px;
   margin: 20px auto;
   background: white;
@@ -92,50 +92,10 @@
   background: white;
 }
 
-.profile-avatar img.brand-logo {
-  object-fit: contain;
-  padding: 8px;
-  background: white;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border: 2px solid #e0e0e0;
-}
-
-/* Brand Icon Styles for Brand Profile Page - matching person icon */
-.profile-avatar .brand-icon {
-  position: relative;
-  width: 28px;
-  height: 28px;
-}
-
-.profile-avatar .brand-icon::before {
-  content: '';
-  position: absolute;
-  top: 5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 14px;
-  height: 8px;
-  border: 2px solid #666;
-  border-bottom: none;
-  border-radius: 3px 3px 0 0;
-  background: none;
-}
-
-.profile-avatar .brand-icon::after {
-  content: '';
-  position: absolute;
-  bottom: 3px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 10px;
-  border: 2px solid #666;
-  border-top: none;
-  border-radius: 0 0 4px 4px;
-  background: none;
+/* Building icon for placeholder */
+.profile-avatar .profile-icon i {
+  font-size: 28px;
+  color: #666;
 }
 
 .profile-info h1 {
@@ -242,22 +202,8 @@
   border: 1px solid #f5c6cb;
 }
 
-/* Loading State - exactly matching Profile.css */
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 50vh;
-  font-size: 1.2rem;
-  color: #6c757d;
-  background: white;
-  border-radius: 12px;
-  margin: 20px auto;
-  max-width: 800px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-}
-
-/* Error States */
+/* Loading and Error States */
+.loading-container,
 .error-container {
   flex: 1;
   display: flex;
@@ -328,9 +274,137 @@
   background: #3a56d4;
 }
 
+/* Brand Profile Form Styles */
+.edit-profile-form {
+  padding: 0;
+}
+
+.edit-profile-form .detail-section {
+  padding: 30px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.edit-profile-form .detail-section:last-of-type {
+  border-bottom: none;
+}
+
+.edit-profile-form .detail-section h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+  font-family: 'Inter', sans-serif;
+}
+
+.readonly-field {
+  background-color: #f8f9fa !important;
+  cursor: not-allowed !important;
+  color: #6c757d;
+  padding: 12px;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.approved {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.status-badge.pending {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.form-actions {
+  display: flex !important;
+  gap: 20px !important;
+  justify-content: flex-end !important;
+  padding: 30px 20px 20px 20px !important;
+  border-top: 1px solid #e9ecef !important;
+  margin-top: 30px !important;
+  background-color: #fafafa !important;
+}
+
+/* Update Profile Button */
+.form-actions .login-button {
+  padding: 14px 30px !important;
+  min-width: 140px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  margin-right: 10px !important;
+  background-color: #4361ee !important;
+  border: none !important;
+  border-radius: 5px !important;
+  color: white !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+.form-actions .login-button:hover {
+  background-color: #3a56d4 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3) !important;
+}
+
+.form-actions .login-button:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Cancel Button */
+.form-actions .back-button {
+  padding: 14px 30px !important;
+  min-width: 120px !important;
+  border: 2px solid #ddd !important;
+  background-color: white !important;
+  color: #555 !important;
+  border-radius: 5px !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+.form-actions .back-button:hover {
+  background-color: #f8f9fa !important;
+  border-color: #aaa !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.form-actions .back-button:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+/* Phone input container styling */
+.react-tel-input {
+  width: 100% !important;
+}
+
+.react-tel-input .form-control {
+  width: 100% !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
 /* Responsive Design - matching Profile.css breakpoints */
 @media (max-width: 768px) {
-  .profile-content {
+  .brand-profile-content {
     margin: 10px;
     border-radius: 8px;
   }
@@ -394,4 +468,110 @@
   .profile-subtitle {
     font-size: 0.875rem;
   }
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-popup {
+  background-color: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  min-width: 250px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4361ee;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-popup p {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Success message improvements */
+.success-message {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Form section improvements */
+.detail-section h3 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.detail-section p {
+  margin-bottom: 15px;
+  font-style: italic;
+}
+
+/* Read-only field styling */
+.form-group input[readonly],
+.form-group select[readonly] {
+  background-color: #f8f9fa !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
+.form-group small {
+  display: block;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+/* Loading state for disabled fields */
+.form-group input:disabled,
+.form-group select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Button improvements */
+.form-actions button:disabled {
+  cursor: not-allowed !important;
+  opacity: 0.6 !important;
+}
+
+.back-button:hover:not(:disabled) {
+  background-color: #f8f9fa !important;
+  border-color: #adb5bd !important;
 }

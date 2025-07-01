@@ -4,7 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { brandRegister, brandLogin, verifyBrandOTP, resendBrandOTP } = require('../controllers/authController');
-const { forgotPassword, verifyForgotPasswordOTP, resetPassword, logout, getProfile } = require('../controllers/brandAuthController');
+const { forgotPassword, verifyForgotPasswordOTP, resetPassword, logout, getProfile, updateProfile } = require('../controllers/brandAuthController');
 const { authenticateToken } = require('../middleware/auth');
 const { asyncHandler } = require('../middleware/errorHandler');
 
@@ -48,6 +48,7 @@ router.post('/resend-otp', asyncHandler(resendBrandOTP));
 router.post('/login', asyncHandler(brandLogin));
 router.post('/logout', asyncHandler(logout));
 router.get('/profile', authenticateToken, asyncHandler(getProfile));
+router.put('/profile', authenticateToken, asyncHandler(updateProfile));
 
 // Brand forgot password routes
 router.post('/forgot-password', asyncHandler(forgotPassword));

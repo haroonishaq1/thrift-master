@@ -17,6 +17,7 @@ function Home({ isLoggedIn }) {
   const [educationOffers, setEducationOffers] = useState([]);
   const [fitnessOffers, setFitnessOffers] = useState([]);
   const [featuredOffers, setFeaturedOffers] = useState([]);
+  const [newLineupOffers, setNewLineupOffers] = useState([]);
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -38,14 +39,11 @@ function Home({ isLoggedIn }) {
   }, [location.state]);
 
   const scrollToCategorySection = (categoryValue) => {
-    // Map category values to section IDs
+    // Map category values to section IDs (only for categories shown on Home page)
     const categoryToSectionId = {
       'food': 'food-drink-section',
-      'fitness': 'fitness-section',
       'electronics': 'electronics-section',
-      'beauty': 'beauty-section',
       'fashion': 'fashion-section',
-      'education': 'education-section',
       'all': 'shop-by-category-section'
     };
     
@@ -73,6 +71,11 @@ function Home({ isLoggedIn }) {
     const fetchData = async () => {
       try {
         setLoading(true);
+        
+        // Start loading timeout - maximum 1 second
+        const loadingTimeout = setTimeout(() => {
+          setLoading(false);
+        }, 1000);
         
         // Fetch electronics offers
         const electronicsResponse = await offersAPI.getOffersByCategory('electronics');
@@ -102,9 +105,16 @@ function Home({ isLoggedIn }) {
         const featuredResponse = await offersAPI.getFeaturedOffers(4);
         setFeaturedOffers(featuredResponse.data || []);
         
+        // Fetch new lineup offers
+        const newLineupResponse = await offersAPI.getNewLineupOffers();
+        setNewLineupOffers(newLineupResponse.data || []);
+        
         // Fetch brands
         const brandsResponse = await offersAPI.getBrands();
         setBrands(brandsResponse.data || []);
+        
+        // Clear timeout and stop loading
+        clearTimeout(loadingTimeout);
         
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -116,6 +126,7 @@ function Home({ isLoggedIn }) {
         setEducationOffers([]);
         setFitnessOffers([]);
         setFeaturedOffers([]);
+        setNewLineupOffers([]);
         setBrands([]);
       } finally {
         setLoading(false);
@@ -183,15 +194,10 @@ function Home({ isLoggedIn }) {
     }
   };
 
-  // Handle hot deals card click
+  // Handle hot deals card click - single offer view
   const handleHotDealClick = (dealId) => {
-    // Navigate with hot deals context
-    navigate(`/offer/${dealId}`, { 
-      state: { 
-        source: 'hotdeals', 
-        title: 'HOT DEALS' 
-      } 
-    });
+    // Navigate without source context for single offer view
+    navigate(`/offer/${dealId}`);
   };
 
   // Handle brand card click - navigate to offer page with first offer from that brand
@@ -364,11 +370,8 @@ function Home({ isLoggedIn }) {
                 <h2>Hot Deals</h2>
               </div>
               <button className="show-more" onClick={() => {
-                if (featuredOffers.length > 0) {
-                  navigate(`/offer/${featuredOffers[0].id}`);
-                } else {
-                  navigate('/offers?category=featured');
-                }
+                // Navigate to offers page with carousel view for "show more"
+                navigate('/offers?category=featured&view=carousel');
               }}>
                 Show more <span>→</span>
               </button>
@@ -393,6 +396,54 @@ function Home({ isLoggedIn }) {
               ))}
             </div>
           )}
+          {featuredOffers.length > 0 && (
+            <div className="offers-count">
+              <span>{featuredOffers.length > 4 ? '4' : featuredOffers.length} of {featuredOffers.length} offers</span>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* New to Lineup Section */}
+      <section className="new-to-lineup">
+        <div className="container">
+          <div className="section-header">
+            <div className="section-title-row">
+              <div className="section-title-content">
+                <h2>New to Lineup</h2>
+              </div>
+              {newLineupOffers.length > 0 && (
+                <button className="show-more" onClick={() => {
+                  navigate('/offers?category=newlineup&view=carousel');
+                }}>
+                  Show more <span>→</span>
+                </button>
+              )}
+            </div>
+            <p>Fresh offers just added - don't miss out!</p>
+          </div>
+          {loading ? (
+            <div className="loading-spinner">Loading new lineup...</div>
+          ) : newLineupOffers.length > 0 ? (
+            <div className={`deals-grid offers-count-${newLineupOffers.length}`}>
+              {newLineupOffers.map((offer, index) => (
+                <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`)} style={{ cursor: 'pointer' }}>
+                  <ProductCard
+                    imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
+                    logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}
+                    brand={offer.brand_name}
+                    title={offer.title}
+                    description={`${offer.discount_percent}% off`}
+                    logoAlt={offer.brand_name}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="no-offers">
+              <p>No lineup offers right now. Check back soon!</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -408,11 +459,7 @@ function Home({ isLoggedIn }) {
               <div className="category-title-section">
                 <h3>Electronics & Technology</h3>
                 <button className="show-more" onClick={() => {
-                  if (electronicsOffers.length > 0) {
-                    navigate(`/offer/${electronicsOffers[0].id}`);
-                  } else {
-                    navigate('/offers?category=electronics');
-                  }
+                  navigate('/offers?category=electronics&view=carousel');
                 }}>
                   Show more <span>→</span>
                 </button>
@@ -423,15 +470,10 @@ function Home({ isLoggedIn }) {
             {loading ? (
               <div className="loading-spinner">Loading electronics offers...</div>
             ) : (
-              <div className="category-offers-grid">
+              <div className={`category-offers-grid offers-count-${electronicsOffers.length}`}>
                 {electronicsOffers.length > 0 ? (
                   electronicsOffers.map((offer, index) => (
-                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { 
-                      state: { 
-                        source: 'category', 
-                        title: 'TECHNOLOGY' 
-                      } 
-                    })} style={{ cursor: 'pointer' }}>
+                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`)} style={{ cursor: 'pointer' }}>
                       <ProductCard
                         imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
                         logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}
@@ -456,11 +498,7 @@ function Home({ isLoggedIn }) {
               <div className="category-title-section">
                 <h3>Fashion</h3>
                 <button className="show-more" onClick={() => {
-                  if (fashionOffers.length > 0) {
-                    navigate(`/offer/${fashionOffers[0].id}`);
-                  } else {
-                    navigate('/offers?category=fashion');
-                  }
+                  navigate('/offers?category=fashion&view=carousel');
                 }}>
                   Show more <span>→</span>
                 </button>
@@ -471,15 +509,10 @@ function Home({ isLoggedIn }) {
             {loading ? (
               <div className="loading-spinner">Loading fashion offers...</div>
             ) : (
-              <div className="category-offers-grid">
+              <div className={`category-offers-grid offers-count-${fashionOffers.length}`}>
                 {fashionOffers.length > 0 ? (
                   fashionOffers.map((offer, index) => (
-                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { 
-                      state: { 
-                        source: 'category', 
-                        title: 'FASHION' 
-                      } 
-                    })} style={{ cursor: 'pointer' }}>
+                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`)} style={{ cursor: 'pointer' }}>
                       <ProductCard
                         imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
                         logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}
@@ -504,11 +537,7 @@ function Home({ isLoggedIn }) {
               <div className="category-title-section">
                 <h3>Food & Drink</h3>
                 <button className="show-more" onClick={() => {
-                  if (foodOffers.length > 0) {
-                    navigate(`/offer/${foodOffers[0].id}`);
-                  } else {
-                    navigate('/offers?category=food');
-                  }
+                  navigate('/offers?category=food&view=carousel');
                 }}>
                   Show more <span>→</span>
                 </button>
@@ -519,15 +548,10 @@ function Home({ isLoggedIn }) {
             {loading ? (
               <div className="loading-spinner">Loading food & drink offers...</div>
             ) : (
-              <div className="category-offers-grid">
+              <div className={`category-offers-grid offers-count-${foodOffers.length}`}>
                 {foodOffers.length > 0 ? (
                   foodOffers.map((offer, index) => (
-                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { 
-                      state: { 
-                        source: 'category', 
-                        title: 'FOOD & DRINK' 
-                      } 
-                    })} style={{ cursor: 'pointer' }}>
+                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`)} style={{ cursor: 'pointer' }}>
                       <ProductCard
                         imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
                         logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}
@@ -546,101 +570,28 @@ function Home({ isLoggedIn }) {
               </div>
             )}
           </div>
-          
-          <div className="category-section" id="beauty-section">
-            <div className="category-header">
-              <div className="category-title-section">
-                <h3>Beauty</h3>
-                <button className="show-more" onClick={() => {
-                  if (beautyOffers.length > 0) {
-                    navigate(`/offer/${beautyOffers[0].id}`);
-                  } else {
-                    navigate('/offers?category=beauty');
-                  }
-                }}>
-                  Show more <span>→</span>
-                </button>
+        </div>
+      </section>
+
+      {/* Banner Section */}
+      <section className="app-banner">
+        <div className="container">
+          <div className="banner-content">
+            <div className="banner-text">
+              <h2>Discover even more with Thrift</h2>
+              <p>Exclusive student discounts, amazing deals, and premium offers – all in one place!</p>
+              <div className="app-rating">
+                <span className="rating-score">4.8</span>
+                <div className="stars">★★★★★</div>
+                <span className="review-count">36k reviews</span>
               </div>
-              <p className="category-description">Look and feel your best with exclusive beauty deals. From skincare to cosmetics, find premium beauty products at student-friendly prices.</p>
             </div>
-            
-            {loading ? (
-              <div className="loading-spinner">Loading beauty offers...</div>
-            ) : (
-              <div className="category-offers-grid">
-                {beautyOffers.length > 0 ? (
-                  beautyOffers.map((offer, index) => (
-                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { 
-                      state: { 
-                        source: 'category', 
-                        title: 'BEAUTY' 
-                      } 
-                    })} style={{ cursor: 'pointer' }}>
-                      <ProductCard
-                        imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
-                        logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}
-                        brand={offer.brand_name}
-                        title={offer.title}
-                        description={`${offer.discount_percent}% off`}
-                        logoAlt={offer.brand_name}
-                      />
-                    </div>
-                  ))
-                ) : (
-                  <div className="no-offers">
-                    <p>No beauty offers available at the moment. Check back soon!</p>
-                  </div>
-                )}
+            <div className="banner-image">
+              {/* Replace this with actual banner image */}
+              <div className="phone-mockup">
+                <img src="/images/iPhone-15-Pro.svg" alt="Thrift Platform" />
               </div>
-            )}
-          </div>
-          
-          <div className="category-section" id="education-section">
-            <div className="category-header">
-              <div className="category-title-section">
-                <h3>Education</h3>
-                <button className="show-more" onClick={() => {
-                  if (educationOffers.length > 0) {
-                    navigate(`/offer/${educationOffers[0].id}`);
-                  } else {
-                    navigate('/offers?category=education');
-                  }
-                }}>
-                  Show more <span>→</span>
-                </button>
-              </div>
-              <p className="category-description">Enhance your learning journey with educational discounts. From online courses to software subscriptions, invest in your future for less.</p>
             </div>
-            
-            {loading ? (
-              <div className="loading-spinner">Loading education offers...</div>
-            ) : (
-              <div className="category-offers-grid">
-                {educationOffers.length > 0 ? (
-                  educationOffers.map((offer, index) => (
-                    <div key={offer.id || index} onClick={() => navigate(`/offer/${offer.id}`, { 
-                      state: { 
-                        source: 'category', 
-                        title: 'EDUCATION' 
-                      } 
-                    })} style={{ cursor: 'pointer' }}>
-                      <ProductCard
-                        imageSrc={offer.image_url ? `http://localhost:5000${offer.image_url}` : '/images/placeholder.jpg'}
-                        logo={offer.brand_logo ? `http://localhost:5000${offer.brand_logo}` : null}
-                        brand={offer.brand_name}
-                        title={offer.title}
-                        description={`${offer.discount_percent}% off`}
-                        logoAlt={offer.brand_name}
-                      />
-                    </div>
-                  ))
-                ) : (
-                  <div className="no-offers">
-                    <p>No education offers available at the moment. Check back soon!</p>
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         </div>
       </section>

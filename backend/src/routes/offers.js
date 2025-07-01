@@ -236,6 +236,55 @@ router.get('/search', async (req, res) => {
   }
 });
 
+// GET /api/offers/search/brands - Search brands for suggestions
+router.get('/search/brands', async (req, res) => {
+  try {
+    const { q, limit = 5 } = req.query;
+    if (!q) {
+      return res.status(400).json({
+        success: false,
+        message: 'Search query is required'
+      });
+    }
+
+    const { Brand } = require('../models/Brand');
+    const brands = await Brand.searchBrands(q, parseInt(limit));
+
+    res.json({
+      success: true,
+      data: brands,
+      message: `Found ${brands.length} brands matching "${q}"`
+    });
+  } catch (error) {
+    console.error('Error searching brands:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to search brands',
+      error: error.message
+    });
+  }
+});
+
+// GET /api/offers/new-lineup - Get offers created within last 5 hours
+router.get('/new-lineup', async (req, res) => {
+  try {
+    const offers = await Offer.getNewLineup();
+
+    res.json({
+      success: true,
+      data: offers,
+      message: `Found ${offers.length} new lineup offers`
+    });
+  } catch (error) {
+    console.error('Error fetching new lineup offers:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve new lineup offers',
+      error: error.message
+    });
+  }
+});
+
 // GET /api/offers/:id - Get specific offer
 router.get('/:id', async (req, res) => {
   try {

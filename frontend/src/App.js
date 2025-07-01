@@ -30,6 +30,7 @@ import BrandForgotPassword from './pages/brand/BrandForgotPassword';
 import BrandForgotPasswordOtpVerification from './pages/brand/BrandForgotPasswordOtpVerification';
 import BrandResetPassword from './pages/brand/BrandResetPassword';
 import BrandProfile from './pages/brand/BrandProfile';
+import BrandEditProfile from './pages/brand/BrandEditProfile';
 import BrandDashboard from './pages/brand/BrandDashboard';
 import BrandOffers from './pages/brand/BrandOffers';
 import BrandAddOffer from './pages/brand/BrandAddOffer';
@@ -39,6 +40,15 @@ import OfferDebugger from './pages/brand/OfferDebugger';
 // Admin Panel Routes
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
+
+// Policy Pages
+import TermsOfService from './pages/TermsOfService';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import CookiePolicy from './pages/CookiePolicy';
+import Contact from './pages/Contact';
+
+// Error Pages
+import NotFound from './pages/NotFound';
 
 // Brand Layout
 import BrandLayout from './components/brand/BrandLayout';
@@ -110,6 +120,7 @@ function App() {
           
           {/* Brand Admin Panel Routes - Protected with Sidebar */}
           <Route path="/brand/profile" element={<BrandLayout><BrandProfile /></BrandLayout>} />
+          <Route path="/brand/edit-profile" element={<BrandLayout><BrandEditProfile /></BrandLayout>} />
           <Route path="/brand/dashboard" element={<BrandLayout><BrandDashboard /></BrandLayout>} />
           <Route path="/brand/offers" element={<BrandLayout><BrandOffers /></BrandLayout>} />
           <Route path="/brand/add-offer" element={<BrandLayout><BrandAddOffer /></BrandLayout>} />
@@ -119,6 +130,15 @@ function App() {
           {/* Admin Panel Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          
+          {/* Policy Pages */}
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
+          <Route path="/contact" element={<Contact />} />
+          
+          {/* 404 Error Page - Must be last */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </Router>

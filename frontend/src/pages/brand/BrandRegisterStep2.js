@@ -68,8 +68,29 @@ function BrandRegisterStep2() {
       newErrors.companyEmail = 'Please enter a valid email';
     }
     
-    if (!phoneNumber || phoneNumber.length < 10) {
+    if (!phoneNumber) {
       newErrors.phone = 'Phone number is required';
+    } else {
+      // Remove all non-numeric characters except +
+      const cleanNumber = phoneNumber.replace(/[^\d+]/g, '');
+      
+      // Check Pakistani phone number format
+      let isValid = false;
+      
+      if (cleanNumber.startsWith('+92')) {
+        // +92 + 10 digits = 13 total characters
+        isValid = cleanNumber.length === 13;
+      } else if (cleanNumber.startsWith('92')) {
+        // 92 + 10 digits = 12 total characters  
+        isValid = cleanNumber.length === 12;
+      } else {
+        // For other formats, should be exactly 11 digits
+        isValid = cleanNumber.length === 11;
+      }
+      
+      if (!isValid) {
+        newErrors.phone = 'Phone number must be 11 digits (Pakistani format: +92xxxxxxxxxx)';
+      }
     }
     
     if (!formData.password) {

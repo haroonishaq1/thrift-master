@@ -1,7 +1,7 @@
 // Import auth utilities
 import { getUserToken } from '../utils/auth';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'development' ? '/api' : 'http://localhost:5000/api');
 
 /**
  * Generic API request function
@@ -369,6 +369,17 @@ export const offersAPI = {
     return apiRequest(`/offers/search?${queryParams.toString()}`, { method: 'GET' });
   },
 
+  // Search brands for suggestions
+  searchBrands: async (searchTerm, limit = 5) => {
+    const queryParams = new URLSearchParams({ q: searchTerm, limit: limit.toString() });
+    return apiRequest(`/offers/search/brands?${queryParams.toString()}`, { method: 'GET' });
+  },
+
+  // Get new lineup offers
+  getNewLineupOffers: async () => {
+    return apiRequest('/offers/new-lineup', { method: 'GET' });
+  },
+
   // Get specific offer
   getOfferById: async (id) => {
     return apiRequest(`/offers/${id}`, { method: 'GET' });
@@ -534,6 +545,35 @@ export const brandAPI = {
       return data;
     });
   },
+
+  // Update brand profile
+  updateBrandProfile: async (updateData) => {
+    const brandToken = localStorage.getItem('brand-token');
+    
+    if (!brandToken) {
+      throw new Error('No authentication token found. Please log in again.');
+    }
+    
+    if (brandToken === 'null' || brandToken === 'undefined') {
+      throw new Error('Invalid authentication token. Please log in again.');
+    }
+    
+    return fetch(`${API_BASE_URL}/brand-auth/profile`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${brandToken}`,
+      },
+      body: JSON.stringify(updateData),
+    }).then(async (response) => {
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+      }
+      return data;
+    });
+  },
 };
 
 /**
@@ -559,6 +599,16 @@ export const tokenUtils = {
     } catch (error) {
       return true;
     }
+  },
+};
+
+// Contact API
+export const contactAPI = {
+  sendMessage: async (formData) => {
+    return apiRequest('/contact', {
+      method: 'POST',
+      body: JSON.stringify(formData),
+    });
   },
 };
 
