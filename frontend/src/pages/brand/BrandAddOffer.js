@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { getBrandToken, isBrandAuthenticated } from '../../utils/auth';
 import { offersAPI } from '../../services/api';
+import { CATEGORY_OPTIONS } from '../../constants/categories';
 import '../../styles/brand/BrandAddOffer.css';
 
 function BrandAddOffer() {

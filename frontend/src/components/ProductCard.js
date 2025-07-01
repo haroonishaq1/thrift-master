@@ -30,7 +30,7 @@ const ProductCard = memo(function ProductCard({ id, brand, discount, logo, image
     <div className="product-card" onClick={handleClick} style={{ cursor: disableClick ? 'default' : 'pointer' }}>
       <div className="card-image-container">
         <img src={imageSrc} alt={title || brand} className="main-image" />
-        <div className="brand-logo-overlay">
+        <div className={`brand-logo-overlay ${logoLoaded && !logoError ? 'has-logo' : ''}`}>
           {logo && logo.trim() && !logoError ? (
             <img 
               ref={logoRef}

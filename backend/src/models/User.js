@@ -6,8 +6,13 @@ const CREATE_USERS_TABLE = `
     id SERIAL PRIMARY KEY,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
+    username VARCHAR(100) UNIQUE,
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
+    age INTEGER,
+    gender VARCHAR(20),
+    country VARCHAR(100),
+    city VARCHAR(100),
     university VARCHAR(255) NOT NULL,
     course VARCHAR(255) NOT NULL,
     graduation_year INTEGER NOT NULL,
@@ -111,6 +116,13 @@ const User = {
     return result.rows[0];
   },
 
+  // Find user by username
+  findByUsername: async (username) => {
+    const query = 'SELECT * FROM users WHERE username = $1';
+    const result = await pool.query(query, [username]);
+    return result.rows[0];
+  },
+
   // Update email verification status
   updateEmailVerification: async (email, verified = true) => {
     const query = 'UPDATE users SET email_verified = $1, updated_at = CURRENT_TIMESTAMP WHERE email = $2 RETURNING *';
@@ -149,6 +161,34 @@ const User = {
       WHERE id = $${paramCount} RETURNING *
     `;
 
+    const result = await pool.query(query, values);
+    return result.rows[0];
+  },
+
+  // Update user by ID
+  updateById: async (id, userData) => {
+    const fields = [];
+    const values = [];
+    let paramCount = 1;
+
+    Object.keys(userData).forEach(key => {
+      if (userData[key] !== undefined && userData[key] !== null) {
+        fields.push(`${key} = $${paramCount}`);
+        values.push(userData[key]);
+        paramCount++;
+      }
+    });
+
+    if (fields.length === 0) {
+      throw new Error('No fields to update');
+    }
+
+    values.push(id);
+    const query = `
+      UPDATE users SET ${fields.join(', ')}, updated_at = CURRENT_TIMESTAMP 
+      WHERE id = $${paramCount} RETURNING *
+    `;
+    
     const result = await pool.query(query, values);
     return result.rows[0];
   }

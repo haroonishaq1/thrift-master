@@ -104,17 +104,20 @@ function BrandLogin() {
       }
 
       // Save token and brand data to local storage using our utility function
+      // Map the complete brand data properly
       const brandData = {
         id: data.data?.brand?.id,
         name: data.data?.brand?.name,
         email: data.data?.brand?.email,
-        phone: data.data?.brand?.phoneNumber || data.data?.brand?.phone,
+        phone_number: data.data?.brand?.phone_number || data.data?.brand?.phoneNumber || data.data?.brand?.phone,
         website: data.data?.brand?.website || data.data?.brand?.websiteUrl,
         category: data.data?.brand?.category,
         description: data.data?.brand?.description,
         logo: data.data?.brand?.logo,
         status: data.data?.brand?.status,
+        is_approved: data.data?.brand?.is_approved,
         created_at: data.data?.brand?.created_at,
+        updated_at: data.data?.brand?.updated_at,
         verified: data.data?.brand?.verified,
         adminId: data.data?.brand?.adminId,
         adminUsername: data.data?.brand?.adminUsername,

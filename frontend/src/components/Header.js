@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { clearUserAuth } from '../utils/auth';
 import { offersAPI } from '../services/api';
+import { CATEGORIES } from '../constants/categories';
 import '../styles/Header.css';
 
 function Header({ isLoggedIn }) {
@@ -16,13 +17,9 @@ function Header({ isLoggedIn }) {
   const searchContainerRef = useRef(null);
   const navigate = useNavigate();
 
+  // Import categories from shared constants and add 'ALL' option
   const categories = [
-    { name: 'Food & Drink', value: 'food' },
-    { name: 'Fitness', value: 'fitness' },
-    { name: 'Technology', value: 'electronics' },
-    { name: 'Beauty', value: 'beauty' },
-    { name: 'Fashion', value: 'fashion' },
-    { name: 'Education', value: 'education' },
+    ...CATEGORIES,
     { name: 'ALL', value: 'all' }
   ];
 

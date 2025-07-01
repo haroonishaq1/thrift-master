@@ -412,12 +412,9 @@ const updateProfile = async (req, res) => {
 
     // Check if username is taken by another user
     if (username) {
-      const existingUser = await User.findOne({ 
-        username: username,
-        _id: { $ne: req.user.userId } // Exclude current user
-      });
+      const existingUser = await User.findByUsername(username);
       
-      if (existingUser) {
+      if (existingUser && existingUser.id !== req.user.userId) {
         return res.status(400).json(
           formatResponse(false, 'Username is already taken')
         );
@@ -429,14 +426,13 @@ const updateProfile = async (req, res) => {
       first_name: firstName,
       last_name: lastName,
       username: username,
-      age: age ? parseInt(age) : undefined,
+      age: age ? parseInt(age) : null,
       gender: gender,
       phone: phone,
       country: country,
       city: city,
       university: university,
-      course: course,
-      updated_at: new Date()
+      course: course
     };
 
     // Remove undefined values
@@ -446,11 +442,7 @@ const updateProfile = async (req, res) => {
       }
     });
 
-    const user = await User.findByIdAndUpdate(
-      req.user.userId,
-      updateData,
-      { new: true, runValidators: true }
-    );
+    const user = await User.updateById(req.user.userId, updateData);
 
     if (!user) {
       return res.status(404).json(

@@ -85,15 +85,37 @@ function EditProfile({ isLoggedIn }) {
       const response = await authAPI.updateProfile(updateData);
       
       if (response.success) {
-        // Update localStorage with new data
-        const updatedUserData = { ...userData, ...updateData };
-        storeUserAuth(localStorage.getItem('token'), updatedUserData);
+        // Update localStorage with new data from API response
+        const token = localStorage.getItem('userToken');
+        const apiUserData = response.data.user;
+        
+        // Normalize field names for consistency (handle both first_name/firstName formats)
+        const normalizedUserData = {
+          ...userData,
+          ...apiUserData,
+          first_name: apiUserData.first_name || apiUserData.firstName,
+          last_name: apiUserData.last_name || apiUserData.lastName,
+          firstName: apiUserData.firstName || apiUserData.first_name,
+          lastName: apiUserData.lastName || apiUserData.last_name,
+        };
+        
+        console.log('🔍 Original userData:', userData);
+        console.log('🔍 API response data:', apiUserData);
+        console.log('🔍 Final normalizedUserData:', normalizedUserData);
+        
+        storeUserAuth(token, normalizedUserData);
+        
+        // Verify data was stored
+        console.log('🔍 Stored data verification:', localStorage.getItem('userData'));
         
         setSuccess('Profile updated successfully!');
         
-        // Redirect back to profile page after a short delay
+        // Redirect back to profile page after a short delay with updated data flag
         setTimeout(() => {
-          navigate('/my-profile');
+          navigate('/my-profile', { 
+            replace: true,
+            state: { forceRefresh: true, updatedData: normalizedUserData }
+          });
         }, 2000);
       }
     } catch (error) {

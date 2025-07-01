@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
+import { BRAND_CATEGORY_OPTIONS } from '../../constants/categories';
 import '../../styles/brand/BrandRegister.css';
 
 // Brand registration step indicator component
@@ -94,20 +95,9 @@ function BrandRegisterStep1() {
     navigate('/brand/register/step2', { state: { formData: values } });
   };
   
-  // Sample brand categories
-  const categories = [
-    { value: '', label: 'Select a category' },
-    { value: 'fashion', label: 'Fashion & Apparel' },
-    { value: 'electronics', label: 'Electronics' },
-    { value: 'beauty', label: 'Beauty & Personal Care' },
-    { value: 'home', label: 'Home & Furniture' },
-    { value: 'food', label: 'Food & Beverages' },
-    { value: 'sports', label: 'Sports & Fitness' },
-    { value: 'entertainment', label: 'Entertainment' },
-    { value: 'travel', label: 'Travel & Hospitality' },
-    { value: 'education', label: 'Education' },
-    { value: 'other', label: 'Other' }
-  ];
+  
+  // Use shared brand category options
+  const categories = BRAND_CATEGORY_OPTIONS;
   
   return (
     <div className="brand-register-container">

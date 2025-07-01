@@ -6,6 +6,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { getBrandData, isBrandAuthenticated, storeBrandAuth } from '../../utils/auth';
 import { brandAPI } from '../../services/api';
+import { CATEGORY_OPTIONS } from '../../constants/categories';
 import '../../styles/brand/BrandProfile.css';
 import '../../styles/Login.css';
 
@@ -135,16 +136,27 @@ function BrandEditProfile() {
       const response = await brandAPI.updateBrandProfile(updateData);
       
       if (response.success) {
-        // Update stored brand data
+        // Update stored brand data with the complete updated data
         const token = localStorage.getItem('brand-token');
         const updatedBrandData = { ...brandData, ...response.data.brand };
+        
+        console.log('🔍 Original brandData:', brandData);
+        console.log('🔍 API response data:', response.data.brand);
+        console.log('🔍 Final updatedBrandData:', updatedBrandData);
+        
         storeBrandAuth(token, updatedBrandData);
+        
+        // Verify data was stored
+        console.log('🔍 Stored data verification:', localStorage.getItem('brand-data'));
         
         setSuccess('Profile updated successfully!');
         
-        // Redirect back to profile page after a short delay
+        // Redirect back to profile page after a short delay with updated data flag
         setTimeout(() => {
-          navigate('/brand/profile');
+          navigate('/brand/profile', { 
+            replace: true,
+            state: { forceRefresh: true, updatedData: updatedBrandData }
+          });
         }, 2000);
       }
     } catch (error) {
@@ -259,20 +271,11 @@ function BrandEditProfile() {
                         className="detail-value"
                         disabled={loading}
                       >
-                        <option value="">Select Category</option>
-                        <option value="fashion">Fashion</option>
-                        <option value="electronics">Electronics</option>
-                        <option value="home">Home & Garden</option>
-                        <option value="sports">Sports & Outdoors</option>
-                        <option value="books">Books & Media</option>
-                        <option value="beauty">Beauty & Personal Care</option>
-                        <option value="food">Food & Beverages</option>
-                        <option value="automotive">Automotive</option>
-                        <option value="health">Health & Wellness</option>
-                        <option value="toys">Toys & Games</option>
-                        <option value="travel">Travel & Tourism</option>
-                        <option value="education">Education</option>
-                        <option value="other">Other</option>
+                        {CATEGORY_OPTIONS.map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
                       </Field>
                       <ErrorMessage name="category" component="div" className="error-message" />
                     </div>

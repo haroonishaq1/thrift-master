@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { isBrandAuthenticated, getBrandData, clearBrandAuth } from '../../utils/auth';
 import { brandAPI } from '../../services/api';
 import '../../styles/brand/BrandProfile.css';
 
 function BrandProfile() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [brandData, setBrandData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Clear navigation state after processing
+  useEffect(() => {
+    if (location.state?.refreshData) {
+      // Clear the state to prevent unnecessary re-renders
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   // Check authentication and redirect
   useEffect(() => {
@@ -24,27 +33,43 @@ function BrandProfile() {
       try {
         setIsLoading(true);
         
-        // First try to get from localStorage
-        const localBrandData = getBrandData();
-        if (localBrandData) {
-          setBrandData(localBrandData);
+        // Check if we have updated data from navigation state
+        const forceRefresh = location.state?.forceRefresh;
+        const updatedData = location.state?.updatedData;
+        
+        if (forceRefresh && updatedData) {
+          console.log('🔍 Using updated data from edit page:', updatedData);
+          setBrandData(updatedData);
+          setIsLoading(false);
+          return;
         }
-
-        // Then try to get complete profile data from API
+        
+        // Always fetch fresh data from API to ensure complete data
         try {
+          console.log('🔍 Fetching fresh profile data from API...');
           const profileResponse = await brandAPI.getBrandProfile();
           console.log('🔍 Full API response:', profileResponse);
           if (profileResponse.success && profileResponse.data && profileResponse.data.brand) {
-            const brandData = profileResponse.data.brand;
-            console.log('✅ API Profile data:', brandData);
-            console.log('🔍 Available API fields:', Object.keys(brandData));
-            console.log('🔍 API Phone field:', brandData.phone_number);
-            console.log('🔍 API Website field:', brandData.website);
-            setBrandData(brandData);
+            const freshBrandData = profileResponse.data.brand;
+            console.log('✅ Fresh API Profile data:', freshBrandData);
+            setBrandData(freshBrandData);
+            
+            // Update localStorage with fresh data
+            const token = localStorage.getItem('brand-token');
+            if (token) {
+              const { storeBrandAuth } = await import('../../utils/auth');
+              storeBrandAuth(token, freshBrandData);
+              console.log('✅ Updated localStorage with fresh data');
+            }
           }
         } catch (apiError) {
-          console.log('ℹ️ API profile not available, using localStorage data:', apiError.message);
-          // If API fails, we already have localStorage data as fallback
+          console.log('ℹ️ API profile fetch failed:', apiError.message);
+          // If API fails, fallback to localStorage data
+          const localBrandData = getBrandData();
+          console.log('🔍 Fallback to localStorage data:', localBrandData);
+          if (localBrandData) {
+            setBrandData(localBrandData);
+          }
         }
         
         setError(null);
@@ -62,7 +87,7 @@ function BrandProfile() {
     };
 
     fetchBrandProfile();
-  }, [navigate]);
+  }, [navigate, location.state]);
 
   const handleEditProfile = () => {
     navigate('/brand/edit-profile');
