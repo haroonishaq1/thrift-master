@@ -25,7 +25,35 @@ function BrandEditProfile() {
     category: Yup.string()
       .required('Category is required'),
     phoneNumber: Yup.string()
-      .min(10, 'Phone number must be at least 10 digits')
+      .test('phone-validation', 'Invalid phone number format', function(value) {
+        // If phone number is provided, validate it
+        if (value && value.trim() !== '') {
+          const cleanNumber = value.replace(/[^\d]/g, ''); // Remove everything except digits
+          
+          // Pakistani mobile number validation
+          if (cleanNumber.startsWith('92')) {
+            // International format: must be exactly 12 digits (92 + 10 digits starting with 3)
+            const localNumber = cleanNumber.substring(2);
+            if (cleanNumber.length !== 12) {
+              return this.createError({ message: `Phone number must be exactly 12 digits for 92 format (${cleanNumber.length}/12 digits)` });
+            }
+            if (!localNumber.startsWith('3')) {
+              return this.createError({ message: 'Pakistani mobile numbers must start with 92 3xx xxx xxxx' });
+            }
+            return true;
+          } else if (cleanNumber.startsWith('03')) {
+            // Local format: must be exactly 11 digits
+            if (cleanNumber.length !== 11) {
+              return this.createError({ message: `Phone number must be exactly 11 digits for 03 format (${cleanNumber.length}/11 digits)` });
+            }
+            return true;
+          } else {
+            return this.createError({ message: 'Phone number must start with 92 or 03' });
+          }
+        }
+        // If empty, it's valid (optional field)
+        return true;
+      })
   });
 
   useEffect(() => {
@@ -55,10 +83,46 @@ function BrandEditProfile() {
     fetchBrandData();
   }, [navigate]);
 
-  const handleSubmit = async (values, { setSubmitting }) => {
+  const handleSubmit = async (values, { setSubmitting, setFieldError }) => {
     setLoading(true);
     setError('');
     setSuccess('');
+
+    // Manual phone validation before submit
+    if (values.phoneNumber && values.phoneNumber.trim() !== '') {
+      const cleanNumber = values.phoneNumber.replace(/[^\d]/g, ''); // Remove everything except digits
+      
+      let isValidPhone = false;
+      let errorMessage = '';
+      
+      if (cleanNumber.startsWith('92')) {
+        // International format: must be exactly 12 digits (92 + 10 digits starting with 3)
+        const localNumber = cleanNumber.substring(2);
+        if (cleanNumber.length !== 12) {
+          errorMessage = `Phone number must be exactly 12 digits for 92 format (currently ${cleanNumber.length} digits)`;
+        } else if (!localNumber.startsWith('3')) {
+          errorMessage = 'Pakistani mobile numbers must start with 92 3xx xxx xxxx';
+        } else {
+          isValidPhone = true;
+        }
+      } else if (cleanNumber.startsWith('03')) {
+        // Local format: must be exactly 11 digits
+        if (cleanNumber.length !== 11) {
+          errorMessage = `Phone number must be exactly 11 digits for 03 format (currently ${cleanNumber.length} digits)`;
+        } else {
+          isValidPhone = true;
+        }
+      } else {
+        errorMessage = 'Phone number must start with 92 or 03';
+      }
+      
+      if (!isValidPhone) {
+        setFieldError('phoneNumber', errorMessage);
+        setLoading(false);
+        setSubmitting(false);
+        return;
+      }
+    }
 
     try {
       // Prepare data for API call - only send editable fields
@@ -67,8 +131,6 @@ function BrandEditProfile() {
         category: values.category,
         phoneNumber: values.phoneNumber || ''
       };
-
-      console.log('Updating brand profile with:', updateData);
 
       const response = await brandAPI.updateBrandProfile(updateData);
       
@@ -125,7 +187,7 @@ function BrandEditProfile() {
       <div className="brand-profile-content">
         <div className="brand-profile-header">
           <div className="brand-profile-header-top">
-            <h2 className="brand-profile-title">Edit Brand Profile</h2>
+            <h2 className="brand-profile-title" style={{ marginTop: '20px' }}>Edit Brand Profile</h2>
           </div>
         </div>
 
@@ -170,7 +232,7 @@ function BrandEditProfile() {
             onSubmit={handleSubmit}
             enableReinitialize
           >
-            {({ isSubmitting, setFieldValue, values }) => (
+            {({ isSubmitting, setFieldValue, values, validateField, setFieldError }) => (
               <Form className="edit-profile-form">
                 <div className="detail-section">
                   <h3 style={{ textAlign: 'left' }}>Brand Information</h3>
@@ -220,7 +282,66 @@ function BrandEditProfile() {
                       <PhoneInput
                         country={'pk'}
                         value={values.phoneNumber}
-                        onChange={(phone) => setFieldValue('phoneNumber', phone)}
+                        onChange={(phone) => {
+                          const cleanNumber = phone.replace(/[^\d]/g, '');
+                          
+                          // Restrict input length based on format
+                          let maxLength = 0;
+                          if (cleanNumber.startsWith('92')) {
+                            maxLength = 12; // 92 + 10 digits
+                          } else if (cleanNumber.startsWith('03')) {
+                            maxLength = 11; // 03 + 9 digits
+                          } else {
+                            maxLength = 11; // Default to local format
+                          }
+                          
+                          // Prevent entering more digits than allowed
+                          if (cleanNumber.length > maxLength) {
+                            return; // Don't update if too long
+                          }
+                          
+                          // Always set the value first
+                          setFieldValue('phoneNumber', phone);
+                          
+                          // Real-time validation with error display
+                          if (cleanNumber && cleanNumber.trim() !== '') {
+                            let isValid = false;
+                            let errorMessage = '';
+                            
+                            if (cleanNumber.startsWith('92')) {
+                              const localPart = cleanNumber.substring(2);
+                              // Must be exactly 12 digits total (92 + 10 digits starting with 3)
+                              if (cleanNumber.length === 12 && localPart.startsWith('3')) {
+                                isValid = true;
+                              } else if (cleanNumber.length < 12) {
+                                errorMessage = `Phone number too short. Need ${12 - cleanNumber.length} more digits for 92 format.`;
+                              } else if (!localPart.startsWith('3')) {
+                                errorMessage = 'Pakistani mobile numbers must start with 92 3xx xxx xxxx';
+                              }
+                            } else if (cleanNumber.startsWith('03')) {
+                              // Local format: exactly 11 digits
+                              if (cleanNumber.length === 11) {
+                                isValid = true;
+                              } else if (cleanNumber.length < 11) {
+                                errorMessage = `Phone number too short. Need ${11 - cleanNumber.length} more digits for 03 format.`;
+                              }
+                            } else {
+                              errorMessage = 'Phone number must start with 92 or 03';
+                            }
+                            
+                            // Show error immediately if invalid
+                            if (!isValid && errorMessage) {
+                              setTimeout(() => {
+                                setFieldError('phoneNumber', errorMessage);
+                              }, 100);
+                            } else {
+                              // Clear error if valid
+                              setTimeout(() => {
+                                setFieldError('phoneNumber', '');
+                              }, 100);
+                            }
+                          }
+                        }}
                         disabled={loading}
                         inputStyle={{
                           width: '100%',
@@ -301,24 +422,11 @@ function BrandEditProfile() {
                   </div>
                 </div>
 
-                <div className="form-actions" style={{ 
-                  display: 'flex', 
-                  gap: '15px', 
-                  justifyContent: 'flex-end',
-                  padding: '20px 0',
-                  borderTop: '1px solid #e9ecef',
-                  marginTop: '20px'
-                }}>
+                <div className="form-actions">
                   <button 
                     type="submit" 
                     className="login-button"
                     disabled={isSubmitting || loading}
-                    style={{
-                      padding: '12px 24px',
-                      minWidth: '120px',
-                      cursor: (isSubmitting || loading) ? 'not-allowed' : 'pointer',
-                      opacity: (isSubmitting || loading) ? 0.6 : 1
-                    }}
                   >
                     {isSubmitting || loading ? 'Updating...' : 'Update Profile'}
                   </button>
@@ -328,16 +436,6 @@ function BrandEditProfile() {
                     onClick={() => navigate('/brand/profile')}
                     className="back-button"
                     disabled={loading}
-                    style={{
-                      padding: '12px 24px',
-                      border: '1px solid #ddd',
-                      backgroundColor: 'white',
-                      color: '#333',
-                      borderRadius: '5px',
-                      cursor: loading ? 'not-allowed' : 'pointer',
-                      fontWeight: 'bold',
-                      opacity: loading ? 0.6 : 1
-                    }}
                   >
                     Cancel
                   </button>
