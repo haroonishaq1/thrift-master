@@ -115,6 +115,15 @@ function Profile({ isLoggedIn }) {
               </div>
             </div>
           </div>
+
+          <div className="profile-actions">
+            <button 
+              className="change-password-button"
+              onClick={() => navigate('/change-password')}
+            >
+              Change Password
+            </button>
+          </div>
         </div>
       </div>
 

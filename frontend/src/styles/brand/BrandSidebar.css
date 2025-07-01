@@ -1,6 +1,7 @@
 .brand-sidebar {
   width: 250px;
-  height: 100vh;
+  height: 100vh !important;
+  min-height: 100vh;
   background-color: #000000;
   color: white;
   display: flex;
@@ -8,16 +9,18 @@
   position: fixed;
   left: 0;
   top: 0;
+  bottom: 0;
   z-index: 100;
   transition: width 0.3s;
-  overflow-y: auto; /* Allow scrolling in sidebar if content is too tall */
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
 }
 
 .brand-sidebar-header {
   padding: 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .brand-sidebar-header h1 {
@@ -44,6 +47,8 @@
 .brand-sidebar-menu {
   flex: 1;
   padding: 20px 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .sidebar-menu-item {
@@ -77,6 +82,8 @@
 .brand-sidebar-footer {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 10px 0;
+  flex-shrink: 0; /* Prevent footer from shrinking */
+  margin-top: auto; /* Push footer to bottom */
 }
 
 .sidebar-menu-item.logout {
@@ -91,6 +98,8 @@
 @media screen and (max-width: 768px) {
   .brand-sidebar {
     width: 60px;
+    height: 100vh !important;
+    min-height: 100vh;
     overflow-x: hidden;
   }
   
@@ -109,4 +118,39 @@
   .sidebar-menu-item.active {
     border-left: 3px solid #2ecc71;
   }
+}
+
+/* Ensure brand pages use full height */
+body.brand-layout-active,
+html.brand-layout-active {
+  height: 100vh !important;
+  min-height: 100vh !important;
+  overflow-x: hidden;
+}
+
+#root {
+  height: 100vh !important;
+  min-height: 100vh !important;
+}
+
+body.brand-layout-active #root {
+  height: 100vh !important;
+  min-height: 100vh !important;
+}
+
+/* Force full height for brand sidebar - override any conflicts */
+.brand-layout .brand-sidebar {
+  height: 100vh !important;
+  min-height: 100vh !important;
+  position: fixed !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+}
+
+/* Additional styles to ensure full height */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }

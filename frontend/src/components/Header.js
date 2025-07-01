@@ -12,6 +12,7 @@ function Header({ isLoggedIn }) {
   const [brandSuggestions, setBrandSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showMoreBrands, setShowMoreBrands] = useState(false);
+  const [noResultsFound, setNoResultsFound] = useState(false);
   const searchContainerRef = useRef(null);
   const navigate = useNavigate();
 
@@ -115,19 +116,24 @@ function Header({ isLoggedIn }) {
 
   const handleSearchInput = async (value) => {
     setSearchTerm(value);
+    setNoResultsFound(false);
     
     if (value.trim().length >= 2) {
       try {
         const response = await offersAPI.searchBrands(value.trim(), showMoreBrands ? 20 : 5);
-        setBrandSuggestions(response.data || []);
+        const results = response.data || [];
+        setBrandSuggestions(results);
         setShowSuggestions(true);
+        setNoResultsFound(results.length === 0);
       } catch (error) {
         console.error('Error searching brands:', error);
         setBrandSuggestions([]);
+        setNoResultsFound(true);
       }
     } else {
       setBrandSuggestions([]);
       setShowSuggestions(false);
+      setNoResultsFound(false);
     }
   };
 
@@ -146,14 +152,15 @@ function Header({ isLoggedIn }) {
           } 
         });
       } else {
-        // If no offers, navigate to offers page
-        navigate('/offers');
+        // If no offers, navigate to offers page with brand info
+        navigate(`/offers?brand_id=${brandId}&brand_name=${encodeURIComponent(brandName)}`);
       }
       
       // Clear search
       setSearchTerm('');
       setShowSuggestions(false);
       setShowMoreBrands(false);
+      setNoResultsFound(false);
     } catch (error) {
       console.error('Error fetching offers for brand:', error);
       navigate('/offers');
@@ -165,22 +172,30 @@ function Header({ isLoggedIn }) {
     if (searchTerm.trim().length >= 2) {
       try {
         const response = await offersAPI.searchBrands(searchTerm.trim(), 20);
-        setBrandSuggestions(response.data || []);
+        const results = response.data || [];
+        setBrandSuggestions(results);
+        setNoResultsFound(results.length === 0);
       } catch (error) {
         console.error('Error fetching more brands:', error);
+        setNoResultsFound(true);
       }
     }
   };
 
   const handleSearchSubmit = async (e) => {
     e.preventDefault();
-    if (searchTerm.trim()) {
+    if (searchTerm.trim() && !noResultsFound) {
       const searchQuery = searchTerm.trim();
       
       try {
         // First check if there are any exact matches (case insensitive)
         const response = await offersAPI.searchBrands(searchQuery, 20);
         const matchingBrands = response.data || [];
+        
+        // If no brands found, don't navigate
+        if (matchingBrands.length === 0) {
+          return;
+        }
         
         // Look for exact match (case insensitive)
         const exactMatch = matchingBrands.find(brand => 
@@ -200,23 +215,24 @@ function Header({ isLoggedIn }) {
               } 
             });
           } else {
-            // If brand has no offers, go to offers page with search
-            navigate(`/offers?search=${encodeURIComponent(searchQuery)}`);
+            // If brand has no offers, navigate to offers page with brand info
+            navigate(`/offers?brand_id=${exactMatch.id}&brand_name=${encodeURIComponent(exactMatch.name)}`);
           }
         } else {
-          // No exact match, navigate to offers page with search
-          navigate(`/offers?search=${encodeURIComponent(searchQuery)}`);
+          // No exact match, don't navigate
+          return;
         }
       } catch (error) {
         console.error('Error during search:', error);
-        // Fallback to offers page with search
-        navigate(`/offers?search=${encodeURIComponent(searchQuery)}`);
+        // Don't navigate on error
+        return;
       }
       
       // Clear search
       setSearchTerm('');
       setShowSuggestions(false);
       setShowMoreBrands(false);
+      setNoResultsFound(false);
     }
   };
 
@@ -226,6 +242,7 @@ function Header({ isLoggedIn }) {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
         setShowSuggestions(false);
         setShowMoreBrands(false);
+        setNoResultsFound(false);
       }
     };
 
@@ -382,8 +399,8 @@ function Header({ isLoggedIn }) {
                   </>
                 ) : (
                   <div className="no-results">
-                    <p>No brands found matching "{searchTerm}"</p>
-                    <small>Try searching for something else or press Enter to search all offers</small>
+                    <p>No items available</p>
+                    <small>No brands found matching "{searchTerm}"</small>
                   </div>
                 )}
               </div>

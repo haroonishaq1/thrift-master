@@ -123,6 +123,14 @@ export const authAPI = {
     });
   },
 
+  // Change password
+  changePassword: async (newPassword) => {
+    return apiRequest('/auth/change-password', {
+      method: 'PUT',
+      body: JSON.stringify({ newPassword }),
+    });
+  },
+
   // Health check
   healthCheck: async () => {
     return apiRequest('/auth/health', {
@@ -565,6 +573,35 @@ export const brandAPI = {
         'Authorization': `Bearer ${brandToken}`,
       },
       body: JSON.stringify(updateData),
+    }).then(async (response) => {
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+      }
+      return data;
+    });
+  },
+
+  // Change password
+  changePassword: async (newPassword) => {
+    const brandToken = localStorage.getItem('brand-token');
+    
+    if (!brandToken) {
+      throw new Error('No authentication token found. Please log in again.');
+    }
+    
+    if (brandToken === 'null' || brandToken === 'undefined') {
+      throw new Error('Invalid authentication token. Please log in again.');
+    }
+    
+    return fetch(`${API_BASE_URL}/brand-auth/change-password`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${brandToken}`,
+      },
+      body: JSON.stringify({ newPassword }),
     }).then(async (response) => {
       const data = await response.json();
       

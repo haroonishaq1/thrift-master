@@ -371,7 +371,12 @@ function Home({ isLoggedIn }) {
               </div>
               <button className="show-more" onClick={() => {
                 // Navigate to offers page with carousel view for "show more"
-                navigate('/offers?category=featured&view=carousel');
+                navigate('/offers?category=featured&view=carousel', {
+                  state: { 
+                    source: 'hotdeals', 
+                    title: 'Hot Deals' 
+                  }
+                });
               }}>
                 Show more <span>→</span>
               </button>
@@ -396,11 +401,6 @@ function Home({ isLoggedIn }) {
               ))}
             </div>
           )}
-          {featuredOffers.length > 0 && (
-            <div className="offers-count">
-              <span>{featuredOffers.length > 4 ? '4' : featuredOffers.length} of {featuredOffers.length} offers</span>
-            </div>
-          )}
         </div>
       </section>
 
@@ -411,16 +411,21 @@ function Home({ isLoggedIn }) {
             <div className="section-title-row">
               <div className="section-title-content">
                 <h2>New to Lineup</h2>
+                <p>Fresh offers just added - don't miss out!</p>
               </div>
               {newLineupOffers.length > 0 && (
                 <button className="show-more" onClick={() => {
-                  navigate('/offers?category=newlineup&view=carousel');
+                  navigate('/offers?category=newlineup&view=carousel', {
+                    state: { 
+                      source: 'newlineup', 
+                      title: 'New to Lineup' 
+                    }
+                  });
                 }}>
                   Show more <span>→</span>
                 </button>
               )}
             </div>
-            <p>Fresh offers just added - don't miss out!</p>
           </div>
           {loading ? (
             <div className="loading-spinner">Loading new lineup...</div>

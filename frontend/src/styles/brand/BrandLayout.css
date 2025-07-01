@@ -2,8 +2,10 @@
   display: flex;
   width: 100%;
   min-height: 100vh;
+  height: 100vh; /* Ensure full viewport height */
   overflow-x: hidden; /* Prevent horizontal scrolling */
   box-sizing: border-box;
+  position: relative;
 }
 
 .brand-container-with-sidebar {
@@ -11,6 +13,7 @@
   background-color: #f8f9fa;
   width: calc(100% - 250px);
   margin-left: 250px;
+  min-height: 100vh;
   overflow-x: hidden; /* Prevent horizontal scrolling in content area */
   transition: width 0.3s, margin-left 0.3s;
   box-sizing: border-box;
@@ -20,6 +23,7 @@
   .brand-container-with-sidebar {
     width: 100%;
     margin-left: 60px;
+    min-height: 100vh;
     padding-right: 60px; /* Ensure content doesn't go under the sidebar */
   }
 }

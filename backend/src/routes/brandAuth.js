@@ -5,9 +5,11 @@ const {
   login,
   getProfile,
   logout,
+  updateProfile,
   forgotPassword,
   verifyForgotPasswordOTP,
-  resetPassword
+  resetPassword,
+  changePassword
 } = require('../controllers/brandAuthController');
 const { authenticateToken } = require('../middleware/auth');
 const { asyncHandler } = require('../middleware/errorHandler');
@@ -22,6 +24,8 @@ router.post('/reset-password', asyncHandler(resetPassword));
 
 // Protected routes
 router.get('/profile', authenticateToken, asyncHandler(getProfile));
+router.put('/profile', authenticateToken, asyncHandler(updateProfile));
+router.put('/change-password', authenticateToken, asyncHandler(changePassword));
 
 // Health check route
 router.get('/health', (req, res) => {

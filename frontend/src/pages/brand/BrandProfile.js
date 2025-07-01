@@ -192,6 +192,15 @@ function BrandProfile() {
               </div>
             </div>
           </div>
+
+          <div className="profile-actions">
+            <button 
+              className="change-password-button"
+              onClick={() => navigate('/brand/change-password')}
+            >
+              Change Password
+            </button>
+          </div>
         </div>
       </div>
     </div>

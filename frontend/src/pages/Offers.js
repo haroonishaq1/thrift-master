@@ -17,6 +17,8 @@ const Offers = ({ isLoggedIn }) => {
   // Get category from URL params
   const category = searchParams.get('category');
   const view = searchParams.get('view');
+  const brandId = searchParams.get('brand_id');
+  const brandName = searchParams.get('brand_name');
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -29,9 +31,26 @@ const Offers = ({ isLoggedIn }) => {
           setLoading(false);
         }, 1000);
         
-        if (category) {
-          // Fetch offers for specific category
-          const response = await offersAPI.getOffersByCategory(category);
+        if (brandId) {
+          // Fetch offers for specific brand
+          const response = await offersAPI.getOffersByBrandId(brandId);
+          setOffers(response.data || []);
+          setCategoryName(brandName || 'Brand Offers');
+        } else if (category) {
+          let response;
+          
+          // Handle special categories
+          if (category === 'featured') {
+            // Fetch all featured offers for Hot Deals
+            response = await offersAPI.getFeaturedOffers(100); // Get all featured offers
+          } else if (category === 'newlineup') {
+            // Fetch new lineup offers
+            response = await offersAPI.getNewLineupOffers();
+          } else {
+            // Fetch offers for regular categories
+            response = await offersAPI.getOffersByCategory(category);
+          }
+          
           setOffers(response.data || []);
           
           // Set category display name
@@ -55,8 +74,8 @@ const Offers = ({ isLoggedIn }) => {
             };
             const source = sourceMapping[category] || 'category';
             const titleMapping = {
-              'featured': 'HOT DEALS',
-              'newlineup': 'NEW TO LINEUP'
+              'featured': 'Hot Deals',
+              'newlineup': 'New to Lineup'
             };
             const title = titleMapping[category] || categoryNames[category];
             
@@ -152,7 +171,11 @@ const Offers = ({ isLoggedIn }) => {
             </div>
           ) : (
             <div className="no-offers">
-              <p>No offers available at the moment. Please check back later!</p>
+              {brandId && brandName ? (
+                <p>This brand has no offers available at the moment. Please check back later!</p>
+              ) : (
+                <p>No offers available at the moment. Please check back later!</p>
+              )}
             </div>
           )}
         </div>

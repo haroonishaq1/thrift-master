@@ -47,6 +47,10 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import CookiePolicy from './pages/CookiePolicy';
 import Contact from './pages/Contact';
 
+// Change Password Pages
+import ChangePassword from './pages/ChangePassword';
+import BrandChangePassword from './pages/brand/BrandChangePassword';
+
 // Error Pages
 import NotFound from './pages/NotFound';
 
@@ -95,8 +99,10 @@ function App() {
           <Route path="/redeem-code/:offerId" element={<RedeemedCodePage isLoggedIn={isLoggedIn} />} />
           
           {/* User Profile Routes */}
+          <Route path="/profile" element={<Profile isLoggedIn={isLoggedIn} />} />
           <Route path="/my-profile" element={<Profile isLoggedIn={isLoggedIn} />} />
           <Route path="/edit-profile" element={<EditProfile isLoggedIn={isLoggedIn} />} />
+          <Route path="/change-password" element={<ChangePassword isLoggedIn={isLoggedIn} />} />
           <Route path="/my-bookmarks" element={<Bookmarks isLoggedIn={isLoggedIn} />} />
           <Route path="/my-orders" element={<Orders isLoggedIn={isLoggedIn} />} />
           <Route path="/settings" element={<Settings isLoggedIn={isLoggedIn} />} />
@@ -121,6 +127,7 @@ function App() {
           {/* Brand Admin Panel Routes - Protected with Sidebar */}
           <Route path="/brand/profile" element={<BrandLayout><BrandProfile /></BrandLayout>} />
           <Route path="/brand/edit-profile" element={<BrandLayout><BrandEditProfile /></BrandLayout>} />
+          <Route path="/brand/change-password" element={<BrandLayout><BrandChangePassword /></BrandLayout>} />
           <Route path="/brand/dashboard" element={<BrandLayout><BrandDashboard /></BrandLayout>} />
           <Route path="/brand/offers" element={<BrandLayout><BrandOffers /></BrandLayout>} />
           <Route path="/brand/add-offer" element={<BrandLayout><BrandAddOffer /></BrandLayout>} />

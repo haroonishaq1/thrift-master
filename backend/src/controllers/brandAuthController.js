@@ -425,6 +425,55 @@ const updateProfile = async (req, res) => {
   }
 };
 
+// Change Password
+const changePassword = async (req, res) => {
+  try {
+    console.log('🚀 Brand change password request received');
+    console.log('🔍 Brand from token:', req.user);
+    const { newPassword } = req.body;
+    const brandId = req.user.id || req.user.userId;
+
+    // Validation
+    if (!newPassword) {
+      return res.status(400).json(
+        formatResponse(false, 'New password is required')
+      );
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json(
+        formatResponse(false, 'Password must be at least 8 characters long')
+      );
+    }
+
+    // Get brand data
+    const brand = await Brand.findById(brandId);
+    if (!brand) {
+      return res.status(404).json(
+        formatResponse(false, 'Brand not found')
+      );
+    }
+
+    // Hash new password
+    const saltRounds = 12;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    // Update brand password
+    await Brand.updatePassword(brand.email, hashedPassword);
+
+    console.log('✅ Brand password changed successfully');
+    return res.json(
+      formatResponse(true, 'Password changed successfully')
+    );
+
+  } catch (error) {
+    console.error('❌ Brand change password error:', error);
+    return res.status(500).json(
+      formatResponse(false, 'Failed to change password. Please try again later.')
+    );
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -433,5 +482,6 @@ module.exports = {
   updateProfile,
   forgotPassword,
   verifyForgotPasswordOTP,
-  resetPassword
+  resetPassword,
+  changePassword
 };

@@ -743,28 +743,62 @@
 .new-to-lineup .section-title-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  width: 100%;
 }
 
 .new-to-lineup .section-title-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  flex: 1;
 }
 
 .new-to-lineup .section-title-content h2 {
   font-size: 36px;
   font-weight: 700;
   color: #333;
-  margin: 0;
+  margin: 0 0 8px 0;
+  text-align: left !important;
 }
 
 .new-to-lineup .section-header p {
   font-size: 16px;
   color: #666;
   margin: 0;
+  text-align: left !important;
   text-align: left;
+}
+
+.new-to-lineup .show-more {
+  background: none !important;
+  border: none !important;
+  color: #1a73e8 !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  transition: color 0.3s ease !important;
+  text-decoration: none !important;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  margin-top: 5px !important;
+  padding: 8px 16px !important;
+  border-radius: 6px !important;
+  white-space: nowrap !important;
+}
+
+.new-to-lineup .show-more:hover {
+  color: #1557b0 !important;
+}
+
+.new-to-lineup .show-more span {
+  font-size: 14px !important;
+  transition: transform 0.3s ease !important;
+}
+
+.new-to-lineup .show-more:hover span {
+  transform: translateX(3px) !important;
 }
 
 .new-to-lineup .deals-grid {
@@ -998,6 +1032,32 @@
   
   .nav-btn.next {
     right: 10px;
+  }
+}
+
+/* Media query for new-to-lineup responsive styles */
+@media (max-width: 768px) {
+  /* Responsive styles for new-to-lineup section */
+  .new-to-lineup .section-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .new-to-lineup .show-more {
+    margin-left: 0;
+    margin-top: 0;
+    align-self: flex-end;
+  }
+  
+  .new-to-lineup .section-title-content h2 {
+    font-size: 28px;
+    margin-bottom: 5px;
+  }
+  
+  .new-to-lineup .section-header p {
+    font-size: 14px;
+    margin-bottom: 10px;
   }
 }
 

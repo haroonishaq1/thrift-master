@@ -13,6 +13,17 @@ function BrandLayout({ children }) {
       navigate('/brand/login');
     }
   }, [navigate]);
+
+  // Add CSS class to body for full height styling
+  useEffect(() => {
+    document.body.classList.add('brand-layout-active');
+    document.documentElement.classList.add('brand-layout-active');
+    
+    return () => {
+      document.body.classList.remove('brand-layout-active');
+      document.documentElement.classList.remove('brand-layout-active');
+    };
+  }, []);
   
   return (
     <div className="brand-layout">

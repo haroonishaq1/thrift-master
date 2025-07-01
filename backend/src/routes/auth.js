@@ -24,7 +24,8 @@ const {
   brandRegister,
   forgotPassword,
   verifyForgotPasswordOTP,
-  resetPassword
+  resetPassword,
+  changePassword
 } = require('../controllers/authController');
 const {
   validateRegistration,
@@ -53,6 +54,7 @@ router.post('/brand/register', upload.single('logoImage'), asyncHandler(brandReg
 // Protected routes
 router.get('/profile', authenticateToken, requireVerified, asyncHandler(getProfile));
 router.put('/profile', authenticateToken, requireVerified, asyncHandler(updateProfile));
+router.put('/change-password', authenticateToken, requireVerified, asyncHandler(changePassword));
 
 // Health check route
 router.get('/health', (req, res) => {

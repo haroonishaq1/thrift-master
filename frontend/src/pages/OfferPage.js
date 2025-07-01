@@ -52,8 +52,8 @@ function OfferPage() {
           const offer = offerResponse.data;
           setOfferData(offer);
           
-          // Check if user came from hot deals, new lineup, or category carousel
-          if (location.state && (location.state.source === 'hotdeals' || location.state.source === 'newlineup' || location.state.source === 'category')) {
+          // Check if user came from hot deals, new lineup, category carousel, or brand carousel
+          if (location.state && (location.state.source === 'hotdeals' || location.state.source === 'newlineup' || location.state.source === 'category' || location.state.source === 'brand')) {
             if (location.state.source === 'hotdeals') {
               // If from hot deals, show all featured/hot deals
               const hotDealsResponse = await offersAPI.getFeaturedOffers();
@@ -78,6 +78,21 @@ function OfferPage() {
                 
                 // Find current offer index in new lineup
                 const currentIndex = newLineupData.findIndex(lineupOffer => lineupOffer.id.toString() === actualOfferId);
+                setCurrentOfferIndex(currentIndex >= 0 ? currentIndex : 0);
+              } else {
+                // Fallback to single offer
+                setCategoryOffers([offer]);
+                setCurrentOfferIndex(0);
+              }
+            } else if (location.state.source === 'brand') {
+              // If from brand carousel, show all offers from that brand
+              const brandResponse = await offersAPI.getOffersByBrandId(offer.brand_id);
+              if (brandResponse.success && brandResponse.data && brandResponse.data.length > 0) {
+                const brandData = brandResponse.data;
+                setCategoryOffers(brandData);
+                
+                // Find current offer index in brand offers
+                const currentIndex = brandData.findIndex(brandOffer => brandOffer.id.toString() === actualOfferId);
                 setCurrentOfferIndex(currentIndex >= 0 ? currentIndex : 0);
               } else {
                 // Fallback to single offer
