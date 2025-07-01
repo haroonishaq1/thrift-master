@@ -71,7 +71,7 @@ function BrandAddOffer() {
         title: values.offerName.trim(),
         description: values.description.trim(),
         discount_percent: values.discountPercentage,
-        category: values.category || 'other',
+        category: values.category || 'food',
         valid_until: values.validUntil || null,
         offerImage: values.offerImage
       };
@@ -121,7 +121,7 @@ function BrandAddOffer() {
             description: '',
             offerImage: null,
             discountPercentage: '',
-            category: 'other',
+            category: '',
             validUntil: ''
           }}
           validationSchema={validationSchema}
@@ -172,16 +172,13 @@ function BrandAddOffer() {
                   id="category" 
                   name="category"
                 >
-                  <option value="other">Other</option>
-                  <option value="fashion">Fashion</option>
-                  <option value="electronics">Electronics</option>
-                  <option value="home-garden">Home & Garden</option>
-                  <option value="sports">Sports</option>
+                  <option value="">Select a category</option>
+                  <option value="food">Food & Drink</option>
+                  <option value="fitness">Fitness</option>
+                  <option value="electronics">Technology</option>
                   <option value="beauty">Beauty</option>
-                  <option value="food-dining">Food & Dining</option>
-                  <option value="travel">Travel</option>
-                  <option value="entertainment">Entertainment</option>
-                  <option value="health-fitness">Health & Fitness</option>
+                  <option value="fashion">Fashion</option>
+                  <option value="education">Education</option>
                 </Field>
                 <ErrorMessage name="category" component="div" className="error-message" />
               </div>

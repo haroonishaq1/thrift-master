@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import '../styles/OfferPage.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -8,12 +8,15 @@ import { offersAPI } from '../services/api';
 function OfferPage() {
   const { offerId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [offerData, setOfferData] = useState(null);
   const [categoryOffers, setCategoryOffers] = useState([]);
   const [currentOfferIndex, setCurrentOfferIndex] = useState(0);
   const [error, setError] = useState(null);
   const [rating, setRating] = useState(null);
   const [showCodeScreen, setShowCodeScreen] = useState(false);
+  const [isNavigatingAway, setIsNavigatingAway] = useState(false);
+  const [sectionTitle, setSectionTitle] = useState('');
   
   // Backend URL for constructing full image paths
   const BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -22,6 +25,7 @@ function OfferPage() {
     const fetchOfferData = async () => {
       try {
         console.log('Fetching offer with ID:', offerId);
+        console.log('Location state:', location.state);
         
         // Get the specific offer from the API
         const offerResponse = await offersAPI.getOfferById(offerId);
@@ -30,6 +34,20 @@ function OfferPage() {
         if (offerResponse.success && offerResponse.data) {
           const offer = offerResponse.data;
           setOfferData(offer);
+          
+          // Check if user came from Hot Deals section
+          if (location.state?.source === 'hot-deals' && location.state?.availableOffers) {
+            console.log('User came from Hot Deals section');
+            setSectionTitle('Hot Deals');
+            const hotDealsOffers = location.state.availableOffers;
+            setCategoryOffers(hotDealsOffers);
+            
+            // Find the index of the current offer in the hot deals list
+            const currentIndex = hotDealsOffers.findIndex(hotOffer => hotOffer.id.toString() === offerId.toString());
+            console.log('Current offer index in Hot Deals:', currentIndex);
+            setCurrentOfferIndex(currentIndex >= 0 ? currentIndex : 0);
+            return; // Early return, don't fetch other offers
+          }
           
           // Get all offers from the same brand (prioritize brand over category)
           if (offer.brand_id) {
@@ -40,6 +58,7 @@ function OfferPage() {
             if (brandResponse.success && brandResponse.data && brandResponse.data.length > 0) {
               const brandData = brandResponse.data;
               setCategoryOffers(brandData);
+              setSectionTitle(offer.brand_name || 'Brand Offers');
               
               // Find the index of the current offer in the brand list
               const currentIndex = brandData.findIndex(brandOffer => brandOffer.id.toString() === offerId.toString());
@@ -52,14 +71,17 @@ function OfferPage() {
                 const categoryResponse = await offersAPI.getOffersByCategory(offer.category);
                 if (categoryResponse.success && categoryResponse.data) {
                   setCategoryOffers(categoryResponse.data);
+                  setSectionTitle(offer.category || 'Category Offers');
                   const currentIndex = categoryResponse.data.findIndex(categoryOffer => categoryOffer.id.toString() === offerId.toString());
                   setCurrentOfferIndex(currentIndex >= 0 ? currentIndex : 0);
                 } else {
                   setCategoryOffers([offer]);
+                  setSectionTitle('Offers');
                   setCurrentOfferIndex(0);
                 }
               } else {
                 setCategoryOffers([offer]);
+                setSectionTitle('Offers');
                 setCurrentOfferIndex(0);
               }
             }
@@ -72,6 +94,7 @@ function OfferPage() {
             if (categoryResponse.success && categoryResponse.data) {
               const categoryData = categoryResponse.data;
               setCategoryOffers(categoryData);
+              setSectionTitle(offer.category || 'Category Offers');
               
               // Find the index of the current offer in the category list
               const currentIndex = categoryData.findIndex(categoryOffer => categoryOffer.id.toString() === offerId.toString());
@@ -80,11 +103,13 @@ function OfferPage() {
             } else {
               // If no category offers found, just show this single offer
               setCategoryOffers([offer]);
+              setSectionTitle('Offers');
               setCurrentOfferIndex(0);
             }
           } else {
             // If no category, just show this single offer
             setCategoryOffers([offer]);
+            setSectionTitle('Offers');
             setCurrentOfferIndex(0);
           }
         } else {
@@ -92,11 +117,13 @@ function OfferPage() {
         }
       } catch (err) {
         console.error('Error fetching offer:', err);
+        console.log('Offer ID that caused error:', offerId);
+        console.log('Error details:', err.message);
         setError(`Error fetching offer details: ${err.message}. Please try again later.`);
       }
     };
 
-    if (offerId) {
+    if (offerId && !isNavigatingAway) {
       fetchOfferData();
     }
   }, [offerId]);
@@ -119,15 +146,26 @@ function OfferPage() {
     };
   }, []);
 
-  // Handle browser back: always go to home if not navigated from inside app
+  // Handle browser back: immediately redirect to home without any data fetching
   useEffect(() => {
     const handlePopState = (event) => {
-      // Always redirect to home on browser back from offer page
-      navigate('/', { replace: true });
+      console.log('Browser back detected - immediately redirecting to home');
+      setIsNavigatingAway(true); // Prevent any further data fetching
+      event.preventDefault();
+      event.stopPropagation();
+      // Immediate redirect to home without any delays
+      window.location.href = '/';
     };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [navigate]);
+    
+    // Add the listener as soon as component mounts
+    window.addEventListener('popstate', handlePopState, true);
+    
+    return () => {
+      window.removeEventListener('popstate', handlePopState, true);
+    };
+  }, []); // Empty dependency array to run only once
+
+  // Removed automatic browser back handler to let React Router handle navigation naturally
 
   const handleRating = (value) => {
     setRating(value);
@@ -146,7 +184,10 @@ function OfferPage() {
       const newIndex = currentOfferIndex > 0 ? currentOfferIndex - 1 : categoryOffers.length - 1;
       setCurrentOfferIndex(newIndex);
       const newOfferId = categoryOffers[newIndex].id;
-      navigate(`/offer/${newOfferId}`);
+      
+      // Preserve the original navigation state when moving between offers
+      const preservedState = location.state ? { ...location.state } : null;
+      navigate(`/offer/${newOfferId}`, { state: preservedState });
     }
   };
 
@@ -155,7 +196,10 @@ function OfferPage() {
       const newIndex = currentOfferIndex < categoryOffers.length - 1 ? currentOfferIndex + 1 : 0;
       setCurrentOfferIndex(newIndex);
       const newOfferId = categoryOffers[newIndex].id;
-      navigate(`/offer/${newOfferId}`);
+      
+      // Preserve the original navigation state when moving between offers
+      const preservedState = location.state ? { ...location.state } : null;
+      navigate(`/offer/${newOfferId}`, { state: preservedState });
     }
   };
 
@@ -163,19 +207,33 @@ function OfferPage() {
     if (categoryOffers.length > 1 && index >= 0 && index < categoryOffers.length) {
       setCurrentOfferIndex(index);
       const newOfferId = categoryOffers[index].id;
-      navigate(`/offer/${newOfferId}`);
+      
+      // Preserve the original navigation state when moving between offers
+      const preservedState = location.state ? { ...location.state } : null;
+      navigate(`/offer/${newOfferId}`, { state: preservedState });
     }
   };
 
-  // Redirect to home if there is an error fetching the offer
+  // Redirect to home page if there is an error fetching the offer (more user-friendly than 404)
   useEffect(() => {
     if (error) {
-      navigate('/', { replace: true });
+      console.log('Error detected in OfferPage, redirecting to home:', error);
+      setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 1000); // Small delay to show error message briefly
     }
   }, [error, navigate]);
 
   if (error) {
-    return null;
+    return (
+      <div className="offer-page">
+        <Header />
+        <div className="error-message">
+          <p>Error loading offer. Redirecting to home...</p>
+        </div>
+        <Footer />
+      </div>
+    );
   }
 
   if (!offerData || categoryOffers.length === 0) {
@@ -199,6 +257,9 @@ function OfferPage() {
           // First Screen: Carousel-style offer display
           <>
             <div className="category-header">
+              {sectionTitle && (
+                <h2 className="section-title">{sectionTitle}</h2>
+              )}
               {categoryOffers.length > 1 && (
                 <p className="offer-counter">
                   {currentOfferIndex + 1} of {categoryOffers.length} offers

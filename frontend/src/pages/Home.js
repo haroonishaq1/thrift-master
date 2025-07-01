@@ -187,31 +187,69 @@ function Home({ isLoggedIn }) {
 
   // Handle hot deals card click
   const handleHotDealClick = (dealId) => {
-    navigate(`/offer/${dealId}`);
+    navigate(`/offer/${dealId}`, { 
+      state: { 
+        source: 'hot-deals',
+        availableOffers: featuredOffers 
+      } 
+    });
   };
 
   // Handle brand card click - navigate to offer page with first offer from that brand
   const handleBrandClick = async (brandId, brandName) => {
     try {
-      // Get offers for this brand
-      const response = await offersAPI.getOffersByBrandId(brandId);
-      const brandOffers = response.data || [];
+      console.log('🔍 Clicked brand:', brandName, 'with ID:', brandId);
       
-      if (brandOffers.length > 0) {
-        // Navigate to the first offer of this brand
-        navigate(`/offer/${brandOffers[0].id}`);
-      } else {
-        // If no offers, navigate to any available offer
-        const allOffers = featuredOffers.concat(electronicsOffers, fashionOffers, foodOffers, beautyOffers, educationOffers);
-        if (allOffers.length > 0) {
-          navigate(`/offer/${allOffers[0].id}`);
-        } else {
-          navigate('/offers');
-        }
+      // First, try to find offers for this brand from the already loaded offers
+      const allLoadedOffers = featuredOffers.concat(electronicsOffers, fashionOffers, foodOffers, beautyOffers, educationOffers, fitnessOffers);
+      const brandOffersFromLoaded = allLoadedOffers.filter(offer => 
+        offer.brand_id === brandId || 
+        offer.brand_name?.toLowerCase() === brandName?.toLowerCase()
+      );
+      
+      console.log('📦 Loaded offers for brand:', brandOffersFromLoaded.length);
+      
+      if (brandOffersFromLoaded.length > 0) {
+        console.log('✅ Found loaded offer, navigating to:', brandOffersFromLoaded[0].id);
+        navigate(`/offer/${brandOffersFromLoaded[0].id}`);
+        return;
       }
+      
+      // If not found in loaded offers, try API call
+      console.log('🔄 Trying API call for brand offers...');
+      const response = await offersAPI.getOffersByBrandId(brandId);
+      console.log('📦 API response:', response);
+      
+      if (response.success && response.data && response.data.length > 0) {
+        const brandOffers = response.data;
+        console.log('✅ API returned offers:', brandOffers.length);
+        console.log('🎯 Navigating to first API offer:', brandOffers[0].id);
+        navigate(`/offer/${brandOffers[0].id}`);
+        return;
+      }
+      
+      // Final fallback - navigate to any available offer
+      console.log('⚠️ No specific brand offers found, using fallback...');
+      if (allLoadedOffers.length > 0) {
+        console.log('✅ Using fallback offer:', allLoadedOffers[0].id);
+        navigate(`/offer/${allLoadedOffers[0].id}`);
+      } else {
+        console.log('📄 No offers available at all, navigating to offers page');
+        navigate('/offers');
+      }
+      
     } catch (error) {
-      console.error('Error fetching offers for brand:', error);
-      navigate('/offers');
+      console.error('❌ Error in handleBrandClick:', error);
+      
+      // Emergency fallback - try to navigate to any available offer
+      const allLoadedOffers = featuredOffers.concat(electronicsOffers, fashionOffers, foodOffers, beautyOffers, educationOffers, fitnessOffers);
+      if (allLoadedOffers.length > 0) {
+        console.log('🔄 Emergency fallback to:', allLoadedOffers[0].id);
+        navigate(`/offer/${allLoadedOffers[0].id}`);
+      } else {
+        console.log('🔄 Emergency fallback to offers page');
+        navigate('/offers');
+      }
     }
   };
 
@@ -254,6 +292,8 @@ function Home({ isLoggedIn }) {
     console.log('Brand logo URL:', brand.logo ? `http://localhost:5000${brand.logo}` : 'No logo');
     console.log('Brand approval status:', brand.is_approved);
     console.log('Raw brand logo path:', brand.logo);
+    console.log('Brand ID for carousel:', brand.id);
+    console.log('Brand offers for this brand:', brandOffers.length);
     
     return {
       id: brand.id,

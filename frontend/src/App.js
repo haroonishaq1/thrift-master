@@ -15,6 +15,7 @@ import Bookmarks from './pages/Bookmarks';
 import Orders from './pages/Orders';
 import Settings from './pages/Settings';
 import Help from './pages/Help';
+import NotFound from './pages/NotFound';
 
 // Forgot Password Routes
 import ForgotPassword from './pages/ForgotPassword';
@@ -117,6 +118,9 @@ function App() {
           {/* Admin Panel Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          
+          {/* 404 Not Found Route - Must be last */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </Router>
