@@ -26,19 +26,11 @@ function BrandResetPassword() {
 
   const validatePassword = (password) => {
     const minLength = password.length >= 8;
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumbers = /\d/.test(password);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
     
     return {
-      isValid: minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar,
+      isValid: minLength,
       errors: {
-        minLength,
-        hasUpperCase,
-        hasLowerCase,
-        hasNumbers,
-        hasSpecialChar
+        minLength
       }
     };
   };
@@ -139,18 +131,6 @@ function BrandResetPassword() {
                 <ul>
                   <li className={passwordValidation.errors.minLength ? 'valid' : 'invalid'}>
                     At least 8 characters
-                  </li>
-                  <li className={passwordValidation.errors.hasUpperCase ? 'valid' : 'invalid'}>
-                    One uppercase letter
-                  </li>
-                  <li className={passwordValidation.errors.hasLowerCase ? 'valid' : 'invalid'}>
-                    One lowercase letter
-                  </li>
-                  <li className={passwordValidation.errors.hasNumbers ? 'valid' : 'invalid'}>
-                    One number
-                  </li>
-                  <li className={passwordValidation.errors.hasSpecialChar ? 'valid' : 'invalid'}>
-                    One special character
                   </li>
                 </ul>
               </div>

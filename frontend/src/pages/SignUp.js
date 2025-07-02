@@ -62,9 +62,6 @@ function SignUp() {
       .required('City is required'),
     university: Yup.string()
       .required('University is required'),
-    course: Yup.string()
-      .required('Course is required')
-      .min(2, 'Course must be at least 2 characters'),
     email: Yup.string()
       .required('Email is required')
       .email('Invalid email format')
@@ -104,7 +101,6 @@ function SignUp() {
         gender: finalFormData.gender,
         country: finalFormData.country,        city: finalFormData.city,
         university: finalFormData.university,
-        course: finalFormData.course,
         phone: finalFormData.phone
       };
 
@@ -147,7 +143,6 @@ function SignUp() {
     country: formData.country || 'Pakistan',
     city: formData.city || 'Lahore',
     university: formData.university || 'University of Lahore',
-    course: formData.course || '',
     email: formData.email || '',
     password: formData.password || '',
     confirmPassword: formData.confirmPassword || ''
@@ -300,17 +295,6 @@ function SignUp() {
                 <option value="University of Lahore">University of Lahore</option>
               </Field>
               <ErrorMessage name="university" component="div" className="error-message" />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="course">Course/Program</label>
-              <Field 
-                id="course"
-                type="text" 
-                name="course"
-                placeholder="e.g., Computer Science, Business Administration"
-              />
-              <ErrorMessage name="course" component="div" className="error-message" />
             </div>
             
             <div className="form-group">

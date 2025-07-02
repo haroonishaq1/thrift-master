@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import '../styles/RedeemedCodePage.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { offersAPI } from '../services/api';
+import { isUserAuthenticated } from '../utils/auth';
 
 function RedeemedCodePage() {
   const { offerId } = useParams();
+  const navigate = useNavigate();
   const [offer, setOffer] = useState(null);
   const [showCode, setShowCode] = useState(false);
   const [generatedCode, setGeneratedCode] = useState('');
   const [loading, setLoading] = useState(true);
-  const [rating, setRating] = useState(null);
   const [copied, setCopied] = useState(false);
-  const [userRating, setUserRating] = useState(null);
+  const [codeAlreadyGenerated, setCodeAlreadyGenerated] = useState(false);
 
   // Backend URL for constructing full image paths
   const BACKEND_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
@@ -36,9 +37,30 @@ function RedeemedCodePage() {
   };
 
   useEffect(() => {
+    // Check if user is authenticated
+    if (!isUserAuthenticated()) {
+      navigate('/login', { 
+        state: { 
+          message: 'Please log in to access this page',
+          redirectTo: `/redeem-code/${offerId}`
+        }
+      });
+      return;
+    }
+
     const fetchOffer = async () => {
       try {
         setLoading(true);
+        
+        // Check if code was already generated for this offer
+        const codeKey = `code_generated_${offerId}`;
+        const existingCode = localStorage.getItem(codeKey);
+        
+        if (existingCode) {
+          setCodeAlreadyGenerated(true);
+          setGeneratedCode(existingCode);
+        }
+        
         const offerResponse = await offersAPI.getOfferById(offerId);
         
         if (offerResponse.success && offerResponse.data) {
@@ -47,10 +69,12 @@ function RedeemedCodePage() {
           console.log('🏢 Brand website in offer:', offerData.brand_website);
           setOffer(offerData);
           
-          // Generate a code with format: THRIFT-BRANDID-OFFER-ID-random6digits
-          const randomSixDigits = Math.floor(100000 + Math.random() * 900000);
-          const code = `THRIFT-${offerData.id}-${offerId}-${randomSixDigits}`;
-          setGeneratedCode(code);
+          // Only generate new code if one doesn't exist
+          if (!existingCode) {
+            const randomSixDigits = Math.floor(100000 + Math.random() * 900000);
+            const code = `THRIFT-${offerData.id}-${offerId}-${randomSixDigits}`;
+            setGeneratedCode(code);
+          }
         } else {
           throw new Error(offerResponse.message || 'Failed to fetch offer');
         }
@@ -68,11 +92,16 @@ function RedeemedCodePage() {
   }, [offerId]);
 
   const handleShowCode = () => {
+    if (codeAlreadyGenerated) {
+      alert('You have already generated your code. You cannot generate again.');
+      return;
+    }
+    
+    // Save code to localStorage
+    const codeKey = `code_generated_${offerId}`;
+    localStorage.setItem(codeKey, generatedCode);
+    setCodeAlreadyGenerated(true);
     setShowCode(true);
-  };
-
-  const handleRating = (type) => {
-    setUserRating(type);
   };
 
   const handleCopy = () => {
@@ -150,25 +179,6 @@ function RedeemedCodePage() {
             {/* Large Discount Text */}
             <h1 className="discount-title">{getDiscountAmount(offer.description)}</h1>
             
-            {/* Rating Section */}
-            <div className="rating-section">
-              <p className="rate-text">Rate this offer:</p>
-              <div className="rating-buttons">
-                <button 
-                  className={`rating-btn thumbs-up ${userRating === 'up' ? 'active' : ''}`}
-                  onClick={() => handleRating('up')}
-                >
-                  👍
-                </button>
-                <button 
-                  className={`rating-btn thumbs-down ${userRating === 'down' ? 'active' : ''}`}
-                  onClick={() => handleRating('down')}
-                >
-                  👎
-                </button>
-              </div>
-            </div>
-            
             {/* Code Display - Below rating buttons */}
             {showCode && (
               <div className="code-container">
@@ -197,11 +207,20 @@ function RedeemedCodePage() {
               Get your code now and visit the {offer.brand_name} website.
             </p>
             
-            {/* Show Code Button */}
-            {!showCode && (
+            {/* Show Code Button or Already Generated Message */}
+            {!showCode && !codeAlreadyGenerated && (
               <button className="show-code-btn" onClick={handleShowCode}>
                 Show code
               </button>
+            )}
+            
+            {!showCode && codeAlreadyGenerated && (
+              <div className="already-generated-message">
+                <p>You have already generated your code. You cannot generate again.</p>
+                <button className="show-existing-code-btn" onClick={() => setShowCode(true)}>
+                  View Your Code
+                </button>
+              </div>
             )}
             
             {/* Open Website Button - Always shown */}

@@ -3,20 +3,38 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { getBrandToken, isBrandAuthenticated } from '../../utils/auth';
-import { offersAPI } from '../../services/api';
-import { CATEGORY_OPTIONS } from '../../constants/categories';
+import { offersAPI, brandAPI } from '../../services/api';
 import '../../styles/brand/BrandAddOffer.css';
 
 function BrandAddOffer() {
   const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState(null);
   const [submitError, setSubmitError] = useState(null);
+  const [brandData, setBrandData] = useState(null);
   // Check for token and redirect to login if not present
   useEffect(() => {
     if (!isBrandAuthenticated()) {
       navigate('/brand/login');
     }
   }, [navigate]);
+
+  // Fetch brand data to get category
+  useEffect(() => {
+    const fetchBrandData = async () => {
+      try {
+        const response = await brandAPI.getBrandProfile();
+        if (response.success) {
+          setBrandData(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching brand data:', error);
+      }
+    };
+
+    if (isBrandAuthenticated()) {
+      fetchBrandData();
+    }
+  }, []);
   
   // Offer validation schema
   const validationSchema = Yup.object({
@@ -35,9 +53,7 @@ function BrandAddOffer() {
     discountPercentage: Yup.number()
       .required('Discount percentage is required')
       .min(1, 'Discount must be at least 1%')
-      .max(100, 'Discount cannot exceed 100%'),
-    category: Yup.string()
-      .required('Category is required'),
+      .max(100, 'Discount cannot exceed 100%')
   });
   
   const handleImageChange = (event, setFieldValue) => {
@@ -69,7 +85,7 @@ function BrandAddOffer() {
         title: values.offerName.trim(),
         description: values.description.trim(),
         discount_percent: values.discountPercentage,
-        category: values.category || '',
+        category: brandData?.category || '',
         offerImage: values.offerImage
       };
 
@@ -117,8 +133,7 @@ function BrandAddOffer() {
             offerName: '',
             description: '',
             offerImage: null,
-            discountPercentage: '',
-            category: ''
+            discountPercentage: ''
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
@@ -159,22 +174,6 @@ function BrandAddOffer() {
                   placeholder="Enter discount percentage"
                 />
                 <ErrorMessage name="discountPercentage" component="div" className="error-message" />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="category">Category *</label>
-                <Field 
-                  as="select"
-                  id="category" 
-                  name="category"
-                >
-                  {CATEGORY_OPTIONS.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </Field>
-                <ErrorMessage name="category" component="div" className="error-message" />
               </div>
 
               <div className="form-group">

@@ -3,7 +3,7 @@ const { User, OTP } = require('../models/User');
 const { Brand } = require('../models/Brand');
 const { BrandOTP } = require('../models/BrandOTP');
 const { generateToken, generateOTP, getOTPExpiry, formatResponse, isValidEmail } = require('../utils/helpers');
-const { sendOTPEmail, sendWelcomeEmail } = require('../utils/emailService');
+const { sendOTPEmail, sendWelcomeEmail, sendForgotPasswordOTPEmail } = require('../utils/emailService');
 
 // User Registration
 const register = async (req, res) => {
@@ -398,12 +398,11 @@ const updateProfile = async (req, res) => {
       phone,
       country,
       city,
-      university,
-      course
+      university
     } = req.body;
 
-    // Validation
-    if (!firstName || !lastName || !username || !university || !course || !phone) {
+    // Validation - removed course requirement
+    if (!firstName || !lastName || !username || !university || !phone) {
       console.log('❌ Validation failed - missing required fields');
       return res.status(400).json(
         formatResponse(false, 'All required fields must be provided')
@@ -431,8 +430,7 @@ const updateProfile = async (req, res) => {
       phone: phone,
       country: country,
       city: city,
-      university: university,
-      course: course
+      university: university
     };
 
     // Remove undefined values
@@ -881,8 +879,8 @@ const forgotPassword = async (req, res) => {
       type: 'forgot_password'
     });
 
-    // Send OTP email
-    await sendOTPEmail(email, otpCode, 'Password Reset');
+    // Send Forgot Password OTP email
+    await sendForgotPasswordOTPEmail(email, otpCode, existingUser.first_name);
 
     console.log('✅ Forgot password OTP sent successfully');
     return res.json(

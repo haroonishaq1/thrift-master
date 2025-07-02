@@ -77,7 +77,7 @@ const User = {
         country, city, university, course, student_id, phone
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
       RETURNING id, first_name, last_name, username, email, age, gender, 
-                country, city, university, course, student_id, phone, email_verified, created_at
+                country, city, university, course, student_id, phone, profile_picture, email_verified, created_at
     `;
 
     const values = [

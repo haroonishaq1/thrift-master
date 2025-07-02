@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const { generateToken, formatResponse, isValidEmail, generateOTP, getOTPExpiry } = require('../utils/helpers');
 const { Brand } = require('../models/Brand');
 const { BrandOTP } = require('../models/BrandOTP');
-const { sendOTPEmail } = require('../utils/emailService');
+const { sendOTPEmail, sendForgotPasswordOTPEmail } = require('../utils/emailService');
 
 // Brand Registration
 const register = async (req, res) => {
@@ -195,9 +195,15 @@ const getProfile = async (req, res) => {
       );
     }
 
-    // Remove password from response
+    // Remove password from response and normalize field names
     const brandResponse = { ...brand };
     delete brandResponse.password;
+    
+    // Normalize field names for frontend compatibility
+    brandResponse.approved = brandResponse.is_approved; // Map is_approved to approved
+    delete brandResponse.is_approved; // Remove the original field to avoid confusion
+
+    console.log('🔍 Normalized brand response:', brandResponse);
 
     return res.json(
       formatResponse(true, 'Brand profile retrieved successfully', {
@@ -325,8 +331,8 @@ const forgotPassword = async (req, res) => {
     // Store OTP in database with type 'forgot_password'
     await BrandOTP.create(email, otpCode, expiresAt, null, 'forgot_password');
 
-    // Send OTP email
-    await sendOTPEmail(email, otpCode, 'Brand Password Reset');
+    // Send Forgot Password OTP email
+    await sendForgotPasswordOTPEmail(email, otpCode, existingBrand.name);
 
     console.log('✅ Brand forgot password OTP sent successfully');
     return res.json(

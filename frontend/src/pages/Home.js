@@ -351,8 +351,7 @@ function Home({ isLoggedIn }) {
         ) : (
           <div className="no-brands-message">
             <div className="no-brands-content">
-              <h3>No Brand Carousel Available</h3>
-              <p>There are currently no approved brands to display in the carousel.</p>
+              <p>Loading...</p>
             </div>
           </div>
         )}
@@ -382,7 +381,7 @@ function Home({ isLoggedIn }) {
             <p>Don't miss out on these amazing student discounts!</p>
           </div>
           {loading ? (
-            <div className="loading-spinner">Loading deals...</div>
+            <div>Loading...</div>
           ) : (
             <div className="deals-grid">
               {featuredOffers.map((offer, index) => (
@@ -426,7 +425,7 @@ function Home({ isLoggedIn }) {
             </div>
           </div>
           {loading ? (
-            <div className="loading-spinner">Loading new lineup...</div>
+            <div>Loading...</div>
           ) : newLineupOffers.length > 0 ? (
             <div className={`deals-grid offers-count-${newLineupOffers.length}`}>
               {newLineupOffers.map((offer, index) => (
@@ -471,7 +470,7 @@ function Home({ isLoggedIn }) {
             </div>
             
             {loading ? (
-              <div className="loading-spinner">Loading electronics offers...</div>
+              <div>Loading...</div>
             ) : (
               <div className={`category-offers-grid offers-count-${electronicsOffers.length}`}>
                 {electronicsOffers.length > 0 ? (
@@ -510,7 +509,7 @@ function Home({ isLoggedIn }) {
             </div>
             
             {loading ? (
-              <div className="loading-spinner">Loading fashion offers...</div>
+              <div>Loading...</div>
             ) : (
               <div className={`category-offers-grid offers-count-${fashionOffers.length}`}>
                 {fashionOffers.length > 0 ? (
@@ -549,7 +548,7 @@ function Home({ isLoggedIn }) {
             </div>
             
             {loading ? (
-              <div className="loading-spinner">Loading food & drink offers...</div>
+              <div>Loading...</div>
             ) : (
               <div className={`category-offers-grid offers-count-${foodOffers.length}`}>
                 {foodOffers.length > 0 ? (

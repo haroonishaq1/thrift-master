@@ -11,6 +11,33 @@ import { authAPI } from '../services/api';
 import '../styles/Profile.css';
 import '../styles/Login.css';
 
+// Dropdown options
+const COUNTRY_OPTIONS = [
+  { value: 'Pakistan', label: 'Pakistan' },
+  { value: 'India', label: 'India' },
+  { value: 'Bangladesh', label: 'Bangladesh' },
+  { value: 'Other', label: 'Other' }
+];
+
+const CITY_OPTIONS = [
+  { value: 'Lahore', label: 'Lahore' },
+  { value: 'Karachi', label: 'Karachi' },
+  { value: 'Islamabad', label: 'Islamabad' },
+  { value: 'Rawalpindi', label: 'Rawalpindi' },
+  { value: 'Faisalabad', label: 'Faisalabad' },
+  { value: 'Multan', label: 'Multan' },
+  { value: 'Other', label: 'Other' }
+];
+
+const UNIVERSITY_OPTIONS = [
+  { value: 'University of Lahore', label: 'University of Lahore' },
+  { value: 'University of Punjab', label: 'University of Punjab' },
+  { value: 'LUMS', label: 'LUMS' },
+  { value: 'FAST University', label: 'FAST University' },
+  { value: 'Comsats University', label: 'Comsats University' },
+  { value: 'Other', label: 'Other' }
+];
+
 function EditProfile({ isLoggedIn }) {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -42,9 +69,7 @@ function EditProfile({ isLoggedIn }) {
     city: Yup.string()
       .required('City is required'),
     university: Yup.string()
-      .required('University is required'),
-    course: Yup.string()
-      .required('Course/Program is required')
+      .required('University is required')
   });
 
   useEffect(() => {
@@ -77,8 +102,7 @@ function EditProfile({ isLoggedIn }) {
         phone: values.phone,
         country: values.country,
         city: values.city,
-        university: values.university,
-        course: values.course
+        university: values.university
       };
 
       // Note: You'll need to implement this API endpoint in your backend
@@ -152,6 +176,7 @@ function EditProfile({ isLoggedIn }) {
               Cancel
             </button>
           </div>
+          
         </div>
 
         <div className="profile-details">
@@ -178,8 +203,7 @@ function EditProfile({ isLoggedIn }) {
               phone: userData.phone || '',
               country: userData.country || '',
               city: userData.city || '',
-              university: userData.university || '',
-              course: userData.course || userData.bio || ''
+              university: userData.university || ''
             }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
@@ -300,45 +324,55 @@ function EditProfile({ isLoggedIn }) {
                     <div className="form-group">
                       <label htmlFor="country">Country</label>
                       <Field 
+                        as="select"
                         id="country"
-                        type="text" 
                         name="country"
                         className="detail-value"
-                      />
+                      >
+                        <option value="">Select Country</option>
+                        {COUNTRY_OPTIONS.map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </Field>
                       <ErrorMessage name="country" component="div" className="error-message" />
                     </div>
 
                     <div className="form-group">
                       <label htmlFor="city">City</label>
                       <Field 
+                        as="select"
                         id="city"
-                        type="text" 
                         name="city"
                         className="detail-value"
-                      />
+                      >
+                        <option value="">Select City</option>
+                        {CITY_OPTIONS.map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </Field>
                       <ErrorMessage name="city" component="div" className="error-message" />
                     </div>
 
                     <div className="form-group">
                       <label htmlFor="university">University</label>
                       <Field 
+                        as="select"
                         id="university"
-                        type="text" 
                         name="university"
                         className="detail-value"
-                      />
+                      >
+                        <option value="">Select University</option>
+                        {UNIVERSITY_OPTIONS.map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </Field>
                       <ErrorMessage name="university" component="div" className="error-message" />
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="course">Course/Program</label>
-                      <Field 
-                        id="course"
-                        type="text" 
-                        name="course"
-                        className="detail-value"
-                      />
-                      <ErrorMessage name="course" component="div" className="error-message" />
                     </div>
                   </div>
                 </div>

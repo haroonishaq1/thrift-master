@@ -143,6 +143,40 @@
   background: #3a56d4;
 }
 
+/* Open Website Button - Blue to match other buttons */
+.open-website-btn {
+  background: #4361ee;
+  color: white;
+  border: none;
+  padding: 14px 40px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.open-website-btn:hover {
+  background: #3a56d4;
+}
+
+/* View Your Code Button - Same styling as open website button */
+.show-existing-code-btn {
+  background: #4361ee;
+  color: white;
+  border: none;
+  padding: 14px 40px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.show-existing-code-btn:hover {
+  background: #3a56d4;
+}
+
 /* Code Container */
 .code-container {
   display: flex;
@@ -188,23 +222,6 @@
   color: #ffffff;
 }
 
-/* Open Website Button - Blue to match other buttons */
-.open-website-btn {
-  background: #4361ee;
-  color: white;
-  border: none;
-  padding: 14px 40px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 10px;
-}
-
-.open-website-btn:hover {
-  background: #3a56d4;
-}
-
 /* Brand Logo Styles for RedeemedCodePage */
 .offer-brand-logo-center {
   width: 120px;
@@ -248,21 +265,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-/* Main white card */
-.redeemed-card {
-  background: white;
-  border: 1px solid #e0e0e0;
-  padding: 50px 40px;
-  text-align: center;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 25px;
-  /* Add top margin to account for logo spacing */
-  margin-top: 0;
 }
 
 /* Responsive styles for brand logo */

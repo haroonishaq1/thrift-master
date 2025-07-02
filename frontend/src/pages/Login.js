@@ -100,8 +100,14 @@ function Login({ updateAuthStatus }) {
           updateAuthStatus();
         }
         
-        // Redirect to home page or dashboard
-        navigate('/');
+        // Check if there's a redirect URL from location state
+        const redirectTo = location.state?.redirectTo;
+        if (redirectTo) {
+          navigate(redirectTo);
+        } else {
+          // Redirect to home page by default
+          navigate('/');
+        }
       }
     } catch (error) {
       console.error('Login error:', error);

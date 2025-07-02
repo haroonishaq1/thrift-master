@@ -147,6 +147,18 @@
   font-family: 'Inter', sans-serif;
 }
 
+.brand-name {
+  background: transparent;
+  color: #000000;
+  padding: 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+  margin: 8px 0;
+  line-height: 1.4;
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
   .product-card {

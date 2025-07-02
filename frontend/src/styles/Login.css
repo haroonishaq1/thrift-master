@@ -313,19 +313,24 @@ button:disabled {
 }
 
 .forgot-password-link {
-  background: none;
-  border: none;
-  color: #3498db;
+  background: none !important;
+  border: none !important;
+  color: #4361ee !important;
   font-size: 0.9rem;
   cursor: pointer;
   text-decoration: none;
   transition: color 0.3s ease;
-  padding: 0;
+  padding: 0 !important;
+  font-weight: normal;
+  font-family: inherit;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 .forgot-password-link:hover {
-  color: #2980b9;
+  color: #3a56d4 !important;
   text-decoration: underline;
+  background: none !important;
 }
 
 /* Login specific error message styling */

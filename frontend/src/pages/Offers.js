@@ -123,9 +123,7 @@ const Offers = ({ isLoggedIn }) => {
     return (
       <div className="offers-page">
         <Header isLoggedIn={isLoggedIn} />
-        <div className="loading-spinner">
-          <p>Loading offers...</p>
-        </div>
+        <div>Loading...</div>
         <Footer />
       </div>
     );

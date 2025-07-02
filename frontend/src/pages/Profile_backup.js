@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { getUserData, isUserAuthenticated } from '../utils/auth';
+import { getUserData, isUserAuthenticated, storeUserAuth } from '../utils/auth';
+import { authAPI } from '../services/api';
 import '../styles/Profile.css';
 
 function Profile({ isLoggedIn }) {
@@ -22,12 +23,50 @@ function Profile({ isLoggedIn }) {
 
         setIsLoading(true);
 
-        // Get data from localStorage
+        // Check if we have updated data from navigation state
+        const forceRefresh = location.state?.forceRefresh;
+        const updatedData = location.state?.updatedData;
+
+        if (forceRefresh && updatedData) {
+          console.log('🔍 Profile: Using updated user data from edit page:', updatedData);
+          setUserData(updatedData);
+          setIsLoading(false);
+          return;
+        }
+
+        // First, try to get data from localStorage (from login)
         const localUserData = getUserData();
         console.log('🔍 Profile: localStorage user data:', localUserData);
         
         if (localUserData) {
+          console.log('🔍 Profile: Using localStorage data');
           setUserData(localUserData);
+          setIsLoading(false);
+          return;
+        }
+
+        // If no localStorage data, try API as fallback
+        try {
+          console.log('🔍 Profile: No localStorage data, fetching from API...');
+          const profileResponse = await authAPI.getProfile();
+          console.log('🔍 Profile: API response:', profileResponse);
+          
+          if (profileResponse.success && profileResponse.data) {
+            const freshUserData = profileResponse.data.user || profileResponse.data;
+            console.log('✅ Profile: Fresh user profile data from API:', freshUserData);
+            setUserData(freshUserData);
+            
+            // Update localStorage with fresh data
+            const token = localStorage.getItem('userToken');
+            if (token) {
+              storeUserAuth(token, freshUserData);
+              console.log('✅ Profile: Updated localStorage with fresh user data');
+            }
+          }
+        } catch (apiError) {
+          console.error('❌ Profile: API fetch failed:', apiError.message);
+          // If everything fails, show error
+          setUserData(null);
         }
       } catch (err) {
         console.error('❌ Profile: Error in fetchUserProfile:', err);
@@ -48,6 +87,13 @@ function Profile({ isLoggedIn }) {
       </div>
     );
   }
+
+  // Debug logging
+  console.log('🔍 Profile.js userData:', userData);
+  console.log('🔍 Profile.js userData.age:', userData.age, typeof userData.age);
+  console.log('🔍 Profile.js userData.gender:', userData.gender, typeof userData.gender);
+  console.log('🔍 Profile.js userData.country:', userData.country, typeof userData.country);
+  console.log('🔍 Profile.js userData.city:', userData.city, typeof userData.city);
 
   return (
     <div className="profile-container">
@@ -95,6 +141,12 @@ function Profile({ isLoggedIn }) {
                 </div>
               </div>
               <div className="detail-item">
+                <label>Program</label>
+                <div className="detail-value">
+                  {userData.bio || userData.course ? (userData.bio || userData.course) : <span style={{ color: '#999', fontStyle: 'italic' }}>Not provided</span>}
+                </div>
+              </div>
+              <div className="detail-item">
                 <label>Gender</label>
                 <div className="detail-value">
                   {userData.gender ? userData.gender : <span style={{ color: '#999', fontStyle: 'italic' }}>Not provided</span>}
@@ -125,7 +177,7 @@ function Profile({ isLoggedIn }) {
                 </div>
               </div>
               <div className="detail-item">
-                <label>University</label>
+                <label>University ID</label>
                 <div className="detail-value">
                   {userData.university ? userData.university : <span style={{ color: '#999', fontStyle: 'italic' }}>Not provided</span>}
                 </div>

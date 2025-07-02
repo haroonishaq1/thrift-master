@@ -184,10 +184,9 @@ function BrandOffers() {
           <span>Rejected: {stats.rejected}</span>
         </div>
         <button 
-          className={`add-offer-button ${!isLatestOfferExpired() ? 'disabled' : ''}`}
-          onClick={isLatestOfferExpired() ? handleAddOffer : undefined}
-          title={!isLatestOfferExpired() ? "You can only add a new offer after your latest offer expires (24 hours)" : ""}
-          disabled={!isLatestOfferExpired() || isLoading}
+          className="add-offer-button"
+          onClick={handleAddOffer}
+          disabled={isLoading}
         >
           Add New Offer
         </button>
@@ -200,7 +199,7 @@ function BrandOffers() {
         </div>
       )}        {isLoading ? (
         <div className="loading-container">
-          <div className="loading-spinner"></div>
+          <div>Loading...</div>
           <p>Loading offers...</p>
         </div>
       ) : offers.length === 0 ? (

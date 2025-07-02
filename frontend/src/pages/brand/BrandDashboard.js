@@ -92,7 +92,7 @@ function BrandDashboard() {
     return (
       <div className="brand-dashboard">
         <div className="loading-container">
-          <div className="loading-spinner">Loading dashboard...</div>
+          <div>Loading...</div>
         </div>
       </div>
     );

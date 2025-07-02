@@ -10,6 +10,7 @@ const CREATE_BRANDS_TABLE = `
     password VARCHAR(255) NOT NULL,
     website VARCHAR(255),
     logo VARCHAR(255),
+    phone_number VARCHAR(20),
     admin_username VARCHAR(100) NOT NULL,
     admin_email VARCHAR(255) NOT NULL,
     description TEXT,
@@ -58,6 +59,9 @@ const Brand = {
 
       // Use phoneNumber if phone_number is not provided
       const finalPhoneNumber = phone_number || phoneNumber;
+      
+      // Standardize website URL
+      const standardizedWebsite = website ? Brand.standardizeWebsiteUrl(website) : website;
 
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 12);
@@ -68,10 +72,10 @@ const Brand = {
         RETURNING id, name, email, website, logo, phone_number, admin_username, admin_email, description, category, is_approved, created_at
       `;
 
-      const values = [name, email, hashedPassword, website, logo, finalPhoneNumber, adminUsername, adminEmail, description, category, false];
+      const values = [name, email, hashedPassword, standardizedWebsite, logo, finalPhoneNumber, adminUsername, adminEmail, description, category, false];
       const result = await pool.query(query, values);
 
-      console.log(`✅ Brand registered: ${name} (Category: ${category}, Pending approval)`);
+      console.log(`✅ Brand registered: ${name} (Category: ${category}, Website: ${standardizedWebsite}, Pending approval)`);
       return result.rows[0];
     } catch (error) {
       console.error('❌ Error creating brand:', error.message);
@@ -336,6 +340,58 @@ const Brand = {
       console.error('❌ Error updating brand profile:', error.message);
       throw error;
     }
+  },
+
+  // Update brand info by ID (for brand dashboard)
+  updateById: async (id, updateData) => {
+    try {
+      // Standardize website link if provided
+      if (updateData.website) {
+        updateData.website = Brand.standardizeWebsiteUrl(updateData.website);
+      }
+
+      const query = `
+        UPDATE brands 
+        SET name = $1, category = $2, phone_number = $3, website = $4, updated_at = CURRENT_TIMESTAMP 
+        WHERE id = $5 
+        RETURNING id, name, email, website, logo, phone_number, admin_username, admin_email, description, category, is_approved, created_at, updated_at
+      `;
+      const values = [updateData.name, updateData.category, updateData.phone_number, updateData.website, id];
+      const result = await pool.query(query, values);
+      
+      if (result.rows.length === 0) {
+        throw new Error('Brand not found');
+      }
+      
+      return result.rows[0];
+    } catch (error) {
+      console.error('❌ Error updating brand by ID:', error.message);
+      throw error;
+    }
+  },
+
+  // Standardize website URL format
+  standardizeWebsiteUrl: (url) => {
+    if (!url) return url;
+    
+    // Remove any whitespace
+    url = url.trim();
+    
+    // If it's empty after trimming, return it
+    if (!url) return url;
+    
+    // If it doesn't start with http:// or https://, add https://
+    if (!url.match(/^https?:\/\//i)) {
+      url = 'https://' + url;
+    }
+    
+    // Convert to lowercase for consistency
+    url = url.toLowerCase();
+    
+    // Remove trailing slash
+    url = url.replace(/\/$/, '');
+    
+    return url;
   },
 
   // Get brands by category

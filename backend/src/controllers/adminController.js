@@ -1,6 +1,12 @@
 const { generateToken, formatResponse } = require('../utils/helpers');
 const { Brand } = require('../models/Brand');
 const { Offer } = require('../models/Offer');
+const { 
+  sendBrandApprovalEmail, 
+  sendBrandRejectionEmail, 
+  sendOfferApprovalEmail, 
+  sendOfferRejectionEmail 
+} = require('../utils/emailService');
 
 // Admin Login with Secret Key
 const adminLogin = async (req, res) => {
@@ -112,6 +118,19 @@ const approveBrand = async (req, res) => {
 
     console.log(`✅ Brand approved: ${approvedBrand.name}`);
 
+    // Send approval email
+    try {
+      await sendBrandApprovalEmail(
+        approvedBrand.admin_email,
+        approvedBrand.name,
+        reason || 'Brand meets all requirements'
+      );
+      console.log(`📧 Approval email sent to ${approvedBrand.admin_email}`);
+    } catch (emailError) {
+      console.error('❌ Failed to send approval email:', emailError);
+      // Continue without failing the approval process
+    }
+
     return res.json(
       formatResponse(true, 'Brand approved successfully', {
         brand: approvedBrand
@@ -145,6 +164,19 @@ const rejectBrand = async (req, res) => {
     const rejectedBrand = await Brand.reject(brandId, 'admin', reason || 'Brand does not meet requirements');
 
     console.log(`❌ Brand rejected: ${rejectedBrand.name}`);
+
+    // Send rejection email
+    try {
+      await sendBrandRejectionEmail(
+        rejectedBrand.admin_email,
+        rejectedBrand.name,
+        reason || 'Brand does not meet requirements'
+      );
+      console.log(`📧 Rejection email sent to ${rejectedBrand.admin_email}`);
+    } catch (emailError) {
+      console.error('❌ Failed to send rejection email:', emailError);
+      // Continue without failing the rejection process
+    }
 
     return res.json(
       formatResponse(true, 'Brand rejected successfully', {
@@ -242,6 +274,23 @@ const approveOffer = async (req, res) => {
     const approvedOffer = await Offer.approve(offerId, adminId);
     
     console.log(`✅ Offer "${approvedOffer.title}" approved successfully`);
+
+    // Send approval email to brand
+    try {
+      // Get brand information
+      const brand = await Brand.findById(approvedOffer.brand_id);
+      if (brand) {
+        await sendOfferApprovalEmail(
+          brand.admin_email,
+          brand.name,
+          approvedOffer.title
+        );
+        console.log(`📧 Offer approval email sent to ${brand.admin_email}`);
+      }
+    } catch (emailError) {
+      console.error('❌ Failed to send offer approval email:', emailError);
+      // Continue without failing the approval process
+    }
     
     return res.json(
       formatResponse(true, 'Offer approved successfully', {
@@ -276,6 +325,24 @@ const rejectOffer = async (req, res) => {
     const rejectedOffer = await Offer.reject(offerId, adminId);
     
     console.log(`✅ Offer "${rejectedOffer.title}" rejected successfully`);
+
+    // Send rejection email to brand
+    try {
+      // Get brand information
+      const brand = await Brand.findById(rejectedOffer.brand_id);
+      if (brand) {
+        await sendOfferRejectionEmail(
+          brand.admin_email,
+          brand.name,
+          rejectedOffer.title,
+          'Offer does not meet approval requirements'
+        );
+        console.log(`📧 Offer rejection email sent to ${brand.admin_email}`);
+      }
+    } catch (emailError) {
+      console.error('❌ Failed to send offer rejection email:', emailError);
+      // Continue without failing the rejection process
+    }
     
     return res.json(
       formatResponse(true, 'Offer rejected successfully', {

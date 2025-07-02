@@ -203,10 +203,7 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <div className="admin-dashboard-container">
-        <div className="loading-spinner">
-          <div className="spinner"></div>
-          <p>Loading dashboard...</p>
-        </div>
+        <div>Loading...</div>
       </div>
     );
   }

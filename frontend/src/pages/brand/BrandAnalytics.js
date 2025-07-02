@@ -273,7 +273,7 @@ function BrandAnalytics() {
     <div className="brand-analytics-container">
       {isLoading ? (
         <div className="loading-container">
-          <div className="loading-spinner">Loading analytics...</div>
+          <div>Loading...</div>
         </div>
       ) : error ? (
         <div className="error-container">

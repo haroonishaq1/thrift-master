@@ -5,6 +5,7 @@ import '../styles/OfferPage.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { offersAPI } from '../services/api';
+import { isUserAuthenticated } from '../utils/auth';
 
 function OfferPage() {
   const { offerId } = useParams();
@@ -15,7 +16,6 @@ function OfferPage() {
   const [currentOfferIndex, setCurrentOfferIndex] = useState(0);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [rating, setRating] = useState(null);
   const [showCodeScreen, setShowCodeScreen] = useState(false);
   const [sectionTitle, setSectionTitle] = useState('');
   
@@ -170,15 +170,35 @@ function OfferPage() {
     };
   }, []);
 
-  const handleRating = (value) => {
-    setRating(value);
-  };
-
   const handleRedeemNow = () => {
+    // Check if user is authenticated
+    if (!isUserAuthenticated()) {
+      // Redirect to login page
+      navigate('/login', { 
+        state: { 
+          message: 'Please log in to redeem this offer',
+          redirectTo: `/redeem-code/${offerId}`
+        }
+      });
+      return;
+    }
+    
     navigate(`/redeem-code/${offerId}`);
   };
 
   const handleShowCode = () => {
+    // Check if user is authenticated
+    if (!isUserAuthenticated()) {
+      // Redirect to login page
+      navigate('/login', { 
+        state: { 
+          message: 'Please log in to access this feature',
+          redirectTo: `/redeem-code/${offerId}`
+        }
+      });
+      return;
+    }
+    
     navigate(`/redeem-code/${offerId}`);
   };
 
@@ -236,8 +256,7 @@ function OfferPage() {
       <div className="offer-page">
         <Header />
         <div className="loading">
-          <div className="spinner"></div>
-          <p>Loading offer details...</p>
+          <p>Loading...</p>
         </div>
         <Footer />
       </div>
@@ -329,23 +348,6 @@ function OfferPage() {
           <div className="redeem-screen">
             <div className="redeem-content">
               <h1 className="discount-title">{offerData.description}</h1>
-              <div className="offer-rating">
-                <p>Rate this offer:</p>
-                <div className="rating-buttons">
-                  <button 
-                    className={`thumbs-up ${rating === true ? 'active' : ''}`} 
-                    onClick={() => handleRating(true)}
-                  >
-                    👍
-                  </button>
-                  <button 
-                    className={`thumbs-down ${rating === false ? 'active' : ''}`} 
-                    onClick={() => handleRating(false)}
-                  >
-                    👎
-                  </button>
-                </div>
-              </div>
               <div className="offer-action">
                 <p>Enter this code at checkout to get {offerData.description}.</p>
                 <p className="visit-website">Get your code now and visit the {offerData.brand_name} website.</p>
