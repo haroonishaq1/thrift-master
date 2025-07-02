@@ -64,12 +64,11 @@
   transform: translateZ(0);
 }
 
-/* When logo image is present, keep white background but adjust styling */
+/* When logo image is present, remove background and border */
 .brand-logo-overlay.has-logo {
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  padding: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: transparent;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 .brand-logo-img {
