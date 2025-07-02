@@ -11,7 +11,7 @@
 
 .brand-register-form-wrapper {
   background: white;
-  padding: 40px;
+  padding: 50px 40px 40px 40px; /* Extra top padding for back button */
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   width: 100%;
@@ -620,4 +620,44 @@
 
 .back-arrow-btn:active {
   transform: scale(0.95);
+}
+
+/* Back to Home Button */
+.back-to-home-button {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 10;
+}
+
+.back-to-home-button:hover {
+  background: #f0f0f0;
+  color: #333;
+  transform: translateX(-2px);
+}
+
+.back-to-home-button:active {
+  transform: translateX(-1px);
+}
+
+/* Mobile responsive back button */
+@media (max-width: 768px) {
+  .back-to-home-button {
+    top: 10px;
+    left: 10px;
+    font-size: 13px;
+    padding: 6px 10px;
+  }
 }

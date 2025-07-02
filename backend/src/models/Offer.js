@@ -10,7 +10,7 @@ const CREATE_OFFERS_TABLE = `
     image_url VARCHAR(500),
     brand_id INTEGER NOT NULL REFERENCES brands(id) ON DELETE CASCADE,
     category VARCHAR(50) DEFAULT 'other',
-    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'expired')),
+    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'expired', 'rejected')),
     isApproved BOOLEAN DEFAULT FALSE,
     approvedAt DATETIME NULL,
     approvedBy INT NULL,
@@ -57,18 +57,17 @@ const Offer = {
         image_url,
         brand_id,
         category = 'other',
-        valid_until,
         terms_conditions,
         usage_limit
       } = offerData;
 
       const query = `
-        INSERT INTO offers (title, description, discount_percent, image_url, brand_id, category, valid_until, terms_conditions, usage_limit)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-        RETURNING id, title, description, discount_percent, image_url, brand_id, category, status, valid_from, valid_until, created_at
+        INSERT INTO offers (title, description, discount_percent, image_url, brand_id, category, terms_conditions, usage_limit)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        RETURNING id, title, description, discount_percent, image_url, brand_id, category, status, valid_from, created_at
       `;
 
-      const values = [title, description, discount_percent, image_url, brand_id, category, valid_until, terms_conditions, usage_limit];
+      const values = [title, description, discount_percent, image_url, brand_id, category, terms_conditions, usage_limit];
       const result = await pool.query(query, values);
 
       console.log(`✅ Offer created: ${title} for brand ID ${brand_id}`);
@@ -404,7 +403,7 @@ const Offer = {
         SELECT o.*, b.name as brand_name, b.email as brand_email, b.logo as brand_logo
         FROM offers o
         LEFT JOIN brands b ON o.brand_id = b.id
-        WHERE o.isApproved = false
+        WHERE o.isApproved = false AND o.status != 'rejected'
         ORDER BY o.created_at ASC
       `;
       
@@ -439,7 +438,7 @@ const Offer = {
     try {
       const query = `
         UPDATE offers 
-        SET status = 'inactive', isApproved = false, updated_at = CURRENT_TIMESTAMP
+        SET status = 'rejected', isApproved = false, updated_at = CURRENT_TIMESTAMP
         WHERE id = $1
         RETURNING *
       `;

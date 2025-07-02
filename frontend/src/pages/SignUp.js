@@ -366,6 +366,13 @@ function SignUp() {
     return (
     <div className="login-container">
       <div className="login-form-wrapper">
+        <button 
+          className="back-to-home-button" 
+          onClick={() => navigate('/')}
+          type="button"
+        >
+          ← Home
+        </button>
         <h1>THRIFT</h1>
         <div className="promo-message">
           <h2>Studying at university? Get student discounts on all your favorite brands—for free!</h2>

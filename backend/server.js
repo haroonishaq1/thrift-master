@@ -38,6 +38,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Request logging middleware
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  console.log('📋 Request Headers:', JSON.stringify(req.headers, null, 2));
+  console.log('📋 Request Body:', JSON.stringify(req.body, null, 2));
+  console.log('📋 Content-Type:', req.get('Content-Type'));
   next();
 });
 

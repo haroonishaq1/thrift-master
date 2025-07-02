@@ -38,9 +38,6 @@ function BrandAddOffer() {
       .max(100, 'Discount cannot exceed 100%'),
     category: Yup.string()
       .required('Category is required'),
-    validUntil: Yup.date()
-      .nullable()
-      .min(new Date(), 'Valid until date must be in the future'),
   });
   
   const handleImageChange = (event, setFieldValue) => {
@@ -72,8 +69,7 @@ function BrandAddOffer() {
         title: values.offerName.trim(),
         description: values.description.trim(),
         discount_percent: values.discountPercentage,
-        category: values.category || 'other',
-        valid_until: values.validUntil || null,
+        category: values.category || '',
         offerImage: values.offerImage
       };
 
@@ -122,8 +118,7 @@ function BrandAddOffer() {
             description: '',
             offerImage: null,
             discountPercentage: '',
-            category: 'other',
-            validUntil: ''
+            category: ''
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
@@ -173,28 +168,13 @@ function BrandAddOffer() {
                   id="category" 
                   name="category"
                 >
-                  <option value="other">Other</option>
-                  <option value="fashion">Fashion</option>
-                  <option value="electronics">Electronics</option>
-                  <option value="home-garden">Home & Garden</option>
-                  <option value="sports">Sports</option>
-                  <option value="beauty">Beauty</option>
-                  <option value="food-dining">Food & Dining</option>
-                  <option value="travel">Travel</option>
-                  <option value="entertainment">Entertainment</option>
-                  <option value="health-fitness">Health & Fitness</option>
+                  {CATEGORY_OPTIONS.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
                 </Field>
                 <ErrorMessage name="category" component="div" className="error-message" />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="validUntil">Valid Until (Optional)</label>
-                <Field 
-                  id="validUntil" 
-                  name="validUntil" 
-                  type="datetime-local"
-                />
-                <ErrorMessage name="validUntil" component="div" className="error-message" />
               </div>
 
               <div className="form-group">

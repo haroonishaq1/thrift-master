@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaArrowLeft } from 'react-icons/fa';
 import PhoneInput from 'react-phone-input-2';
 import { storeBrandAuth } from '../../utils/auth';
 import { authAPI } from '../../services/api';
@@ -130,6 +129,8 @@ function BrandRegisterStep2() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setRegistrationError(''); // Clear previous errors
+    setRegistrationStatus('');
     
     if (!validateForm()) {
       return;
@@ -164,6 +165,8 @@ function BrandRegisterStep2() {
       
       // Call the backend API to register brand using FormData
       const data = await authAPI.brandRegisterWithFormData(formDataToSend);
+      console.log('🔍 Registration Response:', data);
+      
       if (!data.success) {
         throw new Error(data.message || 'Registration failed');
       }
@@ -172,11 +175,17 @@ function BrandRegisterStep2() {
       if (data.message && (data.message.includes('verification code') || data.message.includes('OTP'))) {
         setRegistrationStatus('Registration initiated! Redirecting to verification page...');
 
+        console.log('🔍 Navigating to OTP verification with data:', {
+          brandId: data.data?.brandId || data.brandId,
+          email: brandData.companyEmail,
+          message: data.message
+        });
+
         // Navigate to OTP verification page
         setTimeout(() => {
           navigate('/brand/verify-otp', { 
             state: { 
-              brandId: data.brandId,
+              brandId: data.data?.brandId || data.brandId,
               email: brandData.companyEmail,
               message: data.message 
             } 
@@ -189,12 +198,29 @@ function BrandRegisterStep2() {
       setRegistrationStatus('Registration successful! Redirecting to login...');
       
       setTimeout(() => {
-        navigate('/brand/auth/login');
+        navigate('/brand/login');
       }, 2000);
       
     } catch (error) {
       console.error('Registration error:', error);
-      setRegistrationError(error.message || 'Registration failed. Please try again.');
+      
+      // Extract proper error message from response
+      let errorMessage = 'Registration failed. Please try again.';
+      
+      if (error.message) {
+        // Check for specific error types
+        if (error.message.includes('already exists')) {
+          errorMessage = 'A brand with this email already exists. Please use a different email address.';
+        } else if (error.message.includes('email')) {
+          errorMessage = 'Please provide a valid email address.';
+        } else if (error.message.includes('password')) {
+          errorMessage = 'Password must be at least 6 characters long.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      setRegistrationError(errorMessage);
       setRegistrationStatus('');
     } finally {
       setIsRegistering(false);
@@ -205,21 +231,28 @@ function BrandRegisterStep2() {
     <div className="brand-register-container">
       <div className="brand-register-form-wrapper">
         <button 
-          className="back-arrow-btn"
+          className="back-to-home-button" 
           onClick={() => navigate('/')}
-          aria-label="Go back to home"
+          type="button"
         >
-          <FaArrowLeft />
+          ← Home
         </button>
+        
         <h1>ThriftHub</h1>
         
         <StepIndicator currentStep={2} />
         
         <h2>Complete Registration</h2>
         
-        {registrationStatus && (
-          <div className={`registration-status ${registrationError ? 'error' : 'success'}`}>
-            {registrationError || registrationStatus}
+        {registrationError && (
+          <div className="registration-status error">
+            {registrationError}
+          </div>
+        )}
+        
+        {registrationStatus && !registrationError && (
+          <div className="registration-status success">
+            {registrationStatus}
           </div>
         )}
         

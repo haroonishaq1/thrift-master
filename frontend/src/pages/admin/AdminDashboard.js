@@ -298,7 +298,6 @@ const AdminDashboard = () => {
                       <div className="item-details">
                         <p><strong>Email:</strong> {brand.email}</p>
                         <p><strong>Website:</strong> {brand.website || 'Not provided'}</p>
-                        <p><strong>Description:</strong> {brand.description}</p>
                         <p><strong>Submitted:</strong> {new Date(brand.created_at).toLocaleDateString()}</p>
                       </div>
                       {brand.logo && (
@@ -338,27 +337,26 @@ const AdminDashboard = () => {
               </div>
             ) : (
               <div className="pending-items">
-                {pendingOffers.map((offer) => (
-                  <div key={offer.id} className="pending-item">
-                    <div className="item-info">
-                      <div className="item-header">
-                        <h3>{offer.title}</h3>
-                        <span className="item-type">Offer</span>
-                      </div>
-                      <div className="item-details">
-                        <p><strong>Brand:</strong> {offer.brand_name}</p>
-                        <p><strong>Discount:</strong> {offer.discount_percent}% OFF</p>
-                        <p><strong>Category:</strong> {offer.category}</p>
-                        <p><strong>Description:</strong> {offer.description}</p>
-                        <p><strong>Valid Until:</strong> {offer.valid_until ? new Date(offer.valid_until).toLocaleDateString() : 'No expiry'}</p>
-                        <p><strong>Submitted:</strong> {new Date(offer.created_at).toLocaleDateString()}</p>
-                      </div>
-                      {offer.image_url && (
-                        <div className="offer-image">
-                          <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${offer.image_url}`} alt={offer.title} />
-                        </div>
-                      )}
-                    </div>
+        {pendingOffers.map((offer) => (
+          <div key={offer.id} className="pending-item">
+            <div className="item-info">
+              <div className="item-header">
+                <h3>{offer.title}</h3>
+                <span className="item-type">Offer</span>
+              </div>
+              <div className="item-details">
+                <p><strong>Brand:</strong> {offer.brand_name}</p>
+                <p><strong>Discount:</strong> {offer.discount_percent}% OFF</p>
+                <p><strong>Category:</strong> {offer.category}</p>
+                <p><strong>Description:</strong> {offer.description}</p>
+                <p><strong>Submitted:</strong> {new Date(offer.created_at).toLocaleDateString()}</p>
+              </div>
+              {offer.image_url && (
+                <div className="offer-image">
+                  <img src={`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${offer.image_url}`} alt={offer.title} />
+                </div>
+              )}
+            </div>
                     <div className="item-actions">
                       <button 
                         className="approve-btn"

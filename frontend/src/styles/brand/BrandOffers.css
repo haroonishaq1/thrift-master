@@ -247,6 +247,15 @@
   color: #dc3545;
 }
 
+.status-cell.rejected {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.status-cell.inactive {
+  color: #6c757d;
+}
+
 .approval-status-cell {
   font-weight: 600;
 }
@@ -259,8 +268,18 @@
   color: #ffc107;
 }
 
-.expired-offer {
-  opacity: 0.7;
+.approval-status-cell.rejected {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.approval-status-cell.expired {
+  color: #6c757d;
+}
+
+.rejected-offer {
+  background-color: #fff5f5;
+  /* Removed opacity to keep offers fully visible */
 }
 
 /* Add responsive styles for smaller screens */

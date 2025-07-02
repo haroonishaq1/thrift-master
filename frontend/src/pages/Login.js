@@ -118,6 +118,13 @@ function Login({ updateAuthStatus }) {
   return (
     <div className="login-container">
       <div className="login-form-wrapper">
+        <button 
+          className="back-to-home-button" 
+          onClick={() => navigate('/')}
+          type="button"
+        >
+          ← Home
+        </button>
         <h1>THRIFT</h1>
         <h2>Log in to Thrift with me</h2>
         

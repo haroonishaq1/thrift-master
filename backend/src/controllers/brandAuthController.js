@@ -9,6 +9,7 @@ const register = async (req, res) => {
   try {
     console.log('🚀 Brand registration request received');
     console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
+    console.log('📁 Request file:', req.file);
     
     const {
       name,
@@ -16,12 +17,18 @@ const register = async (req, res) => {
       password,
       description,
       website,
-      logo,
       adminUsername,
       category,
       country,
       phoneNumber
     } = req.body;
+
+    // Handle logo file upload
+    let logoUrl = null;
+    if (req.file) {
+      logoUrl = `/uploads/brands/${req.file.filename}`;
+      console.log('📁 Logo uploaded:', logoUrl);
+    }
 
     console.log('🔍 Extracted fields:', {
       name, email, adminUsername, category, country, website, phoneNumber
@@ -69,6 +76,7 @@ const register = async (req, res) => {
       description: description || '',
       website,
       phone_number: phoneNumber, // Add phone number to brand data
+      logo: logoUrl, // Fix: use 'logo' instead of 'logo_url'
       adminUsername,
       adminEmail: email.toLowerCase(),
       category
@@ -80,21 +88,28 @@ const register = async (req, res) => {
     console.log('✅ Brand registered successfully');
     console.log('📧 Brand email:', email);
 
-    // Generate token
-    const token = generateToken({ 
-      id: newBrand.id, 
-      email: newBrand.email,
-      type: 'brand'
-    });
+    // Generate OTP for brand verification
+    const otpCode = generateOTP();
+    const expiresAt = getOTPExpiry();
 
-    // Remove password from response
-    const brandResponse = { ...newBrand };
-    delete brandResponse.password;
+    // Save OTP to database
+    await BrandOTP.create(
+      email.toLowerCase(),
+      otpCode,
+      expiresAt,
+      null,
+      'registration'
+    );
+
+    // Send OTP email
+    await sendOTPEmail(email, otpCode, name);
+
+    console.log('📧 OTP sent to brand email:', email);
 
     return res.status(201).json(
-      formatResponse(true, 'Brand registered successfully', {
-        brand: brandResponse,
-        token
+      formatResponse(true, 'Registration successful! A verification code has been sent to your email.', {
+        brandId: newBrand.id,
+        requiresVerification: true
       })
     );
 
@@ -208,6 +223,68 @@ const logout = async (req, res) => {
     console.error('❌ Brand logout error:', error);
     return res.status(500).json(
       formatResponse(false, 'Logout failed')
+    );
+  }
+};
+
+// Brand Registration OTP Verification
+const verifyRegistrationOTP = async (req, res) => {
+  try {
+    console.log('🔐 Brand registration OTP verification request received');
+    const { email, otpCode, brandId } = req.body;
+
+    if (!email || !otpCode || !brandId) {
+      return res.status(400).json(
+        formatResponse(false, 'Email, OTP code, and brand ID are required')
+      );
+    }
+
+    if (!isValidEmail(email)) {
+      return res.status(400).json(
+        formatResponse(false, 'Please provide a valid email address')
+      );
+    }
+
+    // Find the OTP record
+    const otpRecord = await BrandOTP.findByEmailAndType(email.toLowerCase(), 'registration');
+    
+    if (!otpRecord) {
+      return res.status(400).json(
+        formatResponse(false, 'No verification code found for this email')
+      );
+    }
+
+    // Check if OTP is expired
+    if (new Date() > new Date(otpRecord.expires_at)) {
+      await BrandOTP.deleteByEmail(email.toLowerCase(), 'registration');
+      return res.status(400).json(
+        formatResponse(false, 'Verification code has expired. Please register again.')
+      );
+    }
+
+    // Check if OTP is correct
+    if (otpRecord.otp_code !== otpCode) {
+      return res.status(400).json(
+        formatResponse(false, 'Invalid verification code')
+      );
+    }
+
+    // Mark OTP as used
+    await BrandOTP.markAsUsed(otpRecord.id);
+
+    // Update brand as email verified (if you have this field)
+    // await Brand.updateEmailVerified(brandId, true);
+
+    console.log('✅ Brand registration OTP verified successfully');
+    
+    return res.json(
+      formatResponse(true, 'Email verified successfully! You can now login.')
+    );
+
+  } catch (error) {
+    console.error('❌ Brand registration OTP verification error:', error);
+    return res.status(500).json(
+      formatResponse(false, 'Verification failed. Please try again later.')
     );
   }
 };
@@ -483,5 +560,6 @@ module.exports = {
   forgotPassword,
   verifyForgotPasswordOTP,
   resetPassword,
-  changePassword
+  changePassword,
+  verifyRegistrationOTP
 };

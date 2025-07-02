@@ -89,10 +89,6 @@ function BrandProfile() {
     fetchBrandProfile();
   }, [navigate, location.state]);
 
-  const handleEditProfile = () => {
-    navigate('/brand/edit-profile');
-  };
-
   if (isLoading) {
     return (
       <div className="profile-container">
@@ -135,32 +131,28 @@ function BrandProfile() {
         <div className="profile-header">
           <div className="profile-header-top">
             <h2 className="profile-title">Brand Profile</h2>
-            <button 
-              className="edit-button"
-              onClick={handleEditProfile}
-            >
-              Edit
-            </button>
           </div>
           <div className="profile-user-section">
-            <div className="profile-avatar">
-              {brandData.logo ? (
-                <img 
-                  src={brandData.logo.startsWith('http') 
-                    ? brandData.logo 
-                    : `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${brandData.logo}`}
-                  alt={`${brandData.name} logo`}
-                  className="profile-icon brand-logo"
-                />
-              ) : (
-                <div className="profile-icon">
-                  <div className="brand-icon"></div>
-                </div>
-              )}
-            </div>
-            <div className="profile-info">
-              <h1>{brandData.name}</h1>
-              <p className="profile-subtitle">{brandData.category || 'Brand'}</p>
+            <div className="profile-header-content">
+              <div className="profile-avatar">
+                {brandData.logo ? (
+                  <img 
+                    src={brandData.logo.startsWith('http') 
+                      ? brandData.logo 
+                      : `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}${brandData.logo}`}
+                    alt={`${brandData.name} logo`}
+                    className="profile-icon brand-logo"
+                  />
+                ) : (
+                  <div className="profile-icon">
+                    <div className="brand-icon"></div>
+                  </div>
+                )}
+              </div>
+              <div className="profile-info">
+                <h1>{brandData.name}</h1>
+                <p className="profile-subtitle">{brandData.category || 'Brand'}</p>
+              </div>
             </div>
           </div>
         </div>

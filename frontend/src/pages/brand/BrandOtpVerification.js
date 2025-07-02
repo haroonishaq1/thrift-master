@@ -8,6 +8,14 @@ const BrandOtpVerification = () => {
   const location = useLocation();
   const email = location.state?.email;
   const brandName = location.state?.brandName;
+  const brandId = location.state?.brandId;
+  
+  console.log('🔍 BrandOtpVerification - State data:', {
+    email,
+    brandName,
+    brandId,
+    locationState: location.state
+  });
   
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
@@ -65,11 +73,17 @@ const BrandOtpVerification = () => {
       setIsLoading(false);
       return;
     }
+
+    if (!brandId) {
+      setError('Brand ID is missing. Please try registering again.');
+      setIsLoading(false);
+      return;
+    }
     
     try {
-      console.log('Verifying Brand OTP:', otpCode, 'for email:', email);
+      console.log('Verifying Brand OTP:', otpCode, 'for email:', email, 'brandId:', brandId);
       
-      const response = await authAPI.brandVerifyOTP(email, otpCode);
+      const response = await authAPI.brandVerifyOTP(email, otpCode, brandId);
       console.log('Brand OTP verification response:', response);
 
       if (response.success) {
@@ -90,7 +104,23 @@ const BrandOtpVerification = () => {
       }
     } catch (error) {
       console.error('Brand OTP verification error:', error);
-      setError(error.message || 'Invalid or expired code. Please try again.');
+      
+      // Extract proper error message
+      let errorMessage = 'Verification failed. Please try again.';
+      
+      if (error.message) {
+        if (error.message.includes('Invalid') || error.message.includes('verification code')) {
+          errorMessage = 'Invalid verification code. Please check and try again.';
+        } else if (error.message.includes('expired')) {
+          errorMessage = 'Verification code has expired. Please request a new code.';
+        } else if (error.message.includes('Email, OTP code, and brand ID are required')) {
+          errorMessage = 'Please enter the complete verification code.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

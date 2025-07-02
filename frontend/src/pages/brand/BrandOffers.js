@@ -9,7 +9,7 @@ function BrandOffers() {
   const [offers, setOffers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [stats, setStats] = useState({ total: 0, active: 0, expired: 0 });    // Check for token and redirect to login if not present
+  const [stats, setStats] = useState({ total: 0, active: 0, expired: 0, rejected: 0 });    // Check for token and redirect to login if not present
   useEffect(() => {
     if (!isBrandAuthenticated()) {
       navigate('/brand/login');
@@ -21,19 +21,22 @@ function BrandOffers() {
     const total = offersData.length;
     let active = 0;
     let expired = 0;
+    let rejected = 0;
     
     offersData.forEach(offer => {
       const now = new Date();
       const isExpired = offer.valid_until ? new Date(offer.valid_until) < now : false;
       
-      if (isExpired || offer.status === 'expired') {
+      if (offer.status === 'rejected') {
+        rejected++;
+      } else if (isExpired || offer.status === 'expired') {
         expired++;
       } else if (offer.status === 'active') {
         active++;
       }
     });
     
-    return { total, active, expired };
+    return { total, active, expired, rejected };
   };
 
   // Load offers from API
@@ -178,6 +181,7 @@ function BrandOffers() {
           <span>Total: {stats.total}</span>
           <span>Active: {stats.active}</span>
           <span>Expired: {stats.expired}</span>
+          <span>Rejected: {stats.rejected}</span>
         </div>
         <button 
           className={`add-offer-button ${!isLatestOfferExpired() ? 'disabled' : ''}`}
@@ -218,7 +222,6 @@ function BrandOffers() {
                 <th>Discount</th>
                 <th>Description</th>
                 <th>Created Date</th>
-                <th>Expiry Date</th>
                 <th>Status</th>
                 <th>Approval Status</th>
                 <th>Actions</th>
@@ -226,13 +229,40 @@ function BrandOffers() {
             </thead>
             <tbody>              {isLoading ? (
                 <tr>
-                  <td colSpan="9" className="loading-cell">Loading offers...</td>
+                  <td colSpan="8" className="loading-cell">Loading offers...</td>
                 </tr>
               ) : offers.map(offer => {
-                const isExpired = offer.current_status === 'expired';
+                const isExpired = offer.valid_until ? new Date(offer.valid_until) < new Date() : false;
+                const isRejected = offer.status === 'rejected';
+                // Handle both isApproved and isapproved field names (database vs API inconsistency)
+                const isApproved = offer.isApproved || offer.isapproved;
+                
+                // Determine Approval Status
+                let approvalStatusDisplay = 'Pending';
+                let approvalStatusClass = 'pending';
+                
+                if (isRejected) {
+                  approvalStatusDisplay = 'Rejected';
+                  approvalStatusClass = 'rejected';
+                } else if (isExpired || offer.status === 'expired') {
+                  approvalStatusDisplay = 'Expired';
+                  approvalStatusClass = 'expired';
+                } else if (isApproved) {
+                  approvalStatusDisplay = 'Approved';
+                  approvalStatusClass = 'approved';
+                }
+                
+                // Determine Status (Active only if approved, otherwise Inactive)
+                let statusDisplay = 'Inactive';
+                let statusClass = 'inactive';
+                
+                if (isApproved && !isExpired && !isRejected && offer.status !== 'expired') {
+                  statusDisplay = 'Active';
+                  statusClass = 'active';
+                }
                 
                 return (
-                  <tr key={offer.id} className={isExpired ? 'expired-offer' : ''}>
+                  <tr key={offer.id} className={`${statusClass}-offer`}>
                     <td className="offer-image-cell">
                       {offer.image_url ? (
                         <img 
@@ -252,12 +282,11 @@ function BrandOffers() {
                         : offer.description}
                     </td>
                     <td>{formatDate(offer.created_at)}</td>
-                    <td>{formatDate(offer.end_date)}</td>
-                    <td className={`status-cell ${isExpired ? 'expired' : 'active'}`}>
-                      {isExpired ? 'Expired' : 'Active'}
+                    <td className={`status-cell ${statusClass}`}>
+                      {statusDisplay}
                     </td>
-                    <td className={`approval-status-cell ${offer.isapproved ? 'approved' : 'pending'}`}>
-                      {offer.isapproved ? 'Approved' : 'Pending'}
+                    <td className={`approval-status-cell ${approvalStatusClass}`}>
+                      {approvalStatusDisplay}
                     </td>
                     <td className="actions-cell">
                       <button 

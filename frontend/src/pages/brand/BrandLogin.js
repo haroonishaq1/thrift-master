@@ -164,6 +164,13 @@ function BrandLogin() {
   return (
     <div className="brand-login-container">
       <div className="brand-login-form-wrapper">
+        <button 
+          className="back-to-home-button" 
+          onClick={() => navigate('/')}
+          type="button"
+        >
+          ← Home
+        </button>
         <h1>THRIFT</h1>        
         <h2>Brand Partner Login</h2>
         

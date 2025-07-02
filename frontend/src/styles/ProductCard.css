@@ -42,60 +42,58 @@
 
 .brand-logo-overlay {
   position: absolute;
-  bottom: 5px;
-  left: 20px;
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.95);
+  bottom: -5px;
+  left: 10px;
+  width: 100px;
+  height: 100px;
+  background: transparent;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: none;
+  backdrop-filter: none;
+  border: none;
   overflow: hidden;
   flex-shrink: 0;
-  min-width: 80px;
-  min-height: 80px;
+  min-width: 100px;
+  min-height: 100px;
   /* Ensure stable dimensions during navigation */
   box-sizing: border-box;
   contain: layout style paint;
   transform: translateZ(0);
+  /* Better padding for logo containment */
+  padding: 8px;
 }
 
-/* When logo image is present, remove background and border */
+/* When logo image is present, provide clean transparent background */
 .brand-logo-overlay.has-logo {
   background: transparent;
   border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: none;
 }
 
 .brand-logo-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 90%;
+  height: 90%;
+  object-fit: contain !important;
   object-position: center;
-  border-radius: 50%;
   background: transparent;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  /* Prevent layout shifts and distortion during navigation */
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  will-change: transform, opacity;
-  /* Force consistent rendering */
+  padding: 0;
+  margin: auto;
+  box-sizing: border-box;
   display: block;
-  /* Add a subtle shadow to make logo stand out */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 50% !important;
+  border: none !important;
 }
 
-/* Prevent logo distortion on resize and navigation */
+/* Remove the conflicting rule that was causing cropping */
 .brand-logo-img:not([src=""]) {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
+  width: 90% !important;
+  height: 90% !important;
+  object-fit: contain !important;
   border-radius: 50% !important;
+  border: none !important;
 }
 
 .brand-initial {

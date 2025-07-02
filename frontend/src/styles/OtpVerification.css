@@ -148,12 +148,21 @@
 }
 
 .error-message {
-  color: #e74c3c;
-  background-color: #ffebee;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 20px;
+  background-color: #fff2f2;
+  color: #b91c1c;
+  border-left: 4px solid #ef4444;
+  padding: 15px;
+  margin: 0 0 25px 0;
+  border-radius: 8px;
   text-align: center;
+  font-size: 15px;
+  width: 100%;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-sizing: border-box;
+  display: block;
+  position: relative;
 }
 
 .otp-verification-footer {

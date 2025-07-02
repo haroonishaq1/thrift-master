@@ -107,7 +107,7 @@ const Brand = {
   getPendingBrands: async () => {
     try {
       const query = `
-        SELECT id, name, email, website, logo, admin_username, admin_email, description, created_at
+        SELECT id, name, email, website, logo, admin_username, admin_email, created_at
         FROM brands 
         WHERE is_approved = FALSE AND rejected_at IS NULL
         ORDER BY created_at DESC
@@ -160,7 +160,7 @@ const Brand = {
   getAllBrands: async () => {
     try {
       const query = `
-        SELECT id, name, email, website, logo, admin_username, admin_email, description, 
+        SELECT id, name, email, website, logo, admin_username, admin_email, 
                is_approved, approved_at, approved_by, approval_reason,
                rejected_at, rejected_by, rejection_reason, created_at,
                CASE 

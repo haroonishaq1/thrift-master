@@ -350,11 +350,9 @@ function Home({ isLoggedIn }) {
           </div>
         ) : (
           <div className="no-brands-message">
-            <div className="container">
-              <div className="no-brands-content">
-                <h3>No Brand Carousel Available</h3>
-                <p>There are currently no approved brands to display in the carousel.</p>
-              </div>
+            <div className="no-brands-content">
+              <h3>No Brand Carousel Available</h3>
+              <p>There are currently no approved brands to display in the carousel.</p>
             </div>
           </div>
         )}

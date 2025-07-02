@@ -51,11 +51,7 @@ const ProductCard = memo(function ProductCard({ id, brand, discount, logo, image
                 opacity: logoLoaded ? 1 : 0.8,
                 transition: 'opacity 0.2s ease',
                 transform: logoLoaded ? 'scale(1)' : 'scale(0.9)',
-                willChange: 'transform, opacity',
-                background: 'transparent', // Make background transparent
-                borderRadius: '50%',
-                border: 'none', // Remove any border completely
-                boxShadow: 'none' // Remove any shadow that may look like a border
+                willChange: 'transform, opacity'
               }}
             />
           ) : (

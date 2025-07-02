@@ -17,15 +17,12 @@ function Header({ isLoggedIn }) {
   const searchContainerRef = useRef(null);
   const navigate = useNavigate();
 
-  // Import categories from shared constants and add 'ALL' option
-  const categories = [
-    ...CATEGORIES,
-    { name: 'ALL', value: 'all' }
-  ];
+  // Import categories from shared constants
+  const categories = CATEGORIES;
 
   const handleCategoryClick = (categoryValue) => {
     // Categories that are shown on Home page (should scroll to section)
-    const categoriesOnHomePage = ['electronics', 'fashion', 'food', 'all'];
+    const categoriesOnHomePage = ['electronics', 'fashion', 'food'];
     
     // Categories that are NOT on Home page (should navigate to offers page)
     const categoriesNotOnHomePage = ['fitness', 'beauty', 'education'];
@@ -53,8 +50,7 @@ function Header({ isLoggedIn }) {
     const categoryToSectionId = {
       'food': 'food-drink-section',
       'electronics': 'electronics-section',
-      'fashion': 'fashion-section',
-      'all': 'shop-by-category-section'
+      'fashion': 'fashion-section'
     };
     
     const sectionId = categoryToSectionId[categoryValue];

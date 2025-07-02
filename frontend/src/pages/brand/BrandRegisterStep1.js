@@ -102,6 +102,13 @@ function BrandRegisterStep1() {
   return (
     <div className="brand-register-container">
       <div className="brand-register-form-wrapper">
+        <button 
+          className="back-to-home-button" 
+          onClick={() => navigate('/')}
+          type="button"
+        >
+          ← Home
+        </button>
         <h1>THRIFT</h1>
         <h2>Register Your Brand</h2>
         

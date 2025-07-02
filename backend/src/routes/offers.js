@@ -316,7 +316,7 @@ router.get('/:id', async (req, res) => {
 // POST /api/offers - Create new offer (Brand authenticated)
 router.post('/', verifyBrandAuth, upload.single('offerImage'), async (req, res) => {
   try {
-    const { title, description, discount_percent, category, valid_until, terms_conditions, usage_limit } = req.body;
+    const { title, description, discount_percent, category, terms_conditions, usage_limit } = req.body;
 
     // Validation
     if (!title || !description || !discount_percent) {
@@ -347,7 +347,6 @@ router.post('/', verifyBrandAuth, upload.single('offerImage'), async (req, res) 
       image_url,
       brand_id: req.brandId,
       category: category || 'other',
-      valid_until: valid_until || null,
       terms_conditions: terms_conditions || null,
       usage_limit: usage_limit ? parseInt(usage_limit) : null
     };
@@ -373,7 +372,7 @@ router.post('/', verifyBrandAuth, upload.single('offerImage'), async (req, res) 
 router.put('/:id', verifyBrandAuth, upload.single('offerImage'), async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, discount_percent, category, status, valid_until, terms_conditions, usage_limit } = req.body;
+    const { title, description, discount_percent, category, status, terms_conditions, usage_limit } = req.body;
 
     // Check if offer exists and belongs to the brand
     const existingOffer = await Offer.findById(id);
@@ -411,7 +410,6 @@ router.put('/:id', verifyBrandAuth, upload.single('offerImage'), async (req, res
       image_url,
       category: category || existingOffer.category,
       status: status || existingOffer.status,
-      valid_until: valid_until !== undefined ? valid_until : existingOffer.valid_until,
       terms_conditions: terms_conditions !== undefined ? terms_conditions : existingOffer.terms_conditions,
       usage_limit: usage_limit !== undefined ? (usage_limit ? parseInt(usage_limit) : null) : existingOffer.usage_limit
     };

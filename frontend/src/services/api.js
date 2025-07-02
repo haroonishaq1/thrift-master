@@ -169,10 +169,10 @@ export const authAPI = {
   },
 
   // Brand OTP verification
-  brandVerifyOTP: async (email, otpCode) => {
+  brandVerifyOTP: async (email, otpCode, brandId) => {
     return apiRequest('/brand-auth/verify-otp', {
       method: 'POST',
-      body: JSON.stringify({ email, otpCode }),
+      body: JSON.stringify({ email, otpCode, brandId }),
     });
   },
 
@@ -453,7 +453,6 @@ export const offersAPI = {
     if (offerData.discount_percent) formData.append('discount_percent', offerData.discount_percent);
     if (offerData.category) formData.append('category', offerData.category);
     if (offerData.status) formData.append('status', offerData.status);
-    if (offerData.valid_until !== undefined) formData.append('valid_until', offerData.valid_until);
     if (offerData.terms_conditions !== undefined) formData.append('terms_conditions', offerData.terms_conditions);
     if (offerData.usage_limit !== undefined) formData.append('usage_limit', offerData.usage_limit);
     if (offerData.offerImage) formData.append('offerImage', offerData.offerImage);

@@ -26,18 +26,24 @@
 }
 
 .dashboard-actions .logout-button {
-  background: #f44336;
-  color: #fff;
+  background: #f44336 !important;
+  color: #fff !important;
   border: none;
-  border-radius: 5px;
-  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  padding: 0.8rem 1.8rem;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(244, 67, 54, 0.3);
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
 }
+
 .dashboard-actions .logout-button:hover {
-  background: #d32f2f;
+  background: #d32f2f !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
 }
 
 .dashboard-content {
@@ -582,6 +588,7 @@
 .brand-logo,
 .offer-image {
   margin-top: 1rem;
+  flex-shrink: 0;
 }
 
 .brand-logo img,

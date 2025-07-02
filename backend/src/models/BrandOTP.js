@@ -70,6 +70,25 @@ const BrandOTP = {
     }
   },
 
+  // Find latest OTP by email and type
+  findByEmailAndType: async (email, type = 'registration') => {
+    try {
+      const query = `
+        SELECT * FROM brand_otps 
+        WHERE email = $1 AND type = $2 AND is_used = FALSE
+        ORDER BY created_at DESC 
+        LIMIT 1
+      `;
+      const values = [email, type];
+      
+      const result = await pool.query(query, values);
+      return result.rows[0] || null;
+    } catch (error) {
+      console.error('❌ Error finding brand OTP by email and type:', error.message);
+      throw error;
+    }
+  },
+
   // Mark OTP as used
   markAsUsed: async (id) => {
     try {

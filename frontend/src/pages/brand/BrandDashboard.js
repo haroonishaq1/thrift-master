@@ -6,7 +6,7 @@ import '../../styles/brand/BrandDashboard.css';
 
 function BrandDashboard() {
   const navigate = useNavigate();
-  const [stats, setStats] = useState({ total: 0, active: 0, expired: 0 });
+  const [stats, setStats] = useState({ total: 0, active: 0, expired: 0, rejected: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [latestOffers, setLatestOffers] = useState([]);
@@ -24,19 +24,24 @@ function BrandDashboard() {
     const total = offersData.length;
     let active = 0;
     let expired = 0;
+    let rejected = 0;
     
     offersData.forEach(offer => {
       const now = new Date();
       const isExpired = offer.valid_until ? new Date(offer.valid_until) < now : false;
+      // Handle both field name variations
+      const isApproved = offer.isApproved || offer.isapproved;
       
-      if (isExpired || offer.status === 'expired') {
+      if (offer.status === 'rejected') {
+        rejected++;
+      } else if (isExpired || offer.status === 'expired') {
         expired++;
-      } else if (offer.status === 'active') {
+      } else if (offer.status === 'active' && isApproved) {
         active++;
       }
     });
     
-    return { total, active, expired };
+    return { total, active, expired, rejected };
   };
 
   // Load dashboard data
@@ -128,6 +133,10 @@ function BrandDashboard() {
           <div className="stat-number">{stats.expired}</div>
           <div className="stat-label">Expired Offers</div>
         </div>
+        <div className="stat-card rejected">
+          <div className="stat-number">{stats.rejected}</div>
+          <div className="stat-label">Rejected Offers</div>
+        </div>
       </div>
 
       {/* Quick Actions */}
@@ -172,13 +181,31 @@ function BrandDashboard() {
           <div className="offers-list">
             {latestOffers.map(offer => {
               const isExpired = offer.valid_until ? new Date(offer.valid_until) < new Date() : false;
+              const isApproved = offer.isApproved || offer.isapproved;
+              const isRejected = offer.status === 'rejected';
+              
+              // Determine status for display
+              let statusDisplay = 'Inactive';
+              let statusClass = 'inactive';
+              
+              if (isRejected) {
+                statusDisplay = 'Rejected';
+                statusClass = 'rejected';
+              } else if (isExpired || offer.status === 'expired') {
+                statusDisplay = 'Expired';
+                statusClass = 'expired';
+              } else if (isApproved && offer.status === 'active') {
+                statusDisplay = 'Active';
+                statusClass = 'active';
+              }
+              
               return (
-                <div key={offer.id} className={`offer-item ${isExpired ? 'expired' : 'active'}`}>
+                <div key={offer.id} className={`offer-item ${statusClass}`}>
                   <div className="offer-info">
                     <h4>{offer.title}</h4>
                     <p>{offer.discount_percent}% off</p>
-                    <span className={`status ${isExpired ? 'expired' : 'active'}`}>
-                      {isExpired ? 'Expired' : 'Active'}
+                    <span className={`status ${statusClass}`}>
+                      {statusDisplay}
                     </span>
                   </div>
                   <div className="offer-date">
